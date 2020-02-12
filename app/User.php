@@ -36,4 +36,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function texts(){
+        return $this->belongsTo('App\Models\TextUser', 'id', 'user_id');
+    }
 }
