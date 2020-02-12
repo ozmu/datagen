@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Data;
 
 use App\Models\Text;
+use App\Models\UserText;
+use App\Http\Requests\UserTextRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -30,9 +32,17 @@ class UsersTextsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserTextRequest $request)
     {
-        //
+        $created = UserText::create([
+            'user_id' => $request->user()->id,
+            'text_id' => $request->input('text_id'),
+            'tagged_text' => $request->input('tagged_text')
+        ]);
+        if ($created){
+            return ["status" => 200];
+        }
+        return ["status" => 500];
     }
 
     /**
@@ -43,7 +53,7 @@ class UsersTextsController extends Controller
      */
     public function show($id)
     {
-        return Text::find($id);
+        return UserText::find($id);
     }
 
     /**
@@ -53,9 +63,15 @@ class UsersTextsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserTextRequest $request)
     {
-        //
+        $updated = UserText::find($request->input('text_id'))->update([
+            'tagged_text' => $request->input('tagged_text')
+        ]);
+        if ($updated){
+            return ["status" => 200];
+        }
+        return ["status" => 500];
     }
 
     /**
@@ -64,8 +80,12 @@ class UsersTextsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $text = Text::where('id', $request->input('id'));
+        if ($text->count() && in_array($text->first()->id, $request->user()->texts->pluck('id')->toArray())){
+            return UserText::destroy($id);
+        }
+        abort(403);
     }
 }

@@ -52,7 +52,7 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserRequest $request, $id)
+    public function update(UserRequest $request)
     {
         return User::find($id)->update($request->all());
     }
@@ -63,8 +63,8 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        return User::destroy($id);
+        return User::destroy($request->input('id'));
     }
 }
