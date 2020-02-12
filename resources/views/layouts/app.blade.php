@@ -22,6 +22,15 @@
 	<script src="{{ asset('global_assets/js/plugins/loaders/blockui.min.js') }}"></script>
 	<!-- /core JS files -->
 
+	<!-- Vue JS files -->
+	<script src="{{ asset('assets/js/vue.js') }}"></script>
+	<script src="{{ asset('assets/js/httpVueLoader.js') }}"></script>
+	<script src="{{ asset('assets/js/vue-router.js') }}"></script>
+	<script src="{{ asset('assets/js/vuex.js') }}"></script>
+	<script src="{{ asset('assets/js/axios.min.js') }}"></script>
+	<script src="{{ asset('assets/js/lodash.min.js') }}"></script>
+	<!-- /Vue JS files -->
+
 	<!-- Theme JS files -->
 	<script src="{{ asset('global_assets/js/plugins/visualization/d3/d3.min.js') }}"></script>
 	<script src="{{ asset('global_assets/js/plugins/visualization/d3/d3_tooltip.js') }}"></script>
@@ -203,8 +212,7 @@
 
 
 	<!-- Page content -->
-	<div class="page-content">
-
+	<div class="page-content" id="app">
 		<!-- Main sidebar -->
 		<div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
 
@@ -287,6 +295,10 @@
 
 		<!-- Main content -->
 		<div class="content-wrapper">
+			content
+			<br>
+			<home></home>
+			<br>
             @yield('content')
 		</div>
 		<!-- /main content -->
@@ -295,4 +307,7 @@
 	<!-- /page content -->
 
 </body>
+<!-- Vue Component Loader -->
+<script src="{{ asset('js/main.js') }}"></script>
+<!-- /Vue Component Loader -->
 </html>
