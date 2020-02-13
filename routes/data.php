@@ -30,8 +30,8 @@ Route::delete('texts.destroy', 'TextsController@destroy')->middleware('admin');
 
 
 // User Text
-Route::get('text', 'UsersTextsController@index');
-Route::post('text', 'UsersTextsController@store');
-Route::get('text.{id}', 'UsersTextsController@show')->middleware('admin');
-Route::put('text', 'UsersTextsController@update');
-Route::delete('text.destroy', 'UsersTextsController@destroy');
+Route::get('text', 'TextsUsersController@index');
+Route::post('text', 'TextsUsersController@store');
+Route::get('text.{id}', 'TextsUsersController@show')->middleware('admin');
+Route::put('text', 'TextsUsersController@update');
+Route::delete('text.destroy', 'TextsUsersController@destroy');

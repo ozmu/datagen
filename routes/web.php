@@ -12,4 +12,4 @@
 */
 
 Auth::routes(['register' => false]);
-Route::get('/', 'AppController@index');
+Route::get('/', 'AppController@index')->middleware('auth');

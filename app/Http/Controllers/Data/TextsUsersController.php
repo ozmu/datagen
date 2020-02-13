@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Data;
 
 use App\Models\Text;
 use App\Models\UserText;
-use App\Http\Requests\UserTextRequest;
+use App\Http\Requests\TextUserRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class UsersTextsController extends Controller
+class TextsUsersController extends Controller
 {
     /**
      * Display a listing of the resource.
