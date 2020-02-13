@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Data;
 
 use App\Models\Text;
-use App\Models\UserText;
+use App\Models\TextUser;
 use App\Http\Requests\TextUserRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -27,14 +27,28 @@ class TextsUsersController extends Controller
     }
 
     /**
+     * Display last tagged texts
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function last(Request $request){
+        if ($request->input('scope') == 'all'){
+            return [
+                "data" => $request->user()->texts
+            ];
+        }
+        return $request->user()->texts()->paginate($request->input('paginate') ? $request->input('paginate') : 5);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserTextRequest $request)
+    public function store(TextUserRequest $request)
     {
-        $created = UserText::create([
+        $created = TextUser::create([
             'user_id' => $request->user()->id,
             'text_id' => $request->input('text_id'),
             'tagged_text' => $request->input('tagged_text')
@@ -51,9 +65,9 @@ class TextsUsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        return UserText::find($id);
+        return TextUser::find($id);
     }
 
     /**
@@ -63,9 +77,9 @@ class TextsUsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserTextRequest $request)
+    public function update(TextUserRequest $request)
     {
-        $updated = UserText::find($request->input('text_id'))->update([
+        $updated = TextUser::find($request->input('text_id'))->update([
             'tagged_text' => $request->input('tagged_text')
         ]);
         if ($updated){
@@ -84,7 +98,7 @@ class TextsUsersController extends Controller
     {
         $text = Text::where('id', $request->input('id'));
         if ($text->count() && in_array($text->first()->id, $request->user()->texts->pluck('id')->toArray())){
-            return UserText::destroy($id);
+            return TextUser::destroy($id);
         }
         abort(403);
     }

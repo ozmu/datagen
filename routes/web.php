@@ -12,4 +12,10 @@
 */
 
 Auth::routes(['register' => false]);
-Route::get('/', 'AppController@index')->middleware('auth');
+
+Route::group(['middleware' => 'auth'], function(){
+    Route::get('/', 'AppController@index');
+    
+    Route::get('/tagging', 'AppController@tagging');
+    Route::get('/tagged', 'AppController@tagged');
+});

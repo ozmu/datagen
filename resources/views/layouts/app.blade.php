@@ -262,25 +262,56 @@
 					<ul class="nav nav-sidebar" data-nav-type="accordion">
 
 						<!-- Main -->
-						<li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Main</div> <i class="icon-menu" title="Main"></i></li>
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Main</div> 
+							<i class="icon-menu" title="Main"></i>
+						</li>
 						<li class="nav-item">
-							<a href="index.html" class="nav-link active">
+							<a href="/" class="nav-link active">
 								<i class="icon-home4"></i>
 								<span>
 									Dashboard
 								</span>
 							</a>
-						</li>						<!-- /main -->
+						</li>						
+						<!-- /main -->
+
+						@if (request()->user()->is_admin)
+						<!-- admin -->
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Admin</div> 
+							<i class="icon-menu" title="Admin"></i>
+						</li>
+						<li class="nav-item">
+							<a href="/admin" class="nav-link">
+								<i class="icon-home4"></i>
+								<span>
+									Admin
+								</span>
+							</a>
+						</li>						
+						<!-- /admin -->
+						@endif
 
 						<!-- Forms -->
-						<li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Forms</div> <i class="icon-menu" title="Forms"></i></li>
-						<li class="nav-item nav-item-submenu">
-							<a href="#" class="nav-link"><i class="icon-pencil3"></i> <span>Form components</span></a>
-							<ul class="nav nav-group-sub" data-submenu-title="Form components">
-								<li class="nav-item"><a href="form_inputs.html" class="nav-link">Basic inputs</a></li>
-							</ul>
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Yazılar</div> 
+							<i class="icon-menu" title="Yazılar"></i>
+						</li>
+						<li class="nav-item">
+							<a href="/tagging" class="nav-link">
+								<i class="icon-pencil3"></i> 
+								<span>İşaretle</span>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="/tagged" class="nav-link">
+								<i class="icon-quill4"></i> 
+								<span>Son işaretlenenler</span>
+							</a>
 						</li>
 						<!-- /forms -->
+						
 
 					</ul>
 				</div>
@@ -295,10 +326,6 @@
 
 		<!-- Main content -->
 		<div class="content-wrapper">
-			content
-			<br>
-			<home></home>
-			<br>
             @yield('content')
 		</div>
 		<!-- /main content -->
