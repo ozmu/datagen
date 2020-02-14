@@ -283,20 +283,36 @@
 							<i class="icon-menu" title="Admin"></i>
 						</li>
 						<li class="nav-item">
-							<a href="/admin" class="nav-link">
-								<i class="icon-home4"></i>
+							<a href="/admin/kullanicilar" class="nav-link">
+								<i class="icon-users"></i>
 								<span>
-									Admin
+									Kullanıcılar
+								</span>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="/admin/ayarlar" class="nav-link">
+								<i class="icon-gear"></i>
+								<span>
+									Ayarlar
+								</span>
+							</a>
+						</li>	
+						<li class="nav-item">
+							<a href="/admin/metinler" class="nav-link">
+								<i class="icon-paragraph-center3 "></i>
+								<span>
+									Metinler
 								</span>
 							</a>
 						</li>						
 						<!-- /admin -->
 						@endif
 
-						<!-- Forms -->
+						<!-- Texts -->
 						<li class="nav-item-header">
-							<div class="text-uppercase font-size-xs line-height-xs">Yazılar</div> 
-							<i class="icon-menu" title="Yazılar"></i>
+							<div class="text-uppercase font-size-xs line-height-xs">Metinler</div> 
+							<i class="icon-menu" title="Metinler"></i>
 						</li>
 						<li class="nav-item">
 							<a href="/tagging" class="nav-link">
@@ -310,7 +326,26 @@
 								<span>Son işaretlenenler</span>
 							</a>
 						</li>
-						<!-- /forms -->
+						<li class="nav-item">
+							<a href="/istatistik" class="nav-link">
+								<i class="icon-stats-dots"></i> 
+								<span>İstatistik</span>
+							</a>
+						</li>
+						<!-- /texts -->
+
+						<!-- Support -->
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Destek</div> 
+							<i class="icon-menu" title="Destek"></i>
+						</li>
+						<li class="nav-item">
+							<a href="/tagging" class="nav-link">
+								<i class="icon-comment-discussion"></i> 
+								<span>İletişim</span>
+							</a>
+						</li>
+						<!-- /support -->
 						
 
 					</ul>

@@ -39,3 +39,9 @@ Route::delete('text.destroy', 'TextsUsersController@destroy');
 
 // Utils
 Route::get('utils/entities', 'UtilsController@entities');
+
+// Admin
+Route::group(['middleware' => 'admin'], function(){
+    Route::get('settings', 'AdminController@getSettings');
+    Route::put('settings', 'AdminController@updateSettings');
+});

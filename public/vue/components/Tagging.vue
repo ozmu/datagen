@@ -16,6 +16,7 @@
                         :class="{'selected-word': current.words.includes(word)}" 
                         @click="selectWord($event, word)">{{ word }}</span>
                     </div>
+                    <button @click="addEntity">Add</button>
                     <div class="form-group">
                         <label>Mesaj</label>
                         <textarea v-model="text.text" cols="5" rows="2" class="form-control"></textarea>
@@ -39,6 +40,7 @@ export default {
                 entity: {},
                 words: []
             },
+            selected: [],
             entities: []
         }
     },
@@ -46,6 +48,14 @@ export default {
     computed: {
         words(){
             return this.text.text.replace(/(<([^>]+)>)/ig, "").replace("  ", " ").split(" ").filter(text => text.length > 0)
+        }
+    },
+
+    watch: {
+        'selected': function(newVal, oldVal){
+            var last = newVal[newVal.length - 1]
+            var entity = last.words.join(' ')
+            this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>')
         }
     },
 
@@ -73,6 +83,12 @@ export default {
                 else {
                     this.current.words = [word]
                 } 
+            }
+        },
+        
+        addEntity(){
+            if (this.current.entity && this.current.words.length > 0){
+                this.selected.push({entity, words})
             }
         },
 
