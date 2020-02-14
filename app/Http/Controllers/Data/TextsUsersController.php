@@ -48,6 +48,20 @@ class TextsUsersController extends Controller
      */
     public function store(TextUserRequest $request)
     {
+        /*
+        $data = ["Hello <START:organization> World <END>. My name is <START:person> Test <END>"];
+        $pattern = "/<START:(.+?)>(.+?)<END>/i";
+        preg_match_all($pattern, $data[0], $matches);
+        $tags = [];
+        for ($c = 0; $c < count($matches[2]); $c++){
+            $data = [
+                "entity" => trim($matches[2][$c]),
+                "type" => $matches[1][$c]
+            ];
+            array_push($tags, $data);
+        }
+        return json_encode($tags);
+        */
         $created = TextUser::create([
             'user_id' => $request->user()->id,
             'text_id' => $request->input('text_id'),

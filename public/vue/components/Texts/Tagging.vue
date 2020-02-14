@@ -93,9 +93,10 @@ export default {
         },
 
         send(){
+            var tagged_text = this.text.text.replace(/<span class="tag" title="(.+?)"> (.+?) <[/]span>/, ' <START:$1> $2 <END> ').replace('  ', ' ')
             var data = {
                 text_id: this.text.id,
-                tagged_text: this.text.text
+                tagged_text: tagged_text
             }
             axios.post('/data/text', data).then(response => {
                 if (response.data.status === 200){

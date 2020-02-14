@@ -40,4 +40,9 @@ class User extends Authenticatable
     public function texts(){
         return $this->belongsTo('App\Models\TextUser', 'id', 'user_id');
     }
+
+    public function balance(){
+        $coin_factor = \App\Models\Setting::where('key', 'coin_factor')->first();
+        return $this->texts->count() * ($coin_factor ? $coin_factor : 1);
+    }
 }

@@ -291,21 +291,21 @@
 							</a>
 						</li>
 						<li class="nav-item">
-							<a href="/admin/ayarlar" class="nav-link">
-								<i class="icon-gear"></i>
-								<span>
-									Ayarlar
-								</span>
-							</a>
-						</li>	
-						<li class="nav-item">
 							<a href="/admin/metinler" class="nav-link">
 								<i class="icon-paragraph-center3 "></i>
 								<span>
 									Metinler
 								</span>
 							</a>
-						</li>						
+						</li>
+						<li class="nav-item">
+							<a href="/admin/ayarlar" class="nav-link">
+								<i class="icon-gear"></i>
+								<span>
+									Ayarlar
+								</span>
+							</a>
+						</li>							
 						<!-- /admin -->
 						@endif
 

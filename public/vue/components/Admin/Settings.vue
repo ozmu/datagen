@@ -28,14 +28,14 @@ export default {
     },
 
     mounted(){
-        axios.get('/data/settings').then(response => {
+        axios.get('/data/admin/settings').then(response => {
             this.settings = response.data
         })
     },
 
     methods: {
         save(){
-            axios.put('/data/settings', {settings: this.settings}).then(response => {
+            axios.put('/data/admin/settings', {settings: this.settings}).then(response => {
                 console.log(response.data)
             })
         }
