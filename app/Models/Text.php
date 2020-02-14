@@ -11,4 +11,8 @@ class Text extends Model
     protected $fillable = [
         "text"
     ];
+
+    public function users(){
+        return $this->belongsTo('App\Models\TextUser', 'id', 'text_id'); 
+    }
 }

@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Jobs\TextsUsers;
+
+use App\Models\TextUser;
+use App\Models\Setting;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+
+class CreateJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    protected $textUser;
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct(TextUser $textUser)
+    {
+        $this->textUser = $textUser;
+    }
+
+    /**
+     * Compute all entity tags and save DB
+     */
+    private function allTags(){
+        $pattern = "/<START:(.+?)>(.+?)<END>/i";
+        preg_match_all($pattern, $this->textUser["tagged_text"], $matches);
+        $tags = [];
+        for ($c = 0; $c < count($matches[2]); $c++){
+            $data = [
+                "entity" => trim($matches[2][$c]),
+                "type" => $matches[1][$c]
+            ];
+            array_push($tags, $data);
+        }
+        $encoded = json_encode($tags);
+        $textUser = TextUser::find($this->textUser["id"]);
+        $textUser->tags = $encoded;
+        $textUser->save();
+    }
+
+    /**
+     * Check for verified text
+     */
+    private function verifiedTags(){
+        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first() : 10;
+        if ($this->textUser->text->users->count() == $maximum_user_for_text){
+            $tag_verify_rate = Setting::where('key', 'tag_verify_rate')->first() ? (int)Setting::where('key', 'tag_verify_rate')->first() : 70;
+            $allTexts = TextUser::where('text_id', 1)->get();
+            $allTags = [];
+            foreach($allTexts as $text){
+                foreach(json_decode('[{"entity":"World","type":"organization"},{"entity":"Test","type":"person"}]', true) as $tag){
+                    array_push($allTags, $tag["type"] . ":" . $tag["entity"]);
+                }
+            }
+            $counts = array_count_values($allTags);
+            $verified_tags = [];
+            foreach ($counts as $tag => $count){
+                if ($count * 100 / $maximum_user_for_text >= $tag_verify_rate){
+                    array_push($verified_tags, $tag);
+                }
+            }
+            return $verified_tags; // Format: ['type:entity']
+            // Verified tags için veritabanına ekle..
+        }
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        $this->allTags();
+    }
+}

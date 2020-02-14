@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Data;
 
 use App\Models\Text;
 use App\Models\TextUser;
+use App\Models\Setting;
 use App\Http\Requests\TextUserRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobs\TextsUsers\CreateJob;
 
 class TextsUsersController extends Controller
 {
@@ -17,9 +19,10 @@ class TextsUsersController extends Controller
      */
     public function index(Request $request)
     {
+        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first() : 10; 
         while (true){
             $random = Text::all()->random();
-            if (!in_array($random->id, $request->user()->texts->pluck('id')->toArray())){
+            if (!in_array($random->id, $request->user()->texts->pluck('id')->toArray()) && $random->users->count() <= $maximum_user_for_text){
                 break;
             }
         }
@@ -48,26 +51,13 @@ class TextsUsersController extends Controller
      */
     public function store(TextUserRequest $request)
     {
-        /*
-        $data = ["Hello <START:organization> World <END>. My name is <START:person> Test <END>"];
-        $pattern = "/<START:(.+?)>(.+?)<END>/i";
-        preg_match_all($pattern, $data[0], $matches);
-        $tags = [];
-        for ($c = 0; $c < count($matches[2]); $c++){
-            $data = [
-                "entity" => trim($matches[2][$c]),
-                "type" => $matches[1][$c]
-            ];
-            array_push($tags, $data);
-        }
-        return json_encode($tags);
-        */
         $created = TextUser::create([
             'user_id' => $request->user()->id,
             'text_id' => $request->input('text_id'),
             'tagged_text' => $request->input('tagged_text')
         ]);
         if ($created){
+            CreateJob::dispatch($created);
             return ["status" => 200];
         }
         return ["status" => 500];
