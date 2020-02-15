@@ -52,10 +52,10 @@ class CreateJob implements ShouldQueue
         $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first() : 10;
         if ($this->textUser->text->users->count() == $maximum_user_for_text){
             $tag_verify_rate = Setting::where('key', 'tag_verify_rate')->first() ? (int)Setting::where('key', 'tag_verify_rate')->first() : 70;
-            $allTexts = TextUser::where('text_id', 1)->get();
+            $allTexts = TextUser::where('text_id', $this->textUser["id"])->get();
             $allTags = [];
             foreach($allTexts as $text){
-                foreach(json_decode('[{"entity":"World","type":"organization"},{"entity":"Test","type":"person"}]', true) as $tag){
+                foreach(json_decode($text['tags'], true) as $tag){
                     array_push($allTags, $tag["type"] . ":" . $tag["entity"]);
                 }
             }
@@ -66,8 +66,26 @@ class CreateJob implements ShouldQueue
                     array_push($verified_tags, $tag);
                 }
             }
-            return $verified_tags; // Format: ['type:entity']
+            $this->checkVerifiedTags($verified_tags); // Format: ['type:entity']
             // Verified tags için veritabanına ekle..
+        }
+    }
+
+    /**
+     * Check verified tags for each TextUser object...
+     */
+    private function checkVerifiedTags($verified_tags){
+        $allTexts = TextUser::where('text_id', $this->textUser["id"])->get();
+        foreach($allTexts as $text){
+            $verifiedList = [];
+            $tags = json_decode($text->tags, true);
+            foreach ($tags as $tag){
+                if (in_array($tag["type"] . ":" . $tag["entity"], $verified_tags)){
+                    array_push($verifiedList, $tag);
+                }
+            }
+            $text->verified_tags = $verifiedList;
+            $text->save();
         }
     }
 
@@ -78,6 +96,7 @@ class CreateJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->allTags();
+        $this->allTags(); // Check all tags in string and store to database.
+        $this->verifiedTags(); // Check "tags" column on database and compute percent and verify.
     }
 }
