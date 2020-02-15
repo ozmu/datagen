@@ -49,9 +49,9 @@ class CreateJob implements ShouldQueue
      * Check for verified text
      */
     private function verifiedTags(){
-        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first() : 10;
+        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int) Setting::where('key', 'maximum_user_for_text')->first()->value : 10;
         if ($this->textUser->text->users->count() == $maximum_user_for_text){
-            $tag_verify_rate = Setting::where('key', 'tag_verify_rate')->first() ? (int)Setting::where('key', 'tag_verify_rate')->first() : 70;
+            $tag_verify_rate = Setting::where('key', 'tag_verify_rate')->first() ? (int) Setting::where('key', 'tag_verify_rate')->first()->value : 70;
             $allTexts = TextUser::where('text_id', $this->textUser["id"])->get();
             $allTags = [];
             foreach($allTexts as $text){
