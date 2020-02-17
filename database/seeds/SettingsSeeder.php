@@ -16,5 +16,6 @@ class SettingsSeeder extends Seeder
         Setting::create(['key' => 'tag_verify_rate', 'value' => '70']); 
         Setting::create(['key' => 'text_verify_rate', 'value' => '50']);
         Setting::create(['key' => 'maximum_user_for_text', 'value' => '10']);
+        Setting::create(['key' => 'balance_calculation_type', 'value' => 'verified_texts']);
     }
 }

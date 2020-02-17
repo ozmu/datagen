@@ -60,7 +60,17 @@ class User extends Authenticatable
 
     public function balance(){
         $coin_factor = Setting::where('key', 'coin_factor')->first() ? (float) Setting::where('key', 'coin_factor')->first()->value : 1;
-        return $this->texts->where('is_verified', true)->count() * $coin_factor;
+        $balance_calculation_type = Setting::where('key', 'balance_calculation_type')->first() ? Setting::where('key', 'balance_calculation_type')->first()->value : "verified_texts";
+        if ($balance_calculation_type == "verified_texts"){
+            return $this->texts->where('is_verified', true)->count() * $coin_factor;
+        }
+        else if ($balance_calculation_type == "verified_tags") {
+            return $this->tags->where('is_verified', true)->count() * $coin_factor;
+        }
+        else {
+            // Verified Texts by default!
+            return $this->texts->where('is_verified', true)->count() * $coin_factor;
+        }
         /*
         $tags = $this->tags();
         return [

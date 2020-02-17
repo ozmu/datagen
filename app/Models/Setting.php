@@ -9,6 +9,10 @@ class Setting extends Model
     protected $table = "settings";
 
     protected $fillable = [
-        "key", "value"
+        'key', 'value'
+    ];
+
+    protected $hidden = [
+        'id', 'created_at', 'updated_at'
     ];
 }
