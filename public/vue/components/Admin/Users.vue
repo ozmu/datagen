@@ -11,6 +11,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Is Deleted</th>
@@ -19,6 +20,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="user in users" :key="user.id">
+                                    <td>{{ user.id }}</td>
                                     <td>{{ user.name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.balance }}</td>
@@ -148,7 +150,7 @@ export default {
         },
 
         update(){
-            axios.post('/data/admin/users/' + this.edit.data.id, this.edit.data).then(response => {
+            axios.put('/data/admin/users/' + this.edit.data.id, this.edit.data).then(response => {
                 if (response.status === 200){
                     console.log('Başarılı')
                 }
