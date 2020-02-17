@@ -39,16 +39,26 @@ class User extends Authenticatable
     ];
 
     public function texts(){
-        return $this->belongsTo('App\Models\TextUser', 'id', 'user_id');
+        return $this->hasMany('App\Models\TextUser', 'user_id', 'id');
+    }
+
+    public function tags(){
+        $tags = [];
+        foreach($this->texts as $text){
+            $tags = array_merge($tags, $text->tags->toArray());
+        }
+        return collect($tags);
     }
 
     public function balance(){
         $coin_factor = Setting::where('key', 'coin_factor')->first() ? (float) Setting::where('key', 'coin_factor')->first()->value : 1;
-        $all = ["verified" => 0, "pending" => 0];
-        foreach($this->texts()->get() as $text){
-            $all["verified"] += $text->tags->where('is_verified', true)->count() * $coin_factor;
-            $all["pending"] += $text->tags->where('is_verified', false)->count() * $coin_factor;
-        }
-        return $all;
+        return $this->texts->where('is_verified', true)->count() * $coin_factor;
+        /*
+        $tags = $this->tags();
+        return [
+            "verified" => $tags->where('is_verified', true)->count() * $coin_factor,
+            "pending" => $tags->where('is_verified', false)->count() * $coin_factor
+        ];
+        */
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs\TextsUsers;
 
+use Carbon\Carbon;
 use App\Models\TextUser;
 use App\Models\Tag;
 use App\Models\Setting;
@@ -65,7 +66,7 @@ class CreateJob implements ShouldQueue
                 }
             }
             $this->checkVerifiedTags($verified_tags); // Format: ['type:entity']
-            // Verified tags için veritabanına ekle..
+            $this->checkVerifiedTexts();
         }
     }
 
@@ -79,9 +80,23 @@ class CreateJob implements ShouldQueue
             foreach ($tags as $tag){
                 if (in_array($tag->type . ":" . $tag->entity, $verified_tags)){
                     $tag->is_verified = true;
+                    $tag->verified_at = (string) Carbon::now();
                     $tag->save();
                 }
             }
+        }
+    }
+
+    /**
+     * Check texts
+     */
+    private function checkVerifiedTexts(){
+        $text_verify_rate = Setting::where('key', 'text_verify_rate')->first() ? (int) Setting::where('key', 'text_verify_rate')->first()->value : 50;
+        $tags = $this->textUser->tags;
+        if ($tags->where('is_verified', true)->count() * 100 / $tags->count() >= $text_verify_rate){
+            $this->textUser->is_verified = true;
+            $this->textUser->verified_at = (string) Carbon::now();
+            $this->textUser->save();
         }
     }
 

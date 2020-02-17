@@ -20,6 +20,7 @@ class CreateTagsTable extends Migration
             $table->string('type');
             $table->string('entity');
             $table->boolean('is_verified')->default(false);
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
         });
     }
