@@ -48,7 +48,7 @@
         </b-modal>
         <!-- END::Create Modal -->
 
-        <!-- BEGIN::Create Modal -->
+        <!-- BEGIN::Edit Modal -->
         <b-modal :active.sync="edit.modal" :width="640" scroll="keep">
             <div class="card">
                 <div class="card-content">
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </b-modal>
-        <!-- END::Create Modal -->
+        <!-- END::Edit Modal -->
     </div>
 </template>
 
