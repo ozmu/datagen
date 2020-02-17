@@ -26,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'texts'
     ];
 
     /**
@@ -36,6 +36,10 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+    ];
+
+    protected $appends = [
+        'balance'
     ];
 
     public function texts(){
@@ -48,6 +52,10 @@ class User extends Authenticatable
             $tags = array_merge($tags, $text->tags->toArray());
         }
         return collect($tags);
+    }
+
+    public function getBalanceAttribute(){
+        return $this->balance();
     }
 
     public function balance(){

@@ -66,8 +66,8 @@ class TextsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        return Text::destroy($request->input('id'));
+        return Text::destroy($id);
     }
 }

@@ -11,10 +11,6 @@ use App\Http\Controllers\Controller;
 
 class AdminController extends Controller
 {
-    public function getUsers(Request $request){
-        return User::where('id', '!=', $request->user()->id)->get();
-    }
-
     public function getSettings(Request $request){
         return Setting::all();
     }

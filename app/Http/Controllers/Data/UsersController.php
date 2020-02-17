@@ -16,6 +16,7 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
+        //return User::where('id', '!=', $request->user()->id)->get();
         return User::all();
     }
 
@@ -52,7 +53,7 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserRequest $request)
+    public function update(UserRequest $request, $id)
     {
         return User::find($id)->update($request->all());
     }
@@ -63,8 +64,8 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request, $id)
     {
-        return User::destroy($request->input('id'));
+        return User::destroy($id);
     }
 }

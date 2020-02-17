@@ -14,21 +14,6 @@
 |
 */
 
-// Users
-Route::get('users', 'UsersController@index')->middleware('admin');
-Route::post('users.create', 'UsersController@store')->middleware('admin');
-Route::get('users.{id}', 'UsersController@show');
-Route::put('users.update.{id}', 'UsersController@update');
-Route::delete('users.destroy', 'UsersController@destroy')->middleware('admin');
-
-// Texts
-Route::get('texts', 'TextsController@index')->middleware('admin');
-Route::post('texts.create', 'TextsController@store')->middleware('admin');
-Route::get('texts.{id}', 'TextsController@show');
-Route::put('texts.update.{id}', 'TextsController@update')->middleware('admin');
-Route::delete('texts.destroy', 'TextsController@destroy')->middleware('admin');
-
-
 // User Text
 Route::get('text/new', 'TextsUsersController@index');
 Route::get('text/last', 'TextsUsersController@last');
@@ -42,13 +27,13 @@ Route::get('utils/entities', 'UtilsController@entities');
 
 // Admin
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function(){
-    Route::get('users', 'AdminController@getUsers');
-    Route::post('users', 'AdminController@storeUser');
-    Route::put('users', 'AdminController@updateUser');
-    Route::delete('users', 'AdminController@destroyUser');
+    // Users
+    Route::resource('users', 'UsersController')->except(['create', 'edit']);
 
-    Route::get('texts', 'AdminController@getTexts');
+    // Texts
+    Route::resource('texts', 'TextsController')->except(['create', 'edit']);
     
+    // Settings
     Route::get('settings', 'AdminController@getSettings');
     Route::put('settings', 'AdminController@updateSettings');
 });
