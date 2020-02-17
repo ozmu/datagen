@@ -3,6 +3,7 @@
 namespace App\Jobs\TextsUsers;
 
 use App\Models\TextUser;
+use App\Models\Tag;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -34,15 +35,12 @@ class CreateJob implements ShouldQueue
         $tags = [];
         for ($c = 0; $c < count($matches[2]); $c++){
             $data = [
+                "tag_user_id" => $this->textUser->id,
                 "entity" => trim($matches[2][$c]),
                 "type" => $matches[1][$c]
             ];
-            array_push($tags, $data);
+            $created = Tag::create($data);
         }
-        $encoded = json_encode($tags);
-        $textUser = TextUser::find($this->textUser["id"]);
-        $textUser->tags = $encoded;
-        $textUser->save();
     }
 
     /**
@@ -52,11 +50,11 @@ class CreateJob implements ShouldQueue
         $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int) Setting::where('key', 'maximum_user_for_text')->first()->value : 10;
         if ($this->textUser->text->users->count() == $maximum_user_for_text){
             $tag_verify_rate = Setting::where('key', 'tag_verify_rate')->first() ? (int) Setting::where('key', 'tag_verify_rate')->first()->value : 70;
-            $allTexts = TextUser::where('text_id', $this->textUser["id"])->get();
+            $allTexts = TextUser::where('text_id', $this->textUser->text_id)->get();
             $allTags = [];
             foreach($allTexts as $text){
-                foreach(json_decode($text['tags'], true) as $tag){
-                    array_push($allTags, $tag["type"] . ":" . $tag["entity"]);
+                foreach($text->tags as $tag){
+                    array_push($allTags, $tag->type . ":" . $tag->entity);
                 }
             }
             $counts = array_count_values($allTags);
@@ -75,17 +73,15 @@ class CreateJob implements ShouldQueue
      * Check verified tags for each TextUser object...
      */
     private function checkVerifiedTags($verified_tags){
-        $allTexts = TextUser::where('text_id', $this->textUser["id"])->get();
+        $allTexts = TextUser::where('text_id', $this->textUser->text_id)->get();
         foreach($allTexts as $text){
-            $verifiedList = [];
-            $tags = json_decode($text->tags, true);
+            $tags = Tag::where('text_user_id', $text->id)->get();
             foreach ($tags as $tag){
-                if (in_array($tag["type"] . ":" . $tag["entity"], $verified_tags)){
-                    array_push($verifiedList, $tag);
+                if (in_array($tag->type . ":" . $tag->entity, $verified_tags)){
+                    $tag->is_verified = true;
+                    $tag->save();
                 }
             }
-            $text->verified_tags = $verifiedList;
-            $text->save();
         }
     }
 

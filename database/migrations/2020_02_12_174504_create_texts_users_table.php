@@ -20,8 +20,6 @@ class CreateTextsUsersTable extends Migration
             $table->unsignedBigInteger('text_id');
             $table->foreign('text_id')->references('id')->on('texts')->onDelete('cascade');
             $table->text('tagged_text')->nullable();
-            $table->text('tags')->nullable();
-            $table->text('verified_tags')->nullable();
             $table->timestamps();
         });
     }

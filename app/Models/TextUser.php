@@ -19,4 +19,8 @@ class TextUser extends Model
     public function text(){
         return $this->belongsTo('App\Models\Text', 'text_id', 'id');
     }
+
+    public function tags(){
+        return $this->hasMany('App\Models\Tag', 'text_user_id', 'id');
+    }
 }

@@ -46,14 +46,8 @@ class User extends Authenticatable
         $coin_factor = Setting::where('key', 'coin_factor')->first() ? (float) Setting::where('key', 'coin_factor')->first()->value : 1;
         $all = ["verified" => 0, "pending" => 0];
         foreach($this->texts()->get() as $text){
-            if (isset($text->tags)){
-                if (isset($text->verified_tags)){
-                    $all["verified"] += count(json_decode($text->verified_tags)) * $coin_factor;
-                }
-                else {
-                    $all["pending"] += count(json_decode($text->tags)) * $coin_factor;
-                }
-            }
+            $all["verified"] += $text->tags->where('is_verified', true)->count() * $coin_factor;
+            $all["pending"] += $text->tags->where('is_verified', false)->count() * $coin_factor;
         }
         return $all;
     }
