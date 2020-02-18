@@ -20,7 +20,17 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('admin-users', require('./components/Admin/Users.vue').default);
+Vue.component('admin-texts', require('./components/Admin/Texts.vue').default);
+Vue.component('admin-settings', require('./components/Admin/Settings.vue').default);
+
+Vue.component('main-home', require('./components/Main/Home.vue').default);
+
+Vue.component('support-contact', require('./components/Support/Contact.vue').default);
+
+Vue.component('texts-tagging', require('./components/Texts/Tagging.vue').default);
+Vue.component('texts-tagged', require('./components/Texts/Tagged.vue').default);
+Vue.component('texts-statistics', require('./components/Texts/Statistics.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

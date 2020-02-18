@@ -2,7 +2,7 @@
 @section('content')
 <!-- Content area -->
 <div class="content">
-
+    <main-home></main-home>
     <!-- Dashboard content -->
     <div class="row">
 
