@@ -19,10 +19,10 @@ class TextsUsersController extends Controller
      */
     public function index(Request $request)
     {
-        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first() : 10; 
+        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first()->value : 10;
         while (true){
             $random = Text::all()->random();
-            if (!in_array($random->id, $request->user()->texts->pluck('id')->toArray()) && $random->users->count() <= $maximum_user_for_text){
+            if (!in_array($random->id, $request->user()->texts->pluck('id')->toArray()) && $random->users()->get()->count() <= $maximum_user_for_text){
                 break;
             }
         }
