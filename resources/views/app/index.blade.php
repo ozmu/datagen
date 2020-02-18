@@ -3,7 +3,7 @@
 <!-- Content area -->
 <div class="content">
     <vue-page-transition name="fade">
-    <router-view/>
+        <router-view/>
     </vue-page-transition>
 </div>
 <!-- /content area -->

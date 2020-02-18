@@ -263,9 +263,7 @@
 						<li class="nav-item">
 							<router-link :to="{name: 'main-home'}" class="nav-link" :class="{'active': $route.name == 'main-home'}">
 								<i class="icon-home4"></i>
-								<span>
-									Dashboard
-								</span>
+								<span>Dashboard</span>
 							</router-link>
 						</li>						
 						<!-- /main -->
@@ -279,25 +277,19 @@
 						<li class="nav-item">
 							<router-link :to="{name: 'admin-users'}" class="nav-link" :class="{'active': $route.name == 'admin-users'}">
 								<i class="icon-users"></i>
-								<span>
-									Kullanıcılar
-								</span>
+								<span>Kullanıcılar</span>
 							</router-link>
 						</li>
 						<li class="nav-item">
 							<router-link :to="{name: 'admin-texts'}" class="nav-link" :class="{'active': $route.name == 'admin-texts'}">
 								<i class="icon-paragraph-center3 "></i>
-								<span>
-									Metinler
-								</span>
+								<span>Metinler</span>
 							</router-link>
 						</li>
 						<li class="nav-item">
 							<router-link :to="{name: 'admin-settings'}" class="nav-link" :class="{'active': $route.name == 'admin-settings'}">
 								<i class="icon-gear"></i>
-								<span>
-									Ayarlar
-								</span>
+								<span>Ayarlar</span>
 							</router-link>
 						</li>							
 						<!-- /admin -->

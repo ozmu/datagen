@@ -8,30 +8,41 @@
                 <div class="row">
                     <div class="table-responsive">
                         <button @click="create.modal = true">Create</button>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Is Deleted</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="user in users" :key="user.id">
-                                    <td>{{ user.id }}</td>
-                                    <td>{{ user.name }}</td>
-                                    <td>{{ user.email }}</td>
-                                    <td>{{ user.balance }}</td>
-                                    <td>{{ user.is_deleted }}</td>
-                                    <td>
-                                        <span @click="edit(user)">Edit</span>
-                                        <span @click="destroy(user)">Delete</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <b-table
+                        :data="users"
+                        :selected.sync="selected"
+                        :paginated="true"
+                        :per-page="10"
+                        :pagination-simple="false"
+                        sort-icon="arrow-up"
+                        focusable>
+                            <template slot-scope="props">
+                                <b-table-column field="id" label="ID" sortable>
+                                    {{ props.row.id }}
+                                </b-table-column>
+                                
+                                <b-table-column field="name" label="Name" sortable>
+                                    {{ props.row.name }}
+                                </b-table-column>
+                                
+                                <b-table-column field="email" label="Email">
+                                    {{ props.row.email }}
+                                </b-table-column>
+                                
+                                <b-table-column field="balance" label="Balance" sortable>
+                                    {{ props.row.balance }}
+                                </b-table-column>
+                                
+                                <b-table-column field="is_deleted" label="Deleted" sortable>
+                                    {{ props.row.is_deleted }}
+                                </b-table-column>
+                                
+                                <b-table-column label="Actions" sortable>
+                                    <span @click="editUser(user)">Edit</span>
+                                    <span @click="destroy(user)">Delete</span>
+                                </b-table-column>
+                            </template>
+                        </b-table>
                     </div>
                 </div>
             </div>
@@ -91,6 +102,7 @@
 export default {
     data(){
         return {
+            selected: {},
             create: {
                 modal: false,
                 data: {}
@@ -142,7 +154,7 @@ export default {
             })
         },
 
-        edit(user){
+        editUser(user){
             this.edit.modal = true
             axios.get('/data/admin/users/' + user.id).then(response => {
                 this.edit.data = response.data

@@ -2025,9 +2025,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      selected: {},
       create: {
         modal: false,
         data: {}
@@ -2081,7 +2093,7 @@ __webpack_require__.r(__webpack_exports__);
         console.log(e.response);
       });
     },
-    edit: function edit(user) {
+    editUser: function editUser(user) {
       var _this3 = this;
 
       this.edit.modal = true;
@@ -52737,67 +52749,159 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "table-responsive" }, [
-              _c(
-                "button",
-                {
-                  on: {
-                    click: function($event) {
-                      _vm.create.modal = true
-                    }
-                  }
-                },
-                [_vm._v("Create")]
-              ),
-              _vm._v(" "),
-              _c("table", [
-                _vm._m(1),
-                _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "table-responsive" },
+              [
                 _c(
-                  "tbody",
-                  _vm._l(_vm.users, function(user) {
-                    return _c("tr", { key: user.id }, [
-                      _c("td", [_vm._v(_vm._s(user.id))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(user.name))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(user.email))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(user.balance))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(user.is_deleted))]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _c(
-                          "span",
-                          {
-                            on: {
-                              click: function($event) {
-                                return _vm.edit(user)
+                  "button",
+                  {
+                    on: {
+                      click: function($event) {
+                        _vm.create.modal = true
+                      }
+                    }
+                  },
+                  [_vm._v("Create")]
+                ),
+                _vm._v(" "),
+                _c("b-table", {
+                  attrs: {
+                    data: _vm.users,
+                    selected: _vm.selected,
+                    paginated: true,
+                    "per-page": 10,
+                    "pagination-simple": false,
+                    "sort-icon": "arrow-up",
+                    focusable: ""
+                  },
+                  on: {
+                    "update:selected": function($event) {
+                      _vm.selected = $event
+                    }
+                  },
+                  scopedSlots: _vm._u([
+                    {
+                      key: "default",
+                      fn: function(props) {
+                        return [
+                          _c(
+                            "b-table-column",
+                            {
+                              attrs: { field: "id", label: "ID", sortable: "" }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(props.row.id) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-table-column",
+                            {
+                              attrs: {
+                                field: "name",
+                                label: "Name",
+                                sortable: ""
                               }
-                            }
-                          },
-                          [_vm._v("Edit")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "span",
-                          {
-                            on: {
-                              click: function($event) {
-                                return _vm.destroy(user)
+                            },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(props.row.name) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-table-column",
+                            { attrs: { field: "email", label: "Email" } },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(props.row.email) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-table-column",
+                            {
+                              attrs: {
+                                field: "balance",
+                                label: "Balance",
+                                sortable: ""
                               }
-                            }
-                          },
-                          [_vm._v("Delete")]
-                        )
-                      ])
-                    ])
-                  }),
-                  0
-                )
-              ])
-            ])
+                            },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(props.row.balance) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-table-column",
+                            {
+                              attrs: {
+                                field: "is_deleted",
+                                label: "Deleted",
+                                sortable: ""
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(props.row.is_deleted) +
+                                  "\n                            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-table-column",
+                            { attrs: { label: "Actions", sortable: "" } },
+                            [
+                              _c(
+                                "span",
+                                {
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.editUser(_vm.user)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Edit")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "span",
+                                {
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.destroy(_vm.user)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Delete")]
+                              )
+                            ]
+                          )
+                        ]
+                      }
+                    }
+                  ])
+                })
+              ],
+              1
+            )
           ])
         ])
       ]),
@@ -53014,24 +53118,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("h5", { staticClass: "card-title" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("ID")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Name")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Email")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Is Deleted")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Actions")])
-      ])
     ])
   }
 ]
