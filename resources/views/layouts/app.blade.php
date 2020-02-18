@@ -63,6 +63,12 @@
 		ul.pagination-list .pagination-link {
 			font-size: initial !important;
 		}
+		.table-full {
+			width: 100%;
+		}
+		.action {
+			cursor: pointer;
+		}
 	</style>
 	<!-- /Important Styles
 </head>

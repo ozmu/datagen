@@ -27,7 +27,7 @@ class TextRequest extends FormRequest
     public function rules()
     {
         return [
-            'texts' => 'required|array|min:1|max:10000'
+            'text' => 'required|string|min:1|max:10000'
         ];
     }
 }

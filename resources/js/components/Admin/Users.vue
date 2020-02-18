@@ -129,7 +129,7 @@ export default {
                     console.log('There is an error!')
                 }
                 this.$buefy.snackbar.open({
-                    message: response.status === 201 ? "User successfully created!" : response.data,
+                    message: response.status === 201 ? "User successfully created!" : JSON.stringify(response.data),
                     type: response.status === 201 ? 'is-success' : 'is-warning',
                     position: 'is-top',
                     actionText: response.status === 201 ? 'OK' : 'Retry',
@@ -158,13 +158,6 @@ export default {
 
         update(){
             axios.put('/data/admin/users/' + this.edit.data.id, this.edit.data).then(response => {
-                if (response.status === 200){
-                    console.log('Başarılı')
-                }
-                else {
-                    console.log('Bir hata var.')
-                }
-                console.log(response.data)
                 this.edit.modal = false;
                 this.$buefy.snackbar.open({
                     message: response.data,
@@ -172,6 +165,17 @@ export default {
                     position: 'is-top',
                     actionText: response.status === 200 ? 'OK' : 'Retry'
                 })
+                if (response.status === 200){
+                    axios.get('/data/admin/users/' + this.edit.data.id).then(response => {
+                        if (response.status === 200){
+                            var objIndex = this.users.findIndex(obj => obj.id === response.data.id)
+                            this.users[objIndex].name = response.data.name
+                            this.users[objIndex].email = response.data.email
+                            this.users[objIndex].balance = response.data.balance
+                        }
+                    })
+                    this.edit.modal = false;
+                }
             }).catch(e => {
                 console.log(e.response)
             })
@@ -195,10 +199,4 @@ export default {
 </script>
 
 <style scoped>
-    .table-full {
-        width: 100%;
-    }
-    .action {
-        cursor: pointer;
-    }
 </style>

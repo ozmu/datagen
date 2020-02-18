@@ -16,7 +16,7 @@ class TextsController extends Controller
      */
     public function index(Request $request)
     {
-        return Text::paginate(50);
+        return Text::all();
     }
 
     /**
@@ -27,14 +27,7 @@ class TextsController extends Controller
      */
     public function store(TextRequest $request)
     {
-        $maxStringLength = 10000;
-        foreach($request->input('texts') as $text){
-            if (is_string($text) && strlen($text) <= $maxStringLength){
-                Text::create([
-                    'text' => $text
-                ]);
-            }
-        }
+        return Text::create($request->all());
     }
 
     /**
@@ -57,7 +50,11 @@ class TextsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return Text::find($id)->update($request->all());
+        $updated = Text::find($id)->update($request->all());
+        if ($updated){
+            return "Updated!";
+        }
+        abort(500);
     }
 
     /**
