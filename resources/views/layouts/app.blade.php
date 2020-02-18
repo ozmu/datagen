@@ -15,6 +15,7 @@
 	<link href="{{ asset('assets/css/layout.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ asset('assets/css/components.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ asset('assets/css/colors.min.css') }}" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="{{ asset('css/materialdesignicons.min.css') }}">
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->
@@ -43,12 +44,33 @@
 	<script src="{{ asset('global_assets/js/demo_charts/pages/dashboard/light/bullets.js') }}"></script>
 	<!-- /theme JS files -->
 
+	<!-- Important Styles -->
+	<style rel="stylesheet">
+		* {
+			font-family: Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+			font-size: .8125rem;
+		}
+		html {
+			overflow: hidden !important;
+		}
+		.modal {
+			z-index: 99 !important;
+		}
+		ul.pagination-list {
+			list-style: none !important;
+			margin-top: 0 !important;
+		}
+		ul.pagination-list .pagination-link {
+			font-size: initial !important;
+		}
+	</style>
+	<!-- /Important Styles
 </head>
 
 <body>
 
 	<!-- Main navbar -->
-	<div class="navbar navbar-expand-md navbar-dark">
+	<div class="navbar navbar-expand-md navbar-dark" style="background-color:#324148;">
 		<div class="navbar-brand">
 			<a href="index.html" class="d-inline-block">
 				<img src="../../../../global_assets/images/logo_light.png" alt="">
@@ -183,7 +205,7 @@
 
 				<li class="nav-item dropdown dropdown-user">
 					<a href="#" class="navbar-nav-link d-flex align-items-center dropdown-toggle" data-toggle="dropdown">
-						<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle mr-2" height="34" alt="">
+						<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle mr-2" height="34" width="34" alt="">
 						<span>Victoria</span>
 					</a>
 
