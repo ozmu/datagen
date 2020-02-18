@@ -34,7 +34,7 @@ class UserRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'password' => 'required|string|max:255'
+            'password' => 'sometimes|string|max:255'
         ];
     }
 }

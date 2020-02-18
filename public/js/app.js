@@ -2033,10 +2033,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2075,14 +2071,14 @@ __webpack_require__.r(__webpack_exports__);
           message: response.status === 201 ? "User successfully created!" : response.data,
           type: response.status === 201 ? 'is-success' : 'is-warning',
           position: 'is-top',
-          actionText: response.status === 201 ? 'OK' : 'Retry',
-          indefinite: response.status === 201 ? false : true,
-          onAction: function onAction() {
-            if (response.status === 201) {
-              _this2.create.modal = false;
-            }
-          }
+          actionText: response.status === 201 ? 'OK' : 'Retry'
         });
+
+        if (response.status === 201) {
+          _this2.create.modal = false;
+        }
+
+        _this2.create.modal = false;
       })["catch"](function (e) {
         _this2.$buefy.snackbar.open({
           message: e.response.data.message,
@@ -2119,15 +2115,7 @@ __webpack_require__.r(__webpack_exports__);
           message: response.data,
           type: response.status === 200 ? 'is-success' : 'is-warning',
           position: 'is-top',
-          actionText: response.status === 200 ? 'OK' : 'Retry',
-          indefinite: true,
-          onAction: function onAction() {
-            // Retry denildiğinde yapılacaklar..
-            _this4.$buefy.toast.open({
-              message: 'Action pressed!',
-              queue: false
-            });
-          }
+          actionText: response.status === 200 ? 'OK' : 'Retry'
         });
       })["catch"](function (e) {
         console.log(e.response);
@@ -52878,6 +52866,7 @@ var render = function() {
                     paginated: true,
                     "per-page": 10,
                     width: "100%",
+                    striped: true,
                     "pagination-simple": false,
                     "sort-icon": "arrow-up"
                   },
@@ -52954,13 +52943,24 @@ var render = function() {
                               }
                             },
                             [
-                              _c("b-tag", { attrs: { type: "is-info" } }, [
-                                _vm._v(
-                                  "\n                                    " +
-                                    _vm._s(props.row.balance) +
-                                    "\n                                "
-                                )
-                              ])
+                              _c(
+                                "b-tag",
+                                { attrs: { type: "is-info" } },
+                                [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(props.row.balance) +
+                                      "\n                                    "
+                                  ),
+                                  _c("b-icon", {
+                                    attrs: {
+                                      icon: "currency-try",
+                                      "custom-size": "mdi-14px"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
                             ],
                             1
                           ),
@@ -53165,89 +53165,65 @@ var render = function() {
           }
         },
         [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-content" }, [
-              _c("div", { staticClass: "content" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("İsim")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.edit.data.name,
-                        expression: "edit.data.name"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.edit.data.name },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.edit.data, "name", $event.target.value)
-                      }
-                    }
-                  })
-                ]),
+          _c("div", { staticClass: "card-content" }, [
+            _c("div", { staticClass: "content" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", [_vm._v("İsim")]),
                 _vm._v(" "),
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("Email")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.edit.data.email,
-                        expression: "edit.data.email"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "email" },
-                    domProps: { value: _vm.edit.data.email },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.edit.data, "email", $event.target.value)
-                      }
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.edit.data.name,
+                      expression: "edit.data.name"
                     }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", [_vm._v("Parola")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.edit.data.password,
-                        expression: "edit.data.password"
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text" },
+                  domProps: { value: _vm.edit.data.name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
                       }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "password" },
-                    domProps: { value: _vm.edit.data.password },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.edit.data, "password", $event.target.value)
-                      }
+                      _vm.$set(_vm.edit.data, "name", $event.target.value)
                     }
-                  })
-                ]),
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", [_vm._v("Email")]),
                 _vm._v(" "),
-                _c("button", { on: { click: _vm.update } }, [_vm._v("Kaydet")])
-              ])
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.edit.data.email,
+                      expression: "edit.data.email"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "email" },
+                  domProps: { value: _vm.edit.data.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.edit.data, "email", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c(
+                "button",
+                { staticClass: "btn btn-primary", on: { click: _vm.update } },
+                [_vm._v("Kaydet")]
+              )
             ])
           ])
         ]

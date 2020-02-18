@@ -10,6 +10,7 @@
                         :paginated="true"
                         :per-page="10"
                         width="100%"
+                        :striped="true"
                         :pagination-simple="false"
                         sort-icon="arrow-up">
                             <template slot-scope="props">
@@ -28,6 +29,7 @@
                                 <b-table-column field="balance" label="Balance" width="10%" sortable>
                                     <b-tag type="is-info">
                                         {{ props.row.balance }}
+                                        <b-icon icon="currency-try" custom-size="mdi-14px"></b-icon>
                                     </b-tag>
                                 </b-table-column>
                                 
@@ -75,23 +77,17 @@
 
         <!-- BEGIN::Edit Modal -->
         <b-modal :active.sync="edit.modal" :width="640" scroll="keep">
-            <div class="card">
-                <div class="card-content">
-                    <div class="content">
-                        <div class="form-group">
-                            <label>İsim</label>
-                            <input type="text" class="form-control" v-model="edit.data.name">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control" v-model="edit.data.email">
-                        </div>
-                        <div class="form-group">
-                            <label>Parola</label>
-                            <input type="password" class="form-control" v-model="edit.data.password">
-                        </div>
-                        <button @click="update">Kaydet</button>
+            <div class="card-content">
+                <div class="content">
+                    <div class="form-group">
+                        <label>İsim</label>
+                        <input type="text" class="form-control" v-model="edit.data.name">
                     </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" v-model="edit.data.email">
+                    </div>
+                    <button class="btn btn-primary" @click="update">Kaydet</button>
                 </div>
             </div>
         </b-modal>
@@ -137,13 +133,11 @@ export default {
                     type: response.status === 201 ? 'is-success' : 'is-warning',
                     position: 'is-top',
                     actionText: response.status === 201 ? 'OK' : 'Retry',
-                    indefinite: response.status === 201 ? false : true,
-                    onAction: () => {
-                        if (response.status === 201){
-                            this.create.modal = false;
-                        }
-                    }
                 })
+                if (response.status === 201){
+                    this.create.modal = false;
+                }
+                this.create.modal = false;
             }).catch(e => {
                 this.$buefy.snackbar.open({
                     message: e.response.data.message,
@@ -176,15 +170,7 @@ export default {
                     message: response.data,
                     type: response.status === 200 ? 'is-success' : 'is-warning',
                     position: 'is-top',
-                    actionText: response.status === 200 ? 'OK' : 'Retry',
-                    indefinite: true,
-                    onAction: () => {
-                        // Retry denildiğinde yapılacaklar..
-                        this.$buefy.toast.open({
-                            message: 'Action pressed!',
-                            queue: false
-                        })
-                    }
+                    actionText: response.status === 200 ? 'OK' : 'Retry'
                 })
             }).catch(e => {
                 console.log(e.response)
