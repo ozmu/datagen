@@ -13,9 +13,7 @@
 
 Auth::routes(['register' => false]);
 
+
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/', 'AppController@index');
-    
-    Route::get('/tagging', 'AppController@tagging');
-    Route::get('/tagged', 'AppController@tagged');
 });

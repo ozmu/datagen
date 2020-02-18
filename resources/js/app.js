@@ -7,7 +7,7 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+//window.Vue = require('vue');
 
 /**
  * The following block of code may be used to automatically register your
@@ -19,6 +19,21 @@ window.Vue = require('vue');
 
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import VuePageTransition from 'vue-page-transition'
+import Buefy from 'buefy'
+// import 'buefy/dist/buefy.css'
+
+Vue.use(VueRouter)
+Vue.use(Buefy)
+Vue.use(VuePageTransition)
+
+import routes from './routes'
+var router = new VueRouter({
+    routes
+})
+
 
 Vue.component('admin-users', require('./components/Admin/Users.vue').default);
 Vue.component('admin-texts', require('./components/Admin/Texts.vue').default);
@@ -39,5 +54,6 @@ Vue.component('texts-statistics', require('./components/Texts/Statistics.vue').d
  */
 
 const app = new Vue({
+    router,
     el: '#app'
 });

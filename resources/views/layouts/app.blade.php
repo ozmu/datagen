@@ -23,21 +23,11 @@
 	<script src="{{ asset('global_assets/js/plugins/loaders/blockui.min.js') }}"></script>
 	<!-- /core JS files -->
 
-	<!-- Vue JS files -->
-	<script src="{{ asset('assets/js/vue.js') }}"></script>
-	<script src="{{ asset('assets/js/httpVueLoader.js') }}"></script>
-	<script src="{{ asset('assets/js/vue-router.js') }}"></script>
-	<script src="{{ asset('assets/js/vuex.js') }}"></script>
-	<script src="{{ asset('assets/js/axios.min.js') }}"></script>
-	<script src="{{ asset('assets/js/lodash.min.js') }}"></script>
-	<!-- /Vue JS files -->
-
 	<!-- Theme JS files -->
 	<script src="{{ asset('global_assets/js/plugins/visualization/d3/d3.min.js') }}"></script>
 	<script src="{{ asset('global_assets/js/plugins/visualization/d3/d3_tooltip.js') }}"></script>
 	<script src="{{ asset('global_assets/js/plugins/forms/styling/switchery.min.js') }}"></script>
 	<script src="{{ asset('global_assets/js/plugins/ui/moment/moment.min.js') }}"></script>
-	<script src="{{ asset('global_assets/js/plugins/pickers/daterangepicker.js') }}"></script>
 
 	<script src="{{ asset('assets/js/app.js') }}"></script>
 	<script src="{{ asset('global_assets/js/demo_pages/dashboard.js') }}"></script>
@@ -271,12 +261,12 @@
 							<i class="icon-menu" title="Main"></i>
 						</li>
 						<li class="nav-item">
-							<a href="/" class="nav-link active">
+							<router-link :to="{name: 'main-home'}" class="nav-link" :class="{'active': $route.name == 'main-home'}">
 								<i class="icon-home4"></i>
 								<span>
 									Dashboard
 								</span>
-							</a>
+							</router-link>
 						</li>						
 						<!-- /main -->
 
@@ -287,28 +277,28 @@
 							<i class="icon-menu" title="Admin"></i>
 						</li>
 						<li class="nav-item">
-							<a href="/admin/kullanicilar" class="nav-link">
+							<router-link :to="{name: 'admin-users'}" class="nav-link" :class="{'active': $route.name == 'admin-users'}">
 								<i class="icon-users"></i>
 								<span>
 									Kullanıcılar
 								</span>
-							</a>
+							</router-link>
 						</li>
 						<li class="nav-item">
-							<a href="/admin/metinler" class="nav-link">
+							<router-link :to="{name: 'admin-texts'}" class="nav-link" :class="{'active': $route.name == 'admin-texts'}">
 								<i class="icon-paragraph-center3 "></i>
 								<span>
 									Metinler
 								</span>
-							</a>
+							</router-link>
 						</li>
 						<li class="nav-item">
-							<a href="/admin/ayarlar" class="nav-link">
+							<router-link :to="{name: 'admin-settings'}" class="nav-link" :class="{'active': $route.name == 'admin-settings'}">
 								<i class="icon-gear"></i>
 								<span>
 									Ayarlar
 								</span>
-							</a>
+							</router-link>
 						</li>							
 						<!-- /admin -->
 						@endif
@@ -319,22 +309,22 @@
 							<i class="icon-menu" title="Metinler"></i>
 						</li>
 						<li class="nav-item">
-							<a href="/tagging" class="nav-link">
+							<router-link :to="{name: 'texts-tagging'}" class="nav-link" :class="{'active': $route.name == 'texts-tagging'}">
 								<i class="icon-pencil3"></i> 
 								<span>İşaretle</span>
-							</a>
+							</router-link>
 						</li>
 						<li class="nav-item">
-							<a href="/tagged" class="nav-link">
+							<router-link :to="{name: 'texts-tagged'}" class="nav-link" :class="{'active': $route.name == 'texts-tagged'}">
 								<i class="icon-quill4"></i> 
 								<span>Son işaretlenenler</span>
-							</a>
+							</router-link>
 						</li>
 						<li class="nav-item">
-							<a href="/istatistik" class="nav-link">
+							<router-link :to="{name: 'texts-statistics'}" class="nav-link" :class="{'active': $route.name == 'texts-statistics'}">
 								<i class="icon-stats-dots"></i> 
 								<span>İstatistik</span>
-							</a>
+							</router-link>
 						</li>
 						<!-- /texts -->
 
@@ -344,10 +334,10 @@
 							<i class="icon-menu" title="Destek"></i>
 						</li>
 						<li class="nav-item">
-							<a href="/tagging" class="nav-link">
+							<router-link :to="{name: 'support-contact'}" class="nav-link" :class="{'active': $route.name == 'support-contact'}">
 								<i class="icon-comment-discussion"></i> 
 								<span>İletişim</span>
-							</a>
+							</router-link>
 						</li>
 						<!-- /support -->
 						
@@ -374,6 +364,6 @@
 
 </body>
 <!-- Vue Component Loader -->
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 <!-- /Vue Component Loader -->
 </html>
