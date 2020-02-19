@@ -2490,10 +2490,10 @@ __webpack_require__.r(__webpack_exports__);
           if (this.current.words.length) {
             var last = this.current.words[this.current.words.length - 1];
             var lastIndex = this.words.findIndex(function (w) {
-              return w.value === last.value;
+              return w.index === last.index;
             }) + 1;
             var wordIndex = this.words.findIndex(function (w) {
-              return w.value === word.value;
+              return w.index === word.index;
             });
 
             for (lastIndex; lastIndex <= wordIndex; lastIndex++) {
@@ -2514,9 +2514,9 @@ __webpack_require__.r(__webpack_exports__);
         var filtered = this.selected.filter(function (s) {
           if (s.words.map(function (word) {
             return word.value;
-          }).join(':') === _this2.current.words.map(function (word) {
-            return word.value;
-          }).join(':')) return true;
+          }).join('|') === _this2.current.words.map(function (word) {
+            return word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ");
+          }).join('|')) return true;
         });
 
         if (filtered.length) {
@@ -2561,7 +2561,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     send: function send() {
-      var tagged_text = this.text.text.replace(/<span class="tag" title="(.+?)"> (.+?) <[/]span>/, ' <START:$1> $2 <END> ').replace('  ', ' ');
+      var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
+      var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ');
       var data = {
         text_id: this.text.id,
         tagged_text: tagged_text
@@ -21130,7 +21131,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.selecteds span.tag[data-v-580e7bde] {\n    margin-right: 5px;\n    margin-bottom: 5px;\n    display: inline-block;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n.add-btn[data-v-580e7bde] {\n    cursor: pointer;\n    transition: all ease .4s;\n}\n.add-btn[data-v-580e7bde]:hover {\n    color: #30ab84;\n    transition: all ease .4s;\n}\n.send-btn[data-v-580e7bde] {\n    float: right;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: calc(100% - 400px);\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.selecteds span.tag[data-v-580e7bde] {\n    margin-right: 5px;\n    margin-bottom: 5px;\n    display: inline-block;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n.add-btn[data-v-580e7bde] {\n    cursor: pointer;\n    transition: all ease .4s;\n}\n.add-btn[data-v-580e7bde]:hover {\n    color: #30ab84;\n    transition: all ease .4s;\n}\n.send-btn[data-v-580e7bde] {\n    float: right;\n}\n", ""]);
 
 // exports
 

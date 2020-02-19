@@ -114,8 +114,8 @@ export default {
                 if (event.ctrlKey){
                     if (this.current.words.length){
                         var last = this.current.words[this.current.words.length - 1]
-                        var lastIndex = this.words.findIndex(w => w.value === last.value) + 1
-                        var wordIndex = this.words.findIndex(w => w.value === word.value)
+                        var lastIndex = this.words.findIndex(w => w.index === last.index) + 1
+                        var wordIndex = this.words.findIndex(w => w.index === word.index)
                         for (lastIndex; lastIndex <= wordIndex; lastIndex++){
                             this.current.words.push(this.words[lastIndex])
                         }
@@ -132,7 +132,7 @@ export default {
         
         addEntity(){
             if (!_.isEmpty(this.current.entity) && this.current.words.length > 0){
-                var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join(':') === this.current.words.map(word => word.value).join(':')) return true})
+                var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join('|') === this.current.words.map(word => word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")).join('|')) return true})
                 if (filtered.length){
                     this.$buefy.snackbar.open({
                         message: "Entity already added!",
@@ -163,7 +163,8 @@ export default {
         },
 
         send(){
-            var tagged_text = this.text.text.replace(/<span class="tag" title="(.+?)"> (.+?) <[/]span>/, ' <START:$1> $2 <END> ').replace('  ', ' ')
+            var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
+            var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ')
             var data = {
                 text_id: this.text.id,
                 tagged_text: tagged_text
@@ -201,7 +202,7 @@ export default {
     min-height: 30px;
 }
 .words {
-    height: 250px;
+    height: calc(100% - 400px);
     overflow: auto;
 }
 .words::-webkit-scrollbar {
