@@ -1,27 +1,27 @@
 <template>
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header header-elements-inline">
-                <h5 class="card-title">İçerik</h5>
-            </div>
             <div class="card-body">
-                <div class="entities">
-                    <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
+                <div class="row card-row">
+                    <div class="col-md-8">
+                        <div class="form-control text" v-html="text.text"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="entities">
+                            <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
+                        </div>
+                        <div class="words">
+                            <span v-for="(word, id) in words" :key="id" class="entity-tag" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word }}</span>
+                        </div>
+                        <div class="selecteds">
+                            <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
+                                {{ s.words.join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
+                            </span>
+                        </div>
+                        <button @click="addEntity">Add</button>
+                        <button @click="send">Gönder</button>
+                    </div>
                 </div>
-                <div class="words">
-                    <span 
-                    v-for="(word, id) in words" 
-                    :key="id" 
-                    class="entity-tag"
-                    :class="{'selected word': current.words.includes(word)}" 
-                    @click="selectWord($event, word)">{{ word }}</span>
-                </div>
-                <button @click="addEntity">Add</button>
-                <div class="form-group">
-                    <label>Mesaj</label>
-                    <div class="form-control" v-html="text.text"></div>
-                </div>
-                <button @click="send">Gönder</button>
             </div>
         </div>
     </div>
@@ -40,6 +40,7 @@ export default {
                 words: []
             },
             selected: [],
+            selectedUpdateType: '',
             entities: []
         }
     },
@@ -52,9 +53,11 @@ export default {
 
     watch: {
         'selected': function(newVal, oldVal){
-            var last = newVal[newVal.length - 1]
-            var entity = last.words.join(' ')
-            this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>')
+            if (this.selectedUpdateType === "increase"){
+                var last = newVal[newVal.length - 1]
+                var entity = last.words.join(' ')
+                this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '" style="color:#fff;background:' + last.entity.color + '"> ' + entity + ' </span>')
+            }
         }
     },
 
@@ -87,7 +90,7 @@ export default {
         
         addEntity(){
             if (this.current.entity && this.current.words.length > 0){
-                var filtered = this.selected.filter(s => {if (s.entity === this.current.entity && s.words.join(':') === this.current.words.join(':')) return true})
+                var filtered = this.selected.filter(s => {if (s.words.join(':') === this.current.words.join(':')) return true})
                 if (filtered.length){
                     this.$buefy.snackbar.open({
                         message: "Entity already added!",
@@ -98,12 +101,20 @@ export default {
                     this.current = {entity: {}, words: []}
                     return
                 }
+                this.selectedUpdateType = "increase";
                 this.selected.push({
                     entity: this.current.entity, 
                     words: this.current.words
                 })
                 this.current = {entity: {}, words: []}
             }
+        },
+
+        removeSelected(selected){
+            var index = this.selected.indexOf(selected);
+            this.selectedUpdateType = "decrease";
+            this.selected.splice(index, 1);
+            this.text.text = this.text.text.replace(/<span class="tag" title="(.+?)" style="(.+?)"> (.+?) <\/span>/i, "$3")
         },
 
         send(){
@@ -126,7 +137,20 @@ export default {
 </script>
 
 <style scoped>
+.card {
+    height: calc(100vh - 190px);
+}
+.card-row, .card-row .text {
+    height: 100%;
+}
 /** Entities and words */
+.entities, .words, .selecteds {
+    padding: 5px 0;
+    margin-bottom: 10px;
+    overflow-y: hidden;
+    overflow-x: auto;
+    border: 1px solid #e1e1e1;
+}
 .selected {
     color: #fff;
     padding: 5px;
@@ -143,5 +167,9 @@ export default {
     cursor: pointer;
     padding: 5px;
     margin-right: 5px;
+}
+.close-icon {
+    margin-left: 5px;
+    cursor: pointer;
 }
 </style>

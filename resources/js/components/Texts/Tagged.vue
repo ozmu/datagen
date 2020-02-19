@@ -26,7 +26,7 @@ export default {
         more(){
             if (this.nextPageUrl){
                 axios.get(this.nextPageUrl).then(response => {
-                    this.taggedTexts += response.data.data
+                    this.taggedTexts = [...this.taggedTexts, response.data.data]
                     this.nextPageUrl = response.data.next_page_url
                 })
             }

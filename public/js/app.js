@@ -2315,6 +2315,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 //
 //
 //
@@ -2342,7 +2350,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.nextPageUrl) {
         axios.get(this.nextPageUrl).then(function (response) {
-          _this.taggedTexts += response.data.data;
+          _this.taggedTexts = [].concat(_toConsumableArray(_this.taggedTexts), [response.data.data]);
           _this.nextPageUrl = response.data.next_page_url;
         });
       }
@@ -2409,6 +2417,7 @@ __webpack_require__.r(__webpack_exports__);
         words: []
       },
       selected: [],
+      selectedUpdateType: '',
       entities: []
     };
   },
@@ -2421,9 +2430,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     'selected': function selected(newVal, oldVal) {
-      var last = newVal[newVal.length - 1];
-      var entity = last.words.join(' ');
-      this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>');
+      if (this.selectedUpdateType === "increase") {
+        var last = newVal[newVal.length - 1];
+        var entity = last.words.join(' ');
+        this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '" style="color:#fff;background:' + last.entity.color + '"> ' + entity + ' </span>');
+      }
     }
   },
   mounted: function mounted() {
@@ -2455,7 +2466,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.current.entity && this.current.words.length > 0) {
         var filtered = this.selected.filter(function (s) {
-          if (s.entity === _this2.current.entity && s.words.join(':') === _this2.current.words.join(':')) return true;
+          if (s.words.join(':') === _this2.current.words.join(':')) return true;
         });
 
         if (filtered.length) {
@@ -2472,6 +2483,7 @@ __webpack_require__.r(__webpack_exports__);
           return;
         }
 
+        this.selectedUpdateType = "increase";
         this.selected.push({
           entity: this.current.entity,
           words: this.current.words
@@ -2481,6 +2493,12 @@ __webpack_require__.r(__webpack_exports__);
           words: []
         };
       }
+    },
+    removeSelected: function removeSelected(selected) {
+      var index = this.selected.indexOf(selected);
+      this.selectedUpdateType = "decrease";
+      this.selected.splice(index, 1);
+      this.text.text = this.text.text.replace(/<span class="tag" title="(.+?)" style="(.+?)"> (.+?) <\/span>/i, "$3");
     },
     send: function send() {
       var tagged_text = this.text.text.replace(/<span class="tag" title="(.+?)"> (.+?) <[/]span>/, ' <START:$1> $2 <END> ').replace('  ', ' ');
@@ -21052,7 +21070,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/** Entities and words */\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde], .card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -53620,81 +53638,106 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "col-md-12" }, [
     _c("div", { staticClass: "card" }, [
-      _vm._m(0),
-      _vm._v(" "),
       _c("div", { staticClass: "card-body" }, [
-        _c(
-          "div",
-          { staticClass: "entities" },
-          _vm._l(_vm.entities, function(entity) {
-            return _c(
-              "span",
-              {
-                key: entity.id,
-                staticClass: "entity-tag",
-                class: {
-                  "selected entity": entity.id === _vm.current.entity.id
-                },
-                on: {
-                  click: function($event) {
-                    _vm.current.entity = entity
-                  }
-                }
-              },
-              [_vm._v(_vm._s(entity.entity))]
-            )
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "words" },
-          _vm._l(_vm.words, function(word, id) {
-            return _c(
-              "span",
-              {
-                key: id,
-                staticClass: "entity-tag",
-                class: { "selected word": _vm.current.words.includes(word) },
-                on: {
-                  click: function($event) {
-                    return _vm.selectWord($event, word)
-                  }
-                }
-              },
-              [_vm._v(_vm._s(word))]
-            )
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c("button", { on: { click: _vm.addEntity } }, [_vm._v("Add")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group" }, [
-          _c("label", [_vm._v("Mesaj")]),
+        _c("div", { staticClass: "row card-row" }, [
+          _c("div", { staticClass: "col-md-8" }, [
+            _c("div", {
+              staticClass: "form-control text",
+              domProps: { innerHTML: _vm._s(_vm.text.text) }
+            })
+          ]),
           _vm._v(" "),
-          _c("div", {
-            staticClass: "form-control",
-            domProps: { innerHTML: _vm._s(_vm.text.text) }
-          })
-        ]),
-        _vm._v(" "),
-        _c("button", { on: { click: _vm.send } }, [_vm._v("Gönder")])
+          _c("div", { staticClass: "col-md-4" }, [
+            _c(
+              "div",
+              { staticClass: "entities" },
+              _vm._l(_vm.entities, function(entity) {
+                return _c(
+                  "span",
+                  {
+                    key: entity.id,
+                    staticClass: "entity-tag",
+                    class: {
+                      "selected entity": entity.id === _vm.current.entity.id
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.current.entity = entity
+                      }
+                    }
+                  },
+                  [_vm._v(_vm._s(entity.entity))]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "words" },
+              _vm._l(_vm.words, function(word, id) {
+                return _c(
+                  "span",
+                  {
+                    key: id,
+                    staticClass: "entity-tag",
+                    class: {
+                      "selected word": _vm.current.words.includes(word)
+                    },
+                    on: {
+                      click: function($event) {
+                        return _vm.selectWord($event, word)
+                      }
+                    }
+                  },
+                  [_vm._v(_vm._s(word))]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "selecteds" },
+              _vm._l(_vm.selected, function(s, id) {
+                return _c(
+                  "span",
+                  {
+                    key: id,
+                    staticClass: "tag",
+                    style: "color:#fff;background:" + s.entity.color,
+                    attrs: { title: s.entity.entity }
+                  },
+                  [
+                    _vm._v(
+                      "\n                            " +
+                        _vm._s(s.words.join(" ")) +
+                        " "
+                    ),
+                    _c("i", {
+                      staticClass: "mdi mdi-close-circle mdi-14px close-icon",
+                      on: {
+                        click: function($event) {
+                          return _vm.removeSelected(s)
+                        }
+                      }
+                    })
+                  ]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c("button", { on: { click: _vm.addEntity } }, [_vm._v("Add")]),
+            _vm._v(" "),
+            _c("button", { on: { click: _vm.send } }, [_vm._v("Gönder")])
+          ])
+        ])
       ])
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header header-elements-inline" }, [
-      _c("h5", { staticClass: "card-title" }, [_vm._v("İçerik")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
