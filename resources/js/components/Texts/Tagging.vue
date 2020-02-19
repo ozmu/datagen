@@ -144,9 +144,12 @@ export default {
 
         removeSelected(selected){
             var index = this.selected.indexOf(selected);
+            console.log(selected)
             this.selectedUpdateType = "decrease";
             this.selected.splice(index, 1);
-            this.text.text = this.text.text.replace(/<span|class="tag"|title="(.+?)"|style="(.+?)">(.+?)<\/span>/i, "$3").replace("  ", " ")
+            var regex = new RegExp('<span[|]class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
+            this.text.text = this.text.text.replace(regex, selected.words.map(word => word.value).join(' ')).replace("  ", " ")
+            this.current = {entity: {}, words: []}
         },
 
         send(){
@@ -182,6 +185,7 @@ export default {
     overflow-y: hidden;
     overflow-x: auto;
     border: 1px solid #e1e1e1;
+    min-height: 30px;
 }
 .words {
     height: 250px;

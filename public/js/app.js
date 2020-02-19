@@ -2532,9 +2532,19 @@ __webpack_require__.r(__webpack_exports__);
     },
     removeSelected: function removeSelected(selected) {
       var index = this.selected.indexOf(selected);
+      console.log(selected);
       this.selectedUpdateType = "decrease";
       this.selected.splice(index, 1);
-      this.text.text = this.text.text.replace(/<span|class="tag"|title="(.+?)"|style="(.+?)">(.+?)<\/span>/i, "$3").replace("  ", " ");
+      var regex = new RegExp('<span[|]class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(function (word) {
+        return word.value;
+      }).join('[|]') + '</span>');
+      this.text.text = this.text.text.replace(regex, selected.words.map(function (word) {
+        return word.value;
+      }).join(' ')).replace("  ", " ");
+      this.current = {
+        entity: {},
+        words: []
+      };
     },
     send: function send() {
       var tagged_text = this.text.text.replace(/<span class="tag" title="(.+?)"> (.+?) <[/]span>/, ' <START:$1> $2 <END> ').replace('  ', ' ');
@@ -21106,7 +21116,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde], .card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde], .card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
 
 // exports
 
