@@ -21130,7 +21130,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.selecteds span.tag[data-v-580e7bde] {\n    margin-right: 5px;\n    margin-bottom: 5px;\n    display: inline-block;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n.add-btn[data-v-580e7bde] {\n    cursor: pointer;\n    transition: all ease .4s;\n}\n.add-btn[data-v-580e7bde]:hover {\n    color: #30ab84;\n    transition: all ease .4s;\n}\n.send-btn[data-v-580e7bde] {\n    float: right;\n}\n", ""]);
 
 // exports
 
@@ -53716,106 +53716,130 @@ var render = function() {
             })
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "col-md-4" }, [
-            _c(
-              "div",
-              { staticClass: "entities" },
-              _vm._l(_vm.entities, function(entity) {
-                return _c(
-                  "span",
-                  {
-                    key: entity.id,
-                    staticClass: "entity-tag",
-                    class: {
-                      "selected entity": entity.id === _vm.current.entity.id
-                    },
-                    on: {
-                      click: function($event) {
-                        _vm.current.entity = entity
-                      }
-                    }
-                  },
-                  [_vm._v(_vm._s(entity.entity))]
-                )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "words" },
-              _vm._l(_vm.words, function(word, id) {
-                return _c(
-                  "span",
-                  {
-                    key: id,
-                    staticClass: "entity-tag entity-word",
-                    class: {
-                      "selected word": _vm.current.words.includes(word)
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.selectWord($event, word)
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      _vm._s(
-                        word.value
-                          .replace(/(<([^>]+)>)/gi, "")
-                          .replace(/[|]/gi, " ")
-                          .replace("  ", " ")
-                      )
-                    )
-                  ]
-                )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "selecteds" },
-              _vm._l(_vm.selected, function(s, id) {
-                return _c(
-                  "span",
-                  {
-                    key: id,
-                    staticClass: "tag",
-                    style: "color:#fff;background:" + s.entity.color,
-                    attrs: { title: s.entity.entity }
-                  },
-                  [
-                    _vm._v(
-                      "\n                            " +
-                        _vm._s(
-                          s.words
-                            .map(function(word) {
-                              return word.value
-                            })
-                            .join(" ")
-                        ) +
-                        " "
-                    ),
-                    _c("i", {
-                      staticClass: "mdi mdi-close-circle mdi-14px close-icon",
+          _c(
+            "div",
+            { staticClass: "col-md-4" },
+            [
+              _c(
+                "div",
+                { staticClass: "entities" },
+                _vm._l(_vm.entities, function(entity) {
+                  return _c(
+                    "span",
+                    {
+                      key: entity.id,
+                      staticClass: "entity-tag",
+                      class: {
+                        "selected entity": entity.id === _vm.current.entity.id
+                      },
                       on: {
                         click: function($event) {
-                          return _vm.removeSelected(s)
+                          _vm.current.entity = entity
                         }
                       }
-                    })
-                  ]
-                )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _c("button", { on: { click: _vm.addEntity } }, [_vm._v("Add")]),
-            _vm._v(" "),
-            _c("button", { on: { click: _vm.send } }, [_vm._v("Gönder")])
-          ])
+                    },
+                    [_vm._v(_vm._s(entity.entity))]
+                  )
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "words" },
+                _vm._l(_vm.words, function(word, id) {
+                  return _c(
+                    "span",
+                    {
+                      key: id,
+                      staticClass: "entity-tag entity-word",
+                      class: {
+                        "selected word": _vm.current.words.includes(word)
+                      },
+                      on: {
+                        click: function($event) {
+                          return _vm.selectWord($event, word)
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        _vm._s(
+                          word.value
+                            .replace(/(<([^>]+)>)/gi, "")
+                            .replace(/[|]/gi, " ")
+                            .replace("  ", " ")
+                        )
+                      )
+                    ]
+                  )
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "selecteds" },
+                _vm._l(_vm.selected, function(s, id) {
+                  return _c(
+                    "span",
+                    {
+                      key: id,
+                      staticClass: "tag",
+                      style: "color:#fff;background:" + s.entity.color,
+                      attrs: { title: s.entity.entity }
+                    },
+                    [
+                      _vm._v(
+                        "\n                            " +
+                          _vm._s(
+                            s.words
+                              .map(function(word) {
+                                return word.value
+                              })
+                              .join(" ")
+                          ) +
+                          " "
+                      ),
+                      _c("i", {
+                        staticClass: "mdi mdi-close-circle mdi-14px close-icon",
+                        on: {
+                          click: function($event) {
+                            return _vm.removeSelected(s)
+                          }
+                        }
+                      })
+                    ]
+                  )
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "b-icon",
+                {
+                  staticClass: "add-btn",
+                  attrs: { icon: "plus-circle", size: "is-medium" },
+                  nativeOn: {
+                    click: function($event) {
+                      return _vm.addEntity($event)
+                    }
+                  }
+                },
+                [_vm._v("Ekle")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary send-btn",
+                  on: { click: _vm.send }
+                },
+                [_vm._v("Gönder")]
+              )
+            ],
+            1
+          )
         ])
       ])
     ])

@@ -18,8 +18,8 @@
                                 {{ s.words.map(word => word.value).join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
-                        <button @click="addEntity">Add</button>
-                        <button @click="send">Gönder</button>
+                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
+                        <button class="btn btn-primary send-btn" @click="send">Gönder</button>
                     </div>
                 </div>
             </div>
@@ -226,6 +226,11 @@ export default {
 .selected.entity {
     background: red !important;
 }
+.selecteds span.tag {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
 .entity-tag {
     cursor: pointer;
     padding: 5px;
@@ -240,5 +245,16 @@ export default {
 .close-icon {
     margin-left: 5px;
     cursor: pointer;
+}
+.add-btn {
+    cursor: pointer;
+    transition: all ease .4s;
+}
+.add-btn:hover {
+    color: #30ab84;
+    transition: all ease .4s;
+}
+.send-btn {
+    float: right;
 }
 </style>
