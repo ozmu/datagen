@@ -2397,7 +2397,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2424,7 +2423,7 @@ __webpack_require__.r(__webpack_exports__);
     'selected': function selected(newVal, oldVal) {
       var last = newVal[newVal.length - 1];
       var entity = last.words.join(' ');
-      this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>');
+      this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>');
     }
   },
   mounted: function mounted() {
@@ -2452,11 +2451,35 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     addEntity: function addEntity() {
+      var _this2 = this;
+
       if (this.current.entity && this.current.words.length > 0) {
-        this.selected.push({
-          entity: entity,
-          words: words
+        var filtered = this.selected.filter(function (s) {
+          if (s.entity === _this2.current.entity && s.words.join(':') === _this2.current.words.join(':')) return true;
         });
+
+        if (filtered.length) {
+          this.$buefy.snackbar.open({
+            message: "Entity already added!",
+            type: 'is-warning',
+            position: 'is-top',
+            actionText: 'OK'
+          });
+          this.current = {
+            entity: {},
+            words: []
+          };
+          return;
+        }
+
+        this.selected.push({
+          entity: this.current.entity,
+          words: this.current.words
+        });
+        this.current = {
+          entity: {},
+          words: []
+        };
       }
     },
     send: function send() {
@@ -21029,7 +21052,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/** Entities */\n.selected-entity[data-v-580e7bde] {\n    background: red;\n    transition: all ease .4s;\n}\n\n/** Words */\n.selected-words[data-v-580e7bde] {\n    background: green;\n    transition: all ease .4s;\n}\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/** Entities and words */\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n", ""]);
 
 // exports
 
@@ -53596,85 +53619,68 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "col-md-12" }, [
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "card" }, [
-        _vm._m(0),
+    _c("div", { staticClass: "card" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-body" }, [
+        _c(
+          "div",
+          { staticClass: "entities" },
+          _vm._l(_vm.entities, function(entity) {
+            return _c(
+              "span",
+              {
+                key: entity.id,
+                staticClass: "entity-tag",
+                class: {
+                  "selected entity": entity.id === _vm.current.entity.id
+                },
+                on: {
+                  click: function($event) {
+                    _vm.current.entity = entity
+                  }
+                }
+              },
+              [_vm._v(_vm._s(entity.entity))]
+            )
+          }),
+          0
+        ),
         _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
-          _c(
-            "div",
-            { staticClass: "entities" },
-            _vm._l(_vm.entities, function(entity) {
-              return _c(
-                "span",
-                {
-                  key: entity.id,
-                  class: {
-                    "selected-entity": entity.id === _vm.current.entity.id
-                  },
-                  on: {
-                    click: function($event) {
-                      _vm.current.entity = entity
-                    }
+        _c(
+          "div",
+          { staticClass: "words" },
+          _vm._l(_vm.words, function(word, id) {
+            return _c(
+              "span",
+              {
+                key: id,
+                staticClass: "entity-tag",
+                class: { "selected word": _vm.current.words.includes(word) },
+                on: {
+                  click: function($event) {
+                    return _vm.selectWord($event, word)
                   }
-                },
-                [_vm._v(_vm._s(entity.entity))]
-              )
-            }),
-            0
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "words" },
-            _vm._l(_vm.words, function(word, id) {
-              return _c(
-                "span",
-                {
-                  key: id,
-                  class: { "selected-word": _vm.current.words.includes(word) },
-                  on: {
-                    click: function($event) {
-                      return _vm.selectWord($event, word)
-                    }
-                  }
-                },
-                [_vm._v(_vm._s(word))]
-              )
-            }),
-            0
-          ),
-          _vm._v(" "),
-          _c("button", { on: { click: _vm.addEntity } }, [_vm._v("Add")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("label", [_vm._v("Mesaj")]),
-            _vm._v(" "),
-            _c("textarea", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.text.text,
-                  expression: "text.text"
                 }
-              ],
-              staticClass: "form-control",
-              attrs: { cols: "5", rows: "2" },
-              domProps: { value: _vm.text.text },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.text, "text", $event.target.value)
-                }
-              }
-            })
-          ]),
+              },
+              [_vm._v(_vm._s(word))]
+            )
+          }),
+          0
+        ),
+        _vm._v(" "),
+        _c("button", { on: { click: _vm.addEntity } }, [_vm._v("Add")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", [_vm._v("Mesaj")]),
           _vm._v(" "),
-          _c("button", { on: { click: _vm.send } }, [_vm._v("Gönder")])
-        ])
+          _c("div", {
+            staticClass: "form-control",
+            domProps: { innerHTML: _vm._s(_vm.text.text) }
+          })
+        ]),
+        _vm._v(" "),
+        _c("button", { on: { click: _vm.send } }, [_vm._v("Gönder")])
       ])
     ])
   ])

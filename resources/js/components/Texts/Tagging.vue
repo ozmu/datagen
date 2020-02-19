@@ -1,28 +1,27 @@
 <template>
     <div class="col-md-12">
-        <div class="row">
-            <div class="card">
-                <div class="card-header header-elements-inline">
-                    <h5 class="card-title">İçerik</h5>
+        <div class="card">
+            <div class="card-header header-elements-inline">
+                <h5 class="card-title">İçerik</h5>
+            </div>
+            <div class="card-body">
+                <div class="entities">
+                    <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
                 </div>
-                <div class="card-body">
-                    <div class="entities">
-                        <span v-for="entity in entities" :key="entity.id" :class="{'selected-entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
-                    </div>
-                    <div class="words">
-                        <span 
-                        v-for="(word, id) in words" 
-                        :key="id" 
-                        :class="{'selected-word': current.words.includes(word)}" 
-                        @click="selectWord($event, word)">{{ word }}</span>
-                    </div>
-                    <button @click="addEntity">Add</button>
-                    <div class="form-group">
-                        <label>Mesaj</label>
-                        <textarea v-model="text.text" cols="5" rows="2" class="form-control"></textarea>
-                    </div>
-                    <button @click="send">Gönder</button>
+                <div class="words">
+                    <span 
+                    v-for="(word, id) in words" 
+                    :key="id" 
+                    class="entity-tag"
+                    :class="{'selected word': current.words.includes(word)}" 
+                    @click="selectWord($event, word)">{{ word }}</span>
                 </div>
+                <button @click="addEntity">Add</button>
+                <div class="form-group">
+                    <label>Mesaj</label>
+                    <div class="form-control" v-html="text.text"></div>
+                </div>
+                <button @click="send">Gönder</button>
             </div>
         </div>
     </div>
@@ -55,7 +54,7 @@ export default {
         'selected': function(newVal, oldVal){
             var last = newVal[newVal.length - 1]
             var entity = last.words.join(' ')
-            this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>')
+            this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '"> ' + entity + ' </span>')
         }
     },
 
@@ -88,7 +87,22 @@ export default {
         
         addEntity(){
             if (this.current.entity && this.current.words.length > 0){
-                this.selected.push({entity, words})
+                var filtered = this.selected.filter(s => {if (s.entity === this.current.entity && s.words.join(':') === this.current.words.join(':')) return true})
+                if (filtered.length){
+                    this.$buefy.snackbar.open({
+                        message: "Entity already added!",
+                        type: 'is-warning',
+                        position: 'is-top',
+                        actionText: 'OK'
+                    })
+                    this.current = {entity: {}, words: []}
+                    return
+                }
+                this.selected.push({
+                    entity: this.current.entity, 
+                    words: this.current.words
+                })
+                this.current = {entity: {}, words: []}
             }
         },
 
@@ -112,15 +126,22 @@ export default {
 </script>
 
 <style scoped>
-/** Entities */
-.selected-entity {
-    background: red;
+/** Entities and words */
+.selected {
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
     transition: all ease .4s;
 }
-
-/** Words */
-.selected-words {
+.selected.word {
     background: green;
-    transition: all ease .4s;
+}
+.selected.entity {
+    background: red;
+}
+.entity-tag {
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 5px;
 }
 </style>
