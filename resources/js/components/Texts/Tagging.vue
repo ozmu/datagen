@@ -11,7 +11,7 @@
                             <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
                         </div>
                         <div class="words">
-                            <span v-for="(word, id) in words" :key="id" class="entity-tag" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word }}</span>
+                            <span v-for="(word, id) in words" :key="id" class="entity-tag" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
                         </div>
                         <div class="selecteds">
                             <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
@@ -62,12 +62,6 @@ export default {
                 var beginText = '<span|class="tag"|title="' + last.entity.entity + '"|style="color:#fff;background:' + last.entity.color + '">'
                 var endText = '</span>'
                 this.text.text = this.text.text.replaceAt(beginIndex, beginText + entity + endText, lastIndex)
-                // this.text.text = this.text.text.splice(beginIndex, 0, beginText)
-                // this.text.text = this.text.text
-                // this.text.text = this.text.text.splice(beginIndex + entity.length + beginText.length, 0, endText)
-                return
-
-                this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '" style="color:#fff;background:' + last.entity.color + '"> ' + entity + ' </span>')
             }
         }
     },
@@ -91,7 +85,6 @@ export default {
         // Add replaceAt method to Strings
         String.prototype.replaceAt = function(index, replacement, lastIndex) {
             return this.substr(0, index) + replacement + this.substr(lastIndex);
-            // return this.substr(0, index) + replacement + this.substr(index + replacement.length);
         }
     },
 
@@ -143,7 +136,7 @@ export default {
                 this.selectedUpdateType = "increase";
                 this.selected.push({
                     entity: this.current.entity, 
-                    words: this.current.words
+                    words: _.orderBy(this.current.words, "index")
                 })
                 this.current = {entity: {}, words: []}
             }

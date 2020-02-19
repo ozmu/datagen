@@ -2437,12 +2437,7 @@ __webpack_require__.r(__webpack_exports__);
         var lastIndex = last.words[last.words.length - 1].index + last.words[last.words.length - 1].value.length;
         var beginText = '<span|class="tag"|title="' + last.entity.entity + '"|style="color:#fff;background:' + last.entity.color + '">';
         var endText = '</span>';
-        this.text.text = this.text.text.replaceAt(beginIndex, beginText + entity + endText, lastIndex); // this.text.text = this.text.text.splice(beginIndex, 0, beginText)
-        // this.text.text = this.text.text
-        // this.text.text = this.text.text.splice(beginIndex + entity.length + beginText.length, 0, endText)
-
-        return;
-        this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '" style="color:#fff;background:' + last.entity.color + '"> ' + entity + ' </span>');
+        this.text.text = this.text.text.replaceAt(beginIndex, beginText + entity + endText, lastIndex);
       }
     }
   },
@@ -2464,7 +2459,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
     String.prototype.replaceAt = function (index, replacement, lastIndex) {
-      return this.substr(0, index) + replacement + this.substr(lastIndex); // return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+      return this.substr(0, index) + replacement + this.substr(lastIndex);
     };
   },
   methods: {
@@ -2527,7 +2522,7 @@ __webpack_require__.r(__webpack_exports__);
         this.selectedUpdateType = "increase";
         this.selected.push({
           entity: this.current.entity,
-          words: this.current.words
+          words: _.orderBy(this.current.words, "index")
         });
         this.current = {
           entity: {},
@@ -53740,7 +53735,16 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v(_vm._s(word))]
+                  [
+                    _vm._v(
+                      _vm._s(
+                        word.value
+                          .replace(/(<([^>]+)>)/gi, "")
+                          .replace(/[|]/gi, " ")
+                          .replace("  ", " ")
+                      )
+                    )
+                  ]
                 )
               }),
               0
