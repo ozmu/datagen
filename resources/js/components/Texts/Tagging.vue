@@ -4,7 +4,7 @@
             <div class="card-body">
                 <div class="row card-row">
                     <div class="col-md-8">
-                        <div class="form-control text" v-html="text.text"></div>
+                        <div class="form-control text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="entities">
@@ -15,7 +15,7 @@
                         </div>
                         <div class="selecteds">
                             <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
-                                {{ s.words.join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
+                                {{ s.words.map(word => word.value).join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
                         <button @click="addEntity">Add</button>
@@ -47,7 +47,8 @@ export default {
 
     computed: {
         words(){
-            return this.text.text.replace(/(<([^>]+)>)/ig, "").replace("  ", " ").split(" ").filter(text => text.length > 0)
+            return this.splitWithIndex(this.text.text, " ")
+            //return this.splitWithIndex(this.text.text.replace(/(<([^>]+)>)/ig, "").replace("  ", " "), " ")
         }
     },
 
@@ -55,7 +56,17 @@ export default {
         'selected': function(newVal, oldVal){
             if (this.selectedUpdateType === "increase"){
                 var last = newVal[newVal.length - 1]
-                var entity = last.words.join(' ')
+                var entity = last.words.map(word => word.value).join('|')
+                var beginIndex = last.words[0].index
+                var lastIndex = last.words[last.words.length - 1].index + last.words[last.words.length - 1].value.length
+                var beginText = '<span|class="tag"|title="' + last.entity.entity + '"|style="color:#fff;background:' + last.entity.color + '">'
+                var endText = '</span>'
+                this.text.text = this.text.text.replaceAt(beginIndex, beginText + entity + endText, lastIndex)
+                // this.text.text = this.text.text.splice(beginIndex, 0, beginText)
+                // this.text.text = this.text.text
+                // this.text.text = this.text.text.splice(beginIndex + entity.length + beginText.length, 0, endText)
+                return
+
                 this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '" style="color:#fff;background:' + last.entity.color + '"> ' + entity + ' </span>')
             }
         }
@@ -71,9 +82,37 @@ export default {
         axios.get('/data/text/new').then(response => {
             this.text = response.data
         })
+
+        // Add splice method to Strings
+        String.prototype.splice = function(idx, rem, str) {
+            return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+        };
+
+        // Add replaceAt method to Strings
+        String.prototype.replaceAt = function(index, replacement, lastIndex) {
+            return this.substr(0, index) + replacement + this.substr(lastIndex);
+            // return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+        }
     },
 
     methods: {
+        splitWithIndex(str, delim){
+            //str = str.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")
+            var ret=[]
+            var splits=str.split(delim)
+            var index=0
+            for(var i=0;i<splits.length;i++){
+                if (splits[i].length > 0){
+                    ret.push({
+                        index,
+                        value: splits[i]
+                    })
+                }
+                index += splits[i].length+delim.length
+            }
+            return ret
+        },
+
         selectWord(event, word){
             if (this.current.words.includes(word)){
                 this.current.words.splice(this.current.words.indexOf(word), 1)
@@ -89,8 +128,8 @@ export default {
         },
         
         addEntity(){
-            if (this.current.entity && this.current.words.length > 0){
-                var filtered = this.selected.filter(s => {if (s.words.join(':') === this.current.words.join(':')) return true})
+            if (!_.isEmpty(this.current.entity) && this.current.words.length > 0){
+                var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join(':') === this.current.words.map(word => word.value).join(':')) return true})
                 if (filtered.length){
                     this.$buefy.snackbar.open({
                         message: "Entity already added!",
@@ -114,7 +153,7 @@ export default {
             var index = this.selected.indexOf(selected);
             this.selectedUpdateType = "decrease";
             this.selected.splice(index, 1);
-            this.text.text = this.text.text.replace(/<span class="tag" title="(.+?)" style="(.+?)"> (.+?) <\/span>/i, "$3")
+            this.text.text = this.text.text.replace(/<span|class="tag"|title="(.+?)"|style="(.+?)">(.+?)<\/span>/i, "$3").replace("  ", " ")
         },
 
         send(){
@@ -150,6 +189,10 @@ export default {
     overflow-y: hidden;
     overflow-x: auto;
     border: 1px solid #e1e1e1;
+}
+.words {
+    height: 250px;
+    overflow: auto;
 }
 .selected {
     color: #fff;

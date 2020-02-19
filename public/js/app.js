@@ -2423,16 +2423,25 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     words: function words() {
-      return this.text.text.replace(/(<([^>]+)>)/ig, "").replace("  ", " ").split(" ").filter(function (text) {
-        return text.length > 0;
-      });
+      return this.splitWithIndex(this.text.text, " "); //return this.splitWithIndex(this.text.text.replace(/(<([^>]+)>)/ig, "").replace("  ", " "), " ")
     }
   },
   watch: {
     'selected': function selected(newVal, oldVal) {
       if (this.selectedUpdateType === "increase") {
         var last = newVal[newVal.length - 1];
-        var entity = last.words.join(' ');
+        var entity = last.words.map(function (word) {
+          return word.value;
+        }).join('|');
+        var beginIndex = last.words[0].index;
+        var lastIndex = last.words[last.words.length - 1].index + last.words[last.words.length - 1].value.length;
+        var beginText = '<span|class="tag"|title="' + last.entity.entity + '"|style="color:#fff;background:' + last.entity.color + '">';
+        var endText = '</span>';
+        this.text.text = this.text.text.replaceAt(beginIndex, beginText + entity + endText, lastIndex); // this.text.text = this.text.text.splice(beginIndex, 0, beginText)
+        // this.text.text = this.text.text
+        // this.text.text = this.text.text.splice(beginIndex + entity.length + beginText.length, 0, endText)
+
+        return;
         this.text.text = this.text.text.replace(entity, '<span class="tag" title="' + last.entity.entity + '" style="color:#fff;background:' + last.entity.color + '"> ' + entity + ' </span>');
       }
     }
@@ -2447,9 +2456,37 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/data/text/new').then(function (response) {
       _this.text = response.data;
-    });
+    }); // Add splice method to Strings
+
+    String.prototype.splice = function (idx, rem, str) {
+      return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+    }; // Add replaceAt method to Strings
+
+
+    String.prototype.replaceAt = function (index, replacement, lastIndex) {
+      return this.substr(0, index) + replacement + this.substr(lastIndex); // return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+    };
   },
   methods: {
+    splitWithIndex: function splitWithIndex(str, delim) {
+      //str = str.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")
+      var ret = [];
+      var splits = str.split(delim);
+      var index = 0;
+
+      for (var i = 0; i < splits.length; i++) {
+        if (splits[i].length > 0) {
+          ret.push({
+            index: index,
+            value: splits[i]
+          });
+        }
+
+        index += splits[i].length + delim.length;
+      }
+
+      return ret;
+    },
     selectWord: function selectWord(event, word) {
       if (this.current.words.includes(word)) {
         this.current.words.splice(this.current.words.indexOf(word), 1);
@@ -2464,9 +2501,13 @@ __webpack_require__.r(__webpack_exports__);
     addEntity: function addEntity() {
       var _this2 = this;
 
-      if (this.current.entity && this.current.words.length > 0) {
+      if (!_.isEmpty(this.current.entity) && this.current.words.length > 0) {
         var filtered = this.selected.filter(function (s) {
-          if (s.words.join(':') === _this2.current.words.join(':')) return true;
+          if (s.words.map(function (word) {
+            return word.value;
+          }).join(':') === _this2.current.words.map(function (word) {
+            return word.value;
+          }).join(':')) return true;
         });
 
         if (filtered.length) {
@@ -2498,7 +2539,7 @@ __webpack_require__.r(__webpack_exports__);
       var index = this.selected.indexOf(selected);
       this.selectedUpdateType = "decrease";
       this.selected.splice(index, 1);
-      this.text.text = this.text.text.replace(/<span class="tag" title="(.+?)" style="(.+?)"> (.+?) <\/span>/i, "$3");
+      this.text.text = this.text.text.replace(/<span|class="tag"|title="(.+?)"|style="(.+?)">(.+?)<\/span>/i, "$3").replace("  ", " ");
     },
     send: function send() {
       var tagged_text = this.text.text.replace(/<span class="tag" title="(.+?)"> (.+?) <[/]span>/, ' <START:$1> $2 <END> ').replace('  ', ' ');
@@ -21070,7 +21111,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde], .card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde], .card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -53643,7 +53684,16 @@ var render = function() {
           _c("div", { staticClass: "col-md-8" }, [
             _c("div", {
               staticClass: "form-control text",
-              domProps: { innerHTML: _vm._s(_vm.text.text) }
+              domProps: {
+                innerHTML: _vm._s(
+                  _vm.text.text
+                    .replace(
+                      /(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi,
+                      "$1 $2 $3 $4> $5 </span>"
+                    )
+                    .replace(/[|]/gi, " ")
+                )
+              }
             })
           ]),
           _vm._v(" "),
@@ -53711,7 +53761,13 @@ var render = function() {
                   [
                     _vm._v(
                       "\n                            " +
-                        _vm._s(s.words.join(" ")) +
+                        _vm._s(
+                          s.words
+                            .map(function(word) {
+                              return word.value
+                            })
+                            .join(" ")
+                        ) +
                         " "
                     ),
                     _c("i", {
