@@ -2487,7 +2487,21 @@ __webpack_require__.r(__webpack_exports__);
         this.current.words.splice(this.current.words.indexOf(word), 1);
       } else {
         if (event.ctrlKey) {
-          this.current.words.push(word);
+          if (this.current.words.length) {
+            var last = this.current.words[this.current.words.length - 1];
+            var lastIndex = this.words.findIndex(function (w) {
+              return w.value === last.value;
+            }) + 1;
+            var wordIndex = this.words.findIndex(function (w) {
+              return w.value === word.value;
+            });
+
+            for (lastIndex; lastIndex <= wordIndex; lastIndex++) {
+              this.current.words.push(this.words[lastIndex]);
+            }
+          } else {
+            this.current.words.push(word);
+          }
         } else {
           this.current.words = [word];
         }
@@ -21116,7 +21130,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde], .card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: 250px;\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -53735,7 +53749,7 @@ var render = function() {
                   "span",
                   {
                     key: id,
-                    staticClass: "entity-tag",
+                    staticClass: "entity-tag entity-word",
                     class: {
                       "selected word": _vm.current.words.includes(word)
                     },

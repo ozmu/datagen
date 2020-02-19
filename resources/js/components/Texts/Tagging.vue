@@ -11,7 +11,7 @@
                             <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
                         </div>
                         <div class="words">
-                            <span v-for="(word, id) in words" :key="id" class="entity-tag" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
+                            <span v-for="(word, id) in words" :key="id" class="entity-tag entity-word" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
                         </div>
                         <div class="selecteds">
                             <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
@@ -112,7 +112,17 @@ export default {
             }
             else {
                 if (event.ctrlKey){
-                    this.current.words.push(word) 
+                    if (this.current.words.length){
+                        var last = this.current.words[this.current.words.length - 1]
+                        var lastIndex = this.words.findIndex(w => w.value === last.value) + 1
+                        var wordIndex = this.words.findIndex(w => w.value === word.value)
+                        for (lastIndex; lastIndex <= wordIndex; lastIndex++){
+                            this.current.words.push(this.words[lastIndex])
+                        }
+                    }
+                    else {
+                        this.current.words.push(word) 
+                    }
                 }
                 else {
                     this.current.words = [word]
@@ -175,7 +185,10 @@ export default {
 .card {
     height: calc(100vh - 190px);
 }
-.card-row, .card-row .text {
+.card-row {
+    height: calc(100vh - 230px);
+}
+.card-row .text {
     height: 100%;
 }
 /** Entities and words */
@@ -191,6 +204,16 @@ export default {
     height: 250px;
     overflow: auto;
 }
+.words::-webkit-scrollbar {
+    width: .35em;
+}
+.words::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+.words::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
 .selected {
     color: #fff;
     padding: 5px;
@@ -198,15 +221,21 @@ export default {
     transition: all ease .4s;
 }
 .selected.word {
-    background: green;
+    background: green !important;
 }
 .selected.entity {
-    background: red;
+    background: red !important;
 }
 .entity-tag {
     cursor: pointer;
     padding: 5px;
     margin-right: 5px;
+    background: #e2e2e2;
+    display: inline-block;
+    border-radius: 5px;
+}
+.entity-tag.entity-word {
+    margin-bottom: 5px;
 }
 .close-icon {
     margin-left: 5px;
