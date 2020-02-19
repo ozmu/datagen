@@ -2496,8 +2496,16 @@ __webpack_require__.r(__webpack_exports__);
               return w.index === word.index;
             });
 
-            for (lastIndex; lastIndex <= wordIndex; lastIndex++) {
-              this.current.words.push(this.words[lastIndex]);
+            if (lastIndex < wordIndex) {
+              for (lastIndex; lastIndex <= wordIndex; lastIndex++) {
+                this.current.words.push(this.words[lastIndex]);
+              }
+            } else {
+              lastIndex--;
+
+              for (lastIndex; lastIndex >= wordIndex; lastIndex--) {
+                this.current.words.push(this.words[lastIndex]);
+              }
             }
           } else {
             this.current.words.push(word);

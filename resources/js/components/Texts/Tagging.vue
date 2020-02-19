@@ -116,8 +116,16 @@ export default {
                         var last = this.current.words[this.current.words.length - 1]
                         var lastIndex = this.words.findIndex(w => w.index === last.index) + 1
                         var wordIndex = this.words.findIndex(w => w.index === word.index)
-                        for (lastIndex; lastIndex <= wordIndex; lastIndex++){
-                            this.current.words.push(this.words[lastIndex])
+                        if (lastIndex < wordIndex){
+                            for (lastIndex; lastIndex <= wordIndex; lastIndex++){
+                                this.current.words.push(this.words[lastIndex])
+                            }
+                        }
+                        else {
+                            lastIndex--;
+                            for (lastIndex; lastIndex >= wordIndex; lastIndex--){
+                                this.current.words.push(this.words[lastIndex])
+                            }
                         }
                     }
                     else {
