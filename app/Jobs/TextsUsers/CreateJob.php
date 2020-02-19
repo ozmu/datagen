@@ -36,7 +36,7 @@ class CreateJob implements ShouldQueue
         $tags = [];
         for ($c = 0; $c < count($matches[2]); $c++){
             $data = [
-                "tag_user_id" => $this->textUser->id,
+                "text_user_id" => $this->textUser->id,
                 "entity" => trim($matches[2][$c]),
                 "type" => $matches[1][$c]
             ];

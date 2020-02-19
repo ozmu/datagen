@@ -2578,6 +2578,8 @@ __webpack_require__.r(__webpack_exports__);
         tagged_text: tagged_text
       };
       axios.post('/data/text', data).then(function (response) {
+        console.log(response);
+
         if (response.status === 200) {
           _this3.$buefy.snackbar.open({
             message: response.data.message,

@@ -178,6 +178,7 @@ export default {
                 tagged_text: tagged_text
             }
             axios.post('/data/text', data).then(response => {
+                console.log(response)
                 if (response.status === 200){
                     this.$buefy.snackbar.open({
                         message:  response.data.message,
