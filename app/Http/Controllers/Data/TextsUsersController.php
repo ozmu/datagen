@@ -20,10 +20,15 @@ class TextsUsersController extends Controller
     public function index(Request $request)
     {
         $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first()->value : 10;
+        $count = 0;
         while (true){
             $random = Text::all()->random();
-            if (!in_array($random->id, $request->user()->texts->pluck('id')->toArray()) && $random->users()->get()->count() <= $maximum_user_for_text){
+            if (!in_array($random->id, $request->user()->texts->pluck('text_id')->toArray()) && $random->users()->get()->count() <= $maximum_user_for_text){
                 break;
+            }
+            $count++;
+            if ($count == Text::count()){
+                return "All texts done!";
             }
         }
         return $random;
@@ -57,10 +62,10 @@ class TextsUsersController extends Controller
             'tagged_text' => $request->input('tagged_text')
         ]);
         if ($created){
-            CreateJob::dispatch($created);
-            return ["status" => 200];
+            //CreateJob::dispatch($created);
+            return ["status" => 200, "message" => "Tagged text created successfully!"];
         }
-        return ["status" => 500];
+        abort(500);
     }
 
     /**

@@ -2569,6 +2569,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     send: function send() {
+      var _this3 = this;
+
       var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
       var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ');
       var data = {
@@ -2576,11 +2578,23 @@ __webpack_require__.r(__webpack_exports__);
         tagged_text: tagged_text
       };
       axios.post('/data/text', data).then(function (response) {
-        if (response.data.status === 200) {
-          console.log("Success!");
-        } else {
-          console.log("Error!");
+        if (response.status === 200) {
+          _this3.$buefy.snackbar.open({
+            message: response.data.message,
+            type: 'is-success',
+            position: 'is-top',
+            actionText: 'OK'
+          });
         }
+      })["catch"](function (e) {
+        console.log(e.response);
+
+        _this3.$buefy.snackbar.open({
+          message: e.response.data.message,
+          type: 'is-warning',
+          position: 'is-top',
+          actionText: 'OK'
+        });
       });
     }
   }

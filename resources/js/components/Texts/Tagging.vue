@@ -178,12 +178,22 @@ export default {
                 tagged_text: tagged_text
             }
             axios.post('/data/text', data).then(response => {
-                if (response.data.status === 200){
-                    console.log("Success!")
+                if (response.status === 200){
+                    this.$buefy.snackbar.open({
+                        message:  response.data.message,
+                        type: 'is-success',
+                        position: 'is-top',
+                        actionText: 'OK'
+                    })
                 }
-                else {
-                    console.log("Error!")
-                }
+            }).catch(e => {
+                console.log(e.response)
+                this.$buefy.snackbar.open({
+                    message:  e.response.data.message,
+                    type: 'is-warning',
+                    position: 'is-top',
+                    actionText: 'OK'
+                })
             })
         }
     }
