@@ -2333,12 +2333,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -54177,9 +54171,7 @@ var staticRenderFns = [
               _vm._v("$37,578 avg")
             ])
           ])
-        ]),
-        _vm._v(" "),
-        _c("div", { attrs: { id: "today-revenue" } })
+        ])
       ])
     ])
   },
@@ -54213,10 +54205,6 @@ var staticRenderFns = [
               _vm._v("489 avg")
             ])
           ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "container-fluid" }, [
-          _c("div", { attrs: { id: "members-online" } })
         ])
       ])
     ])

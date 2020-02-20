@@ -41,8 +41,6 @@
                                 <div class="font-size-sm opacity-75">$37,578 avg</div>
                             </div>
                         </div>
-
-                        <div id="today-revenue"></div>
                     </div>
                     <!-- /today's revenue -->
 
@@ -61,10 +59,6 @@
                                 Members online
                                 <div class="font-size-sm opacity-75">489 avg</div>
                             </div>
-                        </div>
-
-                        <div class="container-fluid">
-                            <div id="members-online"></div>
                         </div>
                     </div>
                     <!-- /members online -->
