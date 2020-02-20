@@ -7,7 +7,9 @@
                 </div>
                 <div class="row">
                     <div class="table-full">
-                        <button @click="create.modal = true">Create</button>
+                        <button class="btn btn-primary create-btn" @click="create.modal = true">
+                            <b-icon icon="plus-circle"></b-icon>
+                        </button>
                         <b-table
                         :data="texts"
                         :paginated="true"
@@ -172,6 +174,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.create-btn {
+    float: right;
+}
 </style>
