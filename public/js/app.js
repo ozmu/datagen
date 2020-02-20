@@ -2491,7 +2491,7 @@ __webpack_require__.r(__webpack_exports__);
             var last = this.current.words[this.current.words.length - 1];
             var lastIndex = this.words.findIndex(function (w) {
               return w.index === last.index;
-            }) + 1;
+            });
             var wordIndex = this.words.findIndex(function (w) {
               return w.index === word.index;
             });

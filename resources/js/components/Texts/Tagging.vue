@@ -114,7 +114,7 @@ export default {
                 if (event.ctrlKey){
                     if (this.current.words.length){
                         var last = this.current.words[this.current.words.length - 1]
-                        var lastIndex = this.words.findIndex(w => w.index === last.index) + 1
+                        var lastIndex = this.words.findIndex(w => w.index === last.index)
                         var wordIndex = this.words.findIndex(w => w.index === word.index)
                         if (lastIndex < wordIndex){
                             for (lastIndex; lastIndex <= wordIndex; lastIndex++){
