@@ -27,7 +27,7 @@ class TextsUsersController extends Controller
                 break;
             }
             $count++;
-            if ($count == Text::count()){
+            if ($count > Text::count()){
                 return response(null, 204);
             }
         }
