@@ -7,7 +7,9 @@
                 </div>
                 <div class="row">
                     <div class="table-full">
-                        <button @click="$router.push({name: 'texts-tagging'})">Create</button>
+                        <button class="btn btn-primary create-btn" @click="$router.push({name: 'texts-tagging'})">
+                            <b-icon icon="plus-circle"></b-icon>
+                        </button>
                         <b-table
                         :data="taggedTexts"
                         :paginated="true"
@@ -121,6 +123,9 @@ export default {
 <style scoped>
 .card-body {
   min-height: calc(100vh - 195px);
+}
+.create-btn {
+    float: right;
 }
 span.tag.is-danger, span.tag.is-success {
     color: #fff;

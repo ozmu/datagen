@@ -23,7 +23,10 @@ Route::put('text', 'TextsUsersController@update');
 Route::delete('text/destroy', 'TextsUsersController@destroy');
 
 // Utils
-Route::get('utils/entities', 'UtilsController@entities');
+Route::group(['prefix' => 'utils'], function(){
+    Route::get('entities', 'UtilsController@entities');
+    Route::get('widgets', 'UtilsController@widgets');
+});
 
 // Admin
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function(){

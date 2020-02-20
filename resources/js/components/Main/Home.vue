@@ -7,18 +7,17 @@
             <div class="row">
                 <div class="col-lg-4">
                     <!-- Today's revenue -->
-                    <div class="card bg-blue-400">
+                    <div class="card bg-blue-400 home-widget">
                         <div class="card-body">
                             <div class="d-flex">
-                                <h3 class="font-weight-semibold mb-0">$18,390</h3>
+                                <h3 class="font-weight-semibold mb-0">{{ widgets.balance.balance }}<b-icon icon="currency-try" custom-size="mdi-18px"></b-icon></h3>
                                 <div class="list-icons ml-auto">
                                     <a class="list-icons-item" data-action="reload"></a>
                                 </div>
                             </div>
-                            
                             <div>
                                 Balance
-                                <div class="font-size-sm opacity-75">$37,578 avg</div>
+                                <div class="font-size-sm opacity-75">{{ widgets.balance.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon></div>
                             </div>
                         </div>
                     </div>
@@ -28,7 +27,7 @@
 
                 <div class="col-lg-4">
                     <!-- Today's revenue -->
-                    <div class="card bg-blue-400">
+                    <div class="card bg-blue-400 home-widget">
                         <div class="card-body">
                             <div class="d-flex">
                                 <h3 class="font-weight-semibold mb-0">$18,390</h3>
@@ -51,7 +50,7 @@
 
                 <div class="col-lg-4">
                     <!-- Members online -->
-                    <div class="card bg-teal-400">
+                    <div class="card bg-teal-400 home-widget">
                         <div class="card-body">
                             <div class="d-flex">
                                 <h3 class="font-weight-semibold mb-0">3,450</h3>
@@ -128,12 +127,29 @@
 export default {
     data(){
         return {
+            widgets: {
+                balance: {}
+            },
             msg: 'Hello World'
+        }
+    },
+
+    mounted(){
+        this.getWidgets("balance")
+    },
+
+    methods: {
+        getWidgets(scope){
+            axios.get('/data/utils/widgets?scope=' + scope).then(response => {
+                this.widgets[scope] = response.data
+            })
         }
     }
 }
 </script>
 
-<style>
-
+<style scoped>
+.home-widget {
+    color: #000000 !important;
+}
 </style>

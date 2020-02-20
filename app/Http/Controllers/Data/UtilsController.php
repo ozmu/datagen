@@ -11,4 +11,14 @@ class UtilsController extends Controller
     public function entities(Request $request){
         return Entity::all();
     }
+
+    public function widgets(Request $request){
+        $scope = $request->input('scope');
+        if ($scope == "balance"){
+            return [
+                "balance" => $request->user()->balance(),
+                "notVerifiedBalance" => $request->user()->balance(false)
+            ];
+        }
+    }
 }
