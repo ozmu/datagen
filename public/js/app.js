@@ -2461,41 +2461,68 @@ __webpack_require__.r(__webpack_exports__);
       // Get Random Text
       this.getNewText();
     } else {
-      axios.get('/data/text.' + this.$route.params.text_user_id).then(function (response) {
+      axios.get('/data/text/' + this.$route.params.text_user_id).then(function (response) {
         if (response.status === 200) {
-          _this.text = response.data.text;
-          var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi");
-          var matches = response.data.tagged_text.match(pattern);
-
-          for (var match in matches) {
-            var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1]; // Entity Type
-
-            var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1]; // Entity Mention
-
-            var type = _this.entities.filter(function (type) {
-              return type.entity === typeMatch;
-            });
-
-            if (type.length) {
-              _this.current.entity = type[0];
-              var splitted = entityMatch.split(' ');
-
-              for (var s in splitted) {
-                var filtered = _this.words.filter(function (word) {
-                  return word.value === splitted[s];
-                });
-
-                if (filtered.length === 1) {
-                  _this.current.words.push(filtered[0]);
-
-                  _this.addEntity();
-                }
+          /*
+          this.text = response.data.text
+          var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi")
+          var matches = response.data.tagged_text.match(pattern)
+          for (var match in matches){
+              var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1] // Entity Type
+              var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1] // Entity Mention
+              console.log("typeMatch: ", typeMatch)
+              console.log("entityMatch: ", entityMatch)
+              var type = this.entities.filter(type => type.entity === typeMatch)
+              if (type.length){
+                  this.current.entity = type[0]
+                  var splitted = entityMatch.split(' ')
+                  if (splitted.length > 1){
+                      for (var s in splitted){
+                          var filtered = this.words.filter(word => word.value === splitted[s])
+                          console.log("filtered: ", filtered)
+                          if (filtered.length === 1){
+                              this.current.words.push(filtered[0])
+                              this.addEntity()
+                          }
+                      }
+                  }
+                  else if (splitted.length === 1){
+                      var filtered = this.words.filter(word => word.value === splitted[0])
+                      if (filtered.length === 1){
+                          this.current.words.push(filtered[0])
+                          this.addEntity()
+                      }
+                  }
               }
-            }
-          } // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
-          // this.text = response.data.text
-          // this.text.text = response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#123122">$2</span>')
+          }
+          */
+          // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
+          var tagPattern = new RegExp('<START:(.+?)> (.+?) <END>', 'gi');
+          var spanPattern = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)<\/span>', 'gi');
+          var replaced = response.data.tagged_text.replace(tagPattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#000000">$2</span>');
+          var match = spanPattern.exec(replaced);
 
+          while (match != null) {
+            var matchPattern = new RegExp('(<span[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#000000)(">)' + match[2] + '(<\/span>)', 'i');
+            replaced = replaced.replace(matchPattern, '$1' + _this.entities.filter(function (e) {
+              return e.entity === match[1];
+            })[0].color + '$3' + match[2].replace(/ /gi, '|') + '$4');
+            match = spanPattern.exec(replaced);
+          }
+
+          _this.text = response.data.text;
+          _this.text.text = replaced;
+          /*
+          var match = spanPattern.exec(this.text.text)
+          while (match != null){
+              var matchPattern = new RegExp('(<span[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#[A-Za-z0-9]{6})(">)' + match[2] + '(<\/span>)', 'i')
+              this.selected.push({
+                  entity: this.entities.filter(e => e.entity === match[1])[0],
+                  words: this.words.filter(w => w.value.includes(match[2].replace(/ /gi, '|')))
+              })
+              match = spanPattern.exec(this.text.text)
+          }
+          */
         }
       })["catch"](function (e) {
         console.log(e.response);
@@ -2517,7 +2544,20 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       axios.get('/data/text/new').then(function (response) {
-        _this2.text = response.data;
+        if (response.status === 200) {
+          _this2.text = response.data;
+        } else if (response.status === 204) {
+          _this2.$buefy.snackbar.open({
+            message: "All texts done!",
+            type: 'is-warning',
+            position: 'is-top',
+            actionText: 'OK'
+          });
+
+          _this2.$router.push({
+            name: 'main-home'
+          });
+        }
       });
       this.current = {
         entity: {},
@@ -2622,6 +2662,20 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
+
+    /*
+    printSelected(selected){
+        var pattern = new RegExp('<span[|]class="tag"[|]title="(.+?)[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'i')
+        var values = selected.words.map(word => word.value)
+        if (pattern.test(values)){
+            console.log('Selected: ', selected)
+            return selected.words[0].value.match(pattern)[2].replace(/[|]/g, ' ')
+        }
+        else {
+            return values.join(' ')
+        }
+    },
+    */
     removeSelected: function removeSelected(selected) {
       var index = this.selected.indexOf(selected);
       this.selectedUpdateType = "decrease";
@@ -21245,7 +21299,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: calc(100% - 400px);\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.selecteds span.tag[data-v-580e7bde] {\n    margin-right: 5px;\n    margin-bottom: 5px;\n    display: inline-block;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n.add-btn[data-v-580e7bde] {\n    cursor: pointer;\n    transition: all ease .4s;\n}\n.add-btn[data-v-580e7bde]:hover {\n    color: #30ab84;\n    transition: all ease .4s;\n}\n.send-btn[data-v-580e7bde] {\n    float: right;\n}\n", ""]);
+exports.push([module.i, "\n.card[data-v-580e7bde] {\n    height: calc(100vh - 190px);\n}\n.card-row[data-v-580e7bde] {\n    height: calc(100vh - 230px);\n}\n.card-row .text[data-v-580e7bde] {\n    height: 100%;\n}\n/** Entities and words */\n.entities[data-v-580e7bde], .words[data-v-580e7bde], .selecteds[data-v-580e7bde] {\n    padding: 5px 0;\n    margin-bottom: 10px;\n    overflow-y: hidden;\n    overflow-x: auto;\n    border: 1px solid #e1e1e1;\n    min-height: 30px;\n}\n.words[data-v-580e7bde] {\n    height: calc(100% - 400px);\n    overflow: auto;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar {\n    width: .35em;\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-track {\n    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);\n}\n.words[data-v-580e7bde]::-webkit-scrollbar-thumb {\n  background-color: darkgrey;\n  outline: 1px solid slategrey;\n}\n.selected[data-v-580e7bde] {\n    color: #fff;\n    padding: 5px;\n    border-radius: 5px;\n    transition: all ease .4s;\n}\n.selected.word[data-v-580e7bde] {\n    background: green !important;\n}\n.selected.entity[data-v-580e7bde] {\n    background: red !important;\n}\n.selecteds span.tag[data-v-580e7bde] {\n    margin-right: 5px;\n    margin-bottom: 5px;\n    display: inline-block;\n}\n.entity-tag[data-v-580e7bde] {\n    cursor: pointer;\n    padding: 5px;\n    margin-right: 5px;\n    background: #e2e2e2;\n    display: inline-block;\n    border-radius: 5px;\n}\n.entity-tag.entity-word[data-v-580e7bde] {\n    margin-bottom: 5px;\n}\n.close-icon[data-v-580e7bde] {\n    margin-left: 5px;\n    cursor: pointer;\n}\n.add-btn[data-v-580e7bde] {\n    cursor: pointer;\n    transition: all ease .4s;\n}\n.add-btn[data-v-580e7bde]:hover {\n    color: #30ab84;\n    transition: all ease .4s;\n}\n.send-btn[data-v-580e7bde] {\n    float: right;\n}\n", ""]);
 
 // exports
 

@@ -18,7 +18,7 @@
 Route::get('text/new', 'TextsUsersController@index');
 Route::get('text/last', 'TextsUsersController@last');
 Route::post('text', 'TextsUsersController@store');
-Route::get('text.{id}', 'TextsUsersController@show');
+Route::get('text/{id}', 'TextsUsersController@show');
 Route::put('text', 'TextsUsersController@update');
 Route::delete('text.destroy', 'TextsUsersController@destroy');
 

@@ -77,20 +77,33 @@ export default {
             this.getNewText();
         }
         else {
-            axios.get('/data/text.' + this.$route.params.text_user_id).then(response => {
+            axios.get('/data/text/' + this.$route.params.text_user_id).then(response => {
                 if (response.status === 200){
+                    /*
                     this.text = response.data.text
                     var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi")
                     var matches = response.data.tagged_text.match(pattern)
                     for (var match in matches){
                         var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1] // Entity Type
                         var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1] // Entity Mention
+                        console.log("typeMatch: ", typeMatch)
+                        console.log("entityMatch: ", entityMatch)
                         var type = this.entities.filter(type => type.entity === typeMatch)
                         if (type.length){
                             this.current.entity = type[0]
                             var splitted = entityMatch.split(' ')
-                            for (var s in splitted){
-                                var filtered = this.words.filter(word => word.value === splitted[s])
+                            if (splitted.length > 1){
+                                for (var s in splitted){
+                                    var filtered = this.words.filter(word => word.value === splitted[s])
+                                    console.log("filtered: ", filtered)
+                                    if (filtered.length === 1){
+                                        this.current.words.push(filtered[0])
+                                        this.addEntity()
+                                    }
+                                }
+                            }
+                            else if (splitted.length === 1){
+                                var filtered = this.words.filter(word => word.value === splitted[0])
                                 if (filtered.length === 1){
                                     this.current.words.push(filtered[0])
                                     this.addEntity()
@@ -98,9 +111,30 @@ export default {
                             }
                         }
                     }
+                    */
                     // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
-                    // this.text = response.data.text
-                    // this.text.text = response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#123122">$2</span>')
+                    var tagPattern = new RegExp('<START:(.+?)> (.+?) <END>', 'gi')
+                    var spanPattern = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)<\/span>', 'gi')
+                    var replaced = response.data.tagged_text.replace(tagPattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#000000">$2</span>')
+                    var match = spanPattern.exec(replaced)
+                    while (match != null){
+                        var matchPattern = new RegExp('(<span[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#000000)(">)' + match[2] + '(<\/span>)', 'i')
+                        replaced = replaced.replace(matchPattern, '$1' + this.entities.filter(e => e.entity === match[1])[0].color + '$3' + match[2].replace(/ /gi, '|') + '$4')
+                        match = spanPattern.exec(replaced)
+                    }
+                    this.text = response.data.text
+                    this.text.text = replaced
+                    /*
+                    var match = spanPattern.exec(this.text.text)
+                    while (match != null){
+                        var matchPattern = new RegExp('(<span[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#[A-Za-z0-9]{6})(">)' + match[2] + '(<\/span>)', 'i')
+                        this.selected.push({
+                            entity: this.entities.filter(e => e.entity === match[1])[0],
+                            words: this.words.filter(w => w.value.includes(match[2].replace(/ /gi, '|')))
+                        })
+                        match = spanPattern.exec(this.text.text)
+                    }
+                    */
                 }
             }).catch(e => {
                 console.log(e.response)
@@ -121,7 +155,18 @@ export default {
     methods: {
         getNewText(){
             axios.get('/data/text/new').then(response => {
-                this.text = response.data
+                if (response.status === 200){
+                    this.text = response.data
+                }
+                else if (response.status === 204){
+                    this.$buefy.snackbar.open({
+                        message: "All texts done!",
+                        type: 'is-warning',
+                        position: 'is-top',
+                        actionText: 'OK'
+                    })
+                    this.$router.push({name: 'main-home'})
+                }
             })
             this.current = {entity: {}, words: []}
         },
@@ -205,6 +250,20 @@ export default {
                 })
             }
         },
+
+        /*
+        printSelected(selected){
+            var pattern = new RegExp('<span[|]class="tag"[|]title="(.+?)[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'i')
+            var values = selected.words.map(word => word.value)
+            if (pattern.test(values)){
+                console.log('Selected: ', selected)
+                return selected.words[0].value.match(pattern)[2].replace(/[|]/g, ' ')
+            }
+            else {
+                return values.join(' ')
+            }
+        },
+        */
 
         removeSelected(selected){
             var index = this.selected.indexOf(selected);
@@ -294,6 +353,7 @@ export default {
 }
 .words::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
 .words::-webkit-scrollbar-thumb {
   background-color: darkgrey;

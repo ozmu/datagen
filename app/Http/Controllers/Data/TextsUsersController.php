@@ -28,7 +28,7 @@ class TextsUsersController extends Controller
             }
             $count++;
             if ($count == Text::count()){
-                return "All texts done!";
+                return response(null, 204);
             }
         }
         return $random;
@@ -76,7 +76,7 @@ class TextsUsersController extends Controller
      */
     public function show(Request $request, $id)
     {
-        return TextUser::findOrFail($id)->with('text')->first();
+        return TextUser::with('text')->where('id', (int) $id)->first();
     }
 
     /**
