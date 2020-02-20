@@ -4,6 +4,9 @@
             <h5 class="card-title">Ayarlar</h5>
         </div>
         <div class="card-body">
+            <div class="overlay" v-if="loading">
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+            </div>
             <div class="col-md-12">
                 <div class="row">
                     <div class="form-group" v-for="setting in settings" :key="setting.id">
@@ -23,6 +26,7 @@
 export default {
     data(){
         return {
+            loading: true,
             settings: []
         }
     },
@@ -30,6 +34,7 @@ export default {
     mounted(){
         axios.get('/data/admin/settings').then(response => {
             this.settings = response.data
+            this.loading = false;
         })
     },
 

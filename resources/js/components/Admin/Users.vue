@@ -2,6 +2,9 @@
     <div>
         <div class="card">
             <div class="card-body">
+                <div class="overlay" v-if="loading">
+                    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                </div>
                 <div class="row">
                     <div class="table-full">
                         <button @click="create.modal = true">Create</button>
@@ -99,6 +102,7 @@
 export default {
     data(){
         return {
+            loading: true,
             create: {
                 modal: false,
                 data: {}
@@ -114,6 +118,7 @@ export default {
     mounted(){
         axios.get('/data/admin/users').then(response => {
             this.users = response.data
+            this.loading = false
         })
     },
 

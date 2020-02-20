@@ -2,11 +2,15 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <div class="overlay" v-if="loading">
+                    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                </div>
                 <div class="row card-row">
                     <div class="col-md-8">
                         <div class="form-control text" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
                     </div>
                     <div class="col-md-4">
+                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
                         <div class="entities">
                             <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
                         </div>
@@ -18,7 +22,6 @@
                                 {{ s.words.map(word => word.value).join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
-                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
                         <button class="btn btn-primary send-btn" @click="send">Gönder</button>
                     </div>
                 </div>
@@ -31,6 +34,7 @@
 export default {
     data(){
         return {
+            loading: true,
             text: {
                 id: null,
                 text: ''
@@ -124,6 +128,7 @@ export default {
                     }
                     this.text = response.data.text
                     this.text.text = replaced
+                    this.loading = false;
                     /*
                     var match = spanPattern.exec(this.text.text)
                     while (match != null){
@@ -157,6 +162,7 @@ export default {
             axios.get('/data/text/new').then(response => {
                 if (response.status === 200){
                     this.text = response.data
+                    this.loading = false;
                 }
                 else if (response.status === 204){
                     this.$buefy.snackbar.open({

@@ -16,6 +16,7 @@
 	<link href="{{ asset('assets/css/components.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ asset('assets/css/colors.min.css') }}" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="{{ asset('css/materialdesignicons.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->

@@ -1718,9 +1718,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      loading: true,
       settings: []
     };
   },
@@ -1729,6 +1733,7 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/data/admin/settings').then(function (response) {
       _this.settings = response.data;
+      _this.loading = false;
     });
   },
   methods: {
@@ -1825,9 +1830,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      loading: true,
       create: {
         modal: false,
         data: {}
@@ -1844,6 +1853,7 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/data/admin/texts').then(function (response) {
       _this.texts = response.data;
+      _this.loading = false;
     });
   },
   methods: {
@@ -2044,9 +2054,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      loading: true,
       create: {
         modal: false,
         data: {}
@@ -2063,6 +2077,7 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/data/admin/users').then(function (response) {
       _this.users = response.data;
+      _this.loading = false;
     });
   },
   methods: {
@@ -2369,9 +2384,13 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      loading: true,
       taggedTexts: [],
       nextPageUrl: "/data/text/last"
     };
@@ -2384,17 +2403,21 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var _this = this;
 
       if (this.nextPageUrl) {
+        this.loading = true;
         axios.get(this.nextPageUrl).then(function (response) {
           _this.taggedTexts = [].concat(_toConsumableArray(_this.taggedTexts), _toConsumableArray(response.data.data));
           _this.nextPageUrl = response.data.next_page_url;
+          _this.loading = false;
         });
       }
     },
     all: function all() {
       var _this2 = this;
 
+      this.loading = true;
       axios.get('/data/text/last?scope=all').then(function (response) {
         _this2.taggedTexts = response.data.data;
+        _this2.loading = false;
       });
     },
     redirect: function redirect(text) {
@@ -2481,9 +2504,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      loading: true,
       text: {
         id: null,
         text: ''
@@ -2580,6 +2607,7 @@ __webpack_require__.r(__webpack_exports__);
 
           _this.text = response.data.text;
           _this.text.text = replaced;
+          _this.loading = false;
           /*
           var match = spanPattern.exec(this.text.text)
           while (match != null){
@@ -2614,6 +2642,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/data/text/new').then(function (response) {
         if (response.status === 200) {
           _this2.text = response.data;
+          _this2.loading = false;
         } else if (response.status === 204) {
           _this2.$buefy.snackbar.open({
             message: "All texts done!",
@@ -21367,7 +21396,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\nspan.tag.is-danger[data-v-224d9f80], span.tag.is-success[data-v-224d9f80] {\n    color: #fff;\n    margin-right: 5px;\n    margin-bottom: 5px;\n}\n", ""]);
+exports.push([module.i, "\n.card-body[data-v-224d9f80] {\n  min-height: calc(100vh - 195px);\n}\nspan.tag.is-danger[data-v-224d9f80], span.tag.is-success[data-v-224d9f80] {\n    color: #fff;\n    margin-right: 5px;\n    margin-bottom: 5px;\n}\n", ""]);
 
 // exports
 
@@ -52914,6 +52943,10 @@ var render = function() {
     _vm._m(0),
     _vm._v(" "),
     _c("div", { staticClass: "card-body" }, [
+      _vm.loading
+        ? _c("div", { staticClass: "overlay" }, [_vm._m(1)])
+        : _vm._e(),
+      _vm._v(" "),
       _c("div", { staticClass: "col-md-12" }, [
         _c(
           "div",
@@ -52963,6 +52996,17 @@ var staticRenderFns = [
     return _c("div", { staticClass: "card-header" }, [
       _c("h5", { staticClass: "card-title" }, [_vm._v("Ayarlar")])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
   }
 ]
 render._withStripped = true
@@ -52993,6 +53037,10 @@ var render = function() {
         _vm._m(0),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
+          _vm.loading
+            ? _c("div", { staticClass: "overlay" }, [_vm._m(1)])
+            : _vm._e(),
+          _vm._v(" "),
           _c("div", { staticClass: "row" }, [
             _c(
               "div",
@@ -53225,6 +53273,17 @@ var staticRenderFns = [
     return _c("div", { staticClass: "card-header" }, [
       _c("h5", { staticClass: "card-title" })
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
   }
 ]
 render._withStripped = true
@@ -53253,6 +53312,10 @@ var render = function() {
     [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-body" }, [
+          _vm.loading
+            ? _c("div", { staticClass: "overlay" }, [_vm._m(0)])
+            : _vm._e(),
+          _vm._v(" "),
           _c("div", { staticClass: "row" }, [
             _c(
               "div",
@@ -53642,7 +53705,19 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -53947,6 +54022,10 @@ var render = function() {
   return _c("div", [
     _c("div", { staticClass: "card" }, [
       _c("div", { staticClass: "card-body" }, [
+        _vm.loading
+          ? _c("div", { staticClass: "overlay" }, [_vm._m(0)])
+          : _vm._e(),
+        _vm._v(" "),
         _c("div", { staticClass: "row" }, [
           _c(
             "div",
@@ -54120,7 +54199,19 @@ var render = function() {
       : _vm._e()
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -54145,6 +54236,10 @@ var render = function() {
   return _c("div", { staticClass: "col-md-12" }, [
     _c("div", { staticClass: "card" }, [
       _c("div", { staticClass: "card-body" }, [
+        _vm.loading
+          ? _c("div", { staticClass: "overlay" }, [_vm._m(0)])
+          : _vm._e(),
+        _vm._v(" "),
         _c("div", { staticClass: "row card-row" }, [
           _c("div", { staticClass: "col-md-8" }, [
             _vm.text.text
@@ -54168,6 +54263,20 @@ var render = function() {
             "div",
             { staticClass: "col-md-4" },
             [
+              _c(
+                "b-icon",
+                {
+                  staticClass: "add-btn",
+                  attrs: { icon: "plus-circle", size: "is-medium" },
+                  nativeOn: {
+                    click: function($event) {
+                      return _vm.addEntity($event)
+                    }
+                  }
+                },
+                [_vm._v("Ekle")]
+              ),
+              _vm._v(" "),
               _c(
                 "div",
                 { staticClass: "entities" },
@@ -54264,20 +54373,6 @@ var render = function() {
               ),
               _vm._v(" "),
               _c(
-                "b-icon",
-                {
-                  staticClass: "add-btn",
-                  attrs: { icon: "plus-circle", size: "is-medium" },
-                  nativeOn: {
-                    click: function($event) {
-                      return _vm.addEntity($event)
-                    }
-                  }
-                },
-                [_vm._v("Ekle")]
-              ),
-              _vm._v(" "),
-              _c(
                 "button",
                 {
                   staticClass: "btn btn-primary send-btn",
@@ -54293,7 +54388,19 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
+  }
+]
 render._withStripped = true
 
 

@@ -2,6 +2,9 @@
     <div>
         <div class="card">
             <div class="card-body">
+                <div class="overlay" v-if="loading">
+                    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                </div>
                 <div class="row">
                     <div class="table-full">
                         <button @click="$router.push({name: 'texts-tagging'})">Create</button>
@@ -48,6 +51,7 @@
 export default {
     data(){
         return {
+            loading: true,
             taggedTexts: [],
             nextPageUrl: "/data/text/last"
         }
@@ -60,16 +64,20 @@ export default {
     methods: {
         more(){
             if (this.nextPageUrl){
+                this.loading = true;
                 axios.get(this.nextPageUrl).then(response => {
                     this.taggedTexts = [...this.taggedTexts, ...response.data.data]
                     this.nextPageUrl = response.data.next_page_url
+                    this.loading = false;
                 })
             }
         },
 
         all(){
+            this.loading = true;
             axios.get('/data/text/last?scope=all').then(response => {
                 this.taggedTexts = response.data.data
+                this.loading = false;
             })
         },
 
@@ -111,6 +119,9 @@ export default {
 </script>
 
 <style scoped>
+.card-body {
+  min-height: calc(100vh - 195px);
+}
 span.tag.is-danger, span.tag.is-success {
     color: #fff;
     margin-right: 5px;
