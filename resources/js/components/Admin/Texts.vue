@@ -1,9 +1,6 @@
 <template>
     <div>
         <div class="card">
-            <div class="card-header">
-                <h5 class="card-title"></h5>
-            </div>
             <div class="card-body">
                 <div class="overlay" v-if="loading">
                     <div class="lds-ring"><div></div><div></div><div></div><div></div></div>

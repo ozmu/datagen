@@ -17,11 +17,11 @@ class AdminController extends Controller
 
     public function updateSettings(Request $request){
         if(is_array($request->input('settings'))){
-            foreach($request->input('settings') as $setting){
-                $s = Setting::where('key', $setting["key"]);
-                if ($s->count() && $s->first()->value != $setting["value"]){
+            foreach($request->input('settings') as $key => $value){
+                $s = Setting::where('key', $key);
+                if ($s->count() && $s->first()->value != $value){
                     $s = $s->first();
-                    $s->value = $setting["value"];
+                    $s->value = $value;
                     $s->save();
                     if ($s->key == "tag_verify_rate" || $s->key == "text_verify_rate"){
                         // If verify rates changes, all textuser objects calculate again.
@@ -34,7 +34,7 @@ class AdminController extends Controller
                     continue;
                 }
             }
-            return "Update success!";
+            return "Successfully updated!";
         }
         abort(403);
     }
