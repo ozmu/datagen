@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul>
-            <li v-for="(text, id) in taggedTexts" :key="id">
+            <li v-for="(text, id) in taggedTexts" :key="id" @click="redirect(text)">
                 {{ text }}
             </li>
         </ul>
@@ -26,7 +26,7 @@ export default {
         more(){
             if (this.nextPageUrl){
                 axios.get(this.nextPageUrl).then(response => {
-                    this.taggedTexts = [...this.taggedTexts, response.data.data]
+                    this.taggedTexts = [...this.taggedTexts, ...response.data.data]
                     this.nextPageUrl = response.data.next_page_url
                 })
             }
@@ -36,6 +36,10 @@ export default {
             axios.get('/data/text/last?scope=all').then(response => {
                 this.taggedTexts = response.data.data
             })
+        },
+
+        redirect(text){
+            this.$router.push({name: 'texts-tagging', params: { text_user_id: text.id}});
         }
     }
 }

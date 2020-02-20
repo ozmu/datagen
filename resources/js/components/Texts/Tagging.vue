@@ -4,7 +4,7 @@
             <div class="card-body">
                 <div class="row card-row">
                     <div class="col-md-8">
-                        <div class="form-control text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
+                        <div class="form-control text" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
                     </div>
                     <div class="col-md-4">
                         <div class="entities">
@@ -72,10 +72,40 @@ export default {
             this.entities = response.data
         })
 
-        // Get Random Text
-        axios.get('/data/text/new').then(response => {
-            this.text = response.data
-        })
+        if (!Object.keys(this.$route.params).includes("text_user_id")){
+            // Get Random Text
+            this.getNewText();
+        }
+        else {
+            axios.get('/data/text.' + this.$route.params.text_user_id).then(response => {
+                if (response.status === 200){
+                    this.text = response.data.text
+                    var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi")
+                    var matches = response.data.tagged_text.match(pattern)
+                    for (var match in matches){
+                        var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1] // Entity Type
+                        var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1] // Entity Mention
+                        var type = this.entities.filter(type => type.entity === typeMatch)
+                        if (type.length){
+                            this.current.entity = type[0]
+                            var splitted = entityMatch.split(' ')
+                            for (var s in splitted){
+                                var filtered = this.words.filter(word => word.value === splitted[s])
+                                if (filtered.length === 1){
+                                    this.current.words.push(filtered[0])
+                                    this.addEntity()
+                                }
+                            }
+                        }
+                    }
+                    // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
+                    // this.text = response.data.text
+                    // this.text.text = response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#123122">$2</span>')
+                }
+            }).catch(e => {
+                console.log(e.response)
+            })
+        }
 
         // Add splice method to Strings
         String.prototype.splice = function(idx, rem, str) {
@@ -89,10 +119,17 @@ export default {
     },
 
     methods: {
+        getNewText(){
+            axios.get('/data/text/new').then(response => {
+                this.text = response.data
+            })
+            this.current = {entity: {}, words: []}
+        },
+
         splitWithIndex(str, delim){
             //str = str.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")
             var ret=[]
-            var splits=str.split(delim)
+            var splits= str ? str.split(delim) : [""]
             var index=0
             for(var i=0;i<splits.length;i++){
                 if (splits[i].length > 0){
@@ -171,7 +208,6 @@ export default {
 
         removeSelected(selected){
             var index = this.selected.indexOf(selected);
-            console.log(selected)
             this.selectedUpdateType = "decrease";
             this.selected.splice(index, 1);
             var regex = new RegExp('<span[|]class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
@@ -191,13 +227,18 @@ export default {
                             tagged_text: tagged_text
                         }
                         axios.post('/data/text', data).then(response => {
-                            console.log(response)
                             if (response.status === 200){
                                 this.$buefy.snackbar.open({
                                     message:  response.data.message,
                                     type: 'is-success',
                                     position: 'is-top',
-                                    actionText: 'OK'
+                                    actionText: 'OK',
+                                    indefinite: true,
+                                    onAction: () => {
+                                        this.selected = []
+                                        this.selectedUpdateType = ""
+                                        this.getNewText();
+                                    }
                                 })
                             }
                         }).catch(e => {

@@ -2350,7 +2350,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       if (this.nextPageUrl) {
         axios.get(this.nextPageUrl).then(function (response) {
-          _this.taggedTexts = [].concat(_toConsumableArray(_this.taggedTexts), [response.data.data]);
+          _this.taggedTexts = [].concat(_toConsumableArray(_this.taggedTexts), _toConsumableArray(response.data.data));
           _this.nextPageUrl = response.data.next_page_url;
         });
       }
@@ -2360,6 +2360,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       axios.get('/data/text/last?scope=all').then(function (response) {
         _this2.taggedTexts = response.data.data;
+      });
+    },
+    redirect: function redirect(text) {
+      this.$router.push({
+        name: 'texts-tagging',
+        params: {
+          text_user_id: text.id
+        }
       });
     }
   }
@@ -2447,11 +2455,53 @@ __webpack_require__.r(__webpack_exports__);
     // Get Entities
     axios.get('/data/utils/entities').then(function (response) {
       _this.entities = response.data;
-    }); // Get Random Text
+    });
 
-    axios.get('/data/text/new').then(function (response) {
-      _this.text = response.data;
-    }); // Add splice method to Strings
+    if (!Object.keys(this.$route.params).includes("text_user_id")) {
+      // Get Random Text
+      this.getNewText();
+    } else {
+      axios.get('/data/text.' + this.$route.params.text_user_id).then(function (response) {
+        if (response.status === 200) {
+          _this.text = response.data.text;
+          var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi");
+          var matches = response.data.tagged_text.match(pattern);
+
+          for (var match in matches) {
+            var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1]; // Entity Type
+
+            var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1]; // Entity Mention
+
+            var type = _this.entities.filter(function (type) {
+              return type.entity === typeMatch;
+            });
+
+            if (type.length) {
+              _this.current.entity = type[0];
+              var splitted = entityMatch.split(' ');
+
+              for (var s in splitted) {
+                var filtered = _this.words.filter(function (word) {
+                  return word.value === splitted[s];
+                });
+
+                if (filtered.length === 1) {
+                  _this.current.words.push(filtered[0]);
+
+                  _this.addEntity();
+                }
+              }
+            }
+          } // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
+          // this.text = response.data.text
+          // this.text.text = response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#123122">$2</span>')
+
+        }
+      })["catch"](function (e) {
+        console.log(e.response);
+      });
+    } // Add splice method to Strings
+
 
     String.prototype.splice = function (idx, rem, str) {
       return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
@@ -2463,10 +2513,21 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    getNewText: function getNewText() {
+      var _this2 = this;
+
+      axios.get('/data/text/new').then(function (response) {
+        _this2.text = response.data;
+      });
+      this.current = {
+        entity: {},
+        words: []
+      };
+    },
     splitWithIndex: function splitWithIndex(str, delim) {
       //str = str.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")
       var ret = [];
-      var splits = str.split(delim);
+      var splits = str ? str.split(delim) : [""];
       var index = 0;
 
       for (var i = 0; i < splits.length; i++) {
@@ -2518,13 +2579,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     addEntity: function addEntity() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!_.isEmpty(this.current.entity) && this.current.words.length > 0) {
         var filtered = this.selected.filter(function (s) {
           if (s.words.map(function (word) {
             return word.value;
-          }).join('|') === _this2.current.words.map(function (word) {
+          }).join('|') === _this3.current.words.map(function (word) {
             return word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ");
           }).join('|')) return true;
         });
@@ -2563,7 +2624,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     removeSelected: function removeSelected(selected) {
       var index = this.selected.indexOf(selected);
-      console.log(selected);
       this.selectedUpdateType = "decrease";
       this.selected.splice(index, 1);
       var regex = new RegExp('<span[|]class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(function (word) {
@@ -2578,7 +2638,7 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     send: function send() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.selected.length) {
         this.$buefy.dialog.confirm({
@@ -2586,27 +2646,32 @@ __webpack_require__.r(__webpack_exports__);
           onConfirm: function onConfirm() {
             var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
 
-            var tagged_text = _this3.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ');
+            var tagged_text = _this4.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ');
 
             var data = {
-              text_id: _this3.text.id,
+              text_id: _this4.text.id,
               tagged_text: tagged_text
             };
             axios.post('/data/text', data).then(function (response) {
-              console.log(response);
-
               if (response.status === 200) {
-                _this3.$buefy.snackbar.open({
+                _this4.$buefy.snackbar.open({
                   message: response.data.message,
                   type: 'is-success',
                   position: 'is-top',
-                  actionText: 'OK'
+                  actionText: 'OK',
+                  indefinite: true,
+                  onAction: function onAction() {
+                    _this4.selected = [];
+                    _this4.selectedUpdateType = "";
+
+                    _this4.getNewText();
+                  }
                 });
               }
             })["catch"](function (e) {
               console.log(e.response);
 
-              _this3.$buefy.snackbar.open({
+              _this4.$buefy.snackbar.open({
                 message: e.response.data.message,
                 type: 'is-warning',
                 position: 'is-top',
@@ -53712,9 +53777,18 @@ var render = function() {
     _c(
       "ul",
       _vm._l(_vm.taggedTexts, function(text, id) {
-        return _c("li", { key: id }, [
-          _vm._v("\n            " + _vm._s(text) + "\n        ")
-        ])
+        return _c(
+          "li",
+          {
+            key: id,
+            on: {
+              click: function($event) {
+                return _vm.redirect(text)
+              }
+            }
+          },
+          [_vm._v("\n            " + _vm._s(text) + "\n        ")]
+        )
       }),
       0
     ),
@@ -53751,19 +53825,21 @@ var render = function() {
       _c("div", { staticClass: "card-body" }, [
         _c("div", { staticClass: "row card-row" }, [
           _c("div", { staticClass: "col-md-8" }, [
-            _c("div", {
-              staticClass: "form-control text",
-              domProps: {
-                innerHTML: _vm._s(
-                  _vm.text.text
-                    .replace(
-                      /(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi,
-                      "$1 $2 $3 $4> $5 </span>"
+            _vm.text.text
+              ? _c("div", {
+                  staticClass: "form-control text",
+                  domProps: {
+                    innerHTML: _vm._s(
+                      _vm.text.text
+                        .replace(
+                          /(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi,
+                          "$1 $2 $3 $4> $5 </span>"
+                        )
+                        .replace(/[|]/gi, " ")
                     )
-                    .replace(/[|]/gi, " ")
-                )
-              }
-            })
+                  }
+                })
+              : _vm._e()
           ]),
           _vm._v(" "),
           _c(

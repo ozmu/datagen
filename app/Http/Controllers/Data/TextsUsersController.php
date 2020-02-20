@@ -76,7 +76,7 @@ class TextsUsersController extends Controller
      */
     public function show(Request $request, $id)
     {
-        return TextUser::find($id);
+        return TextUser::findOrFail($id)->with('text')->first();
     }
 
     /**
