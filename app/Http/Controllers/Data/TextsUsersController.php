@@ -42,10 +42,10 @@ class TextsUsersController extends Controller
     public function last(Request $request){
         if ($request->input('scope') == 'all'){
             return [
-                "data" => $request->user()->texts
+                "data" => $request->user()->texts()->with('text', 'tags')->get()
             ];
         }
-        return $request->user()->texts()->paginate($request->input('paginate') ? $request->input('paginate') : 5);
+        return $request->user()->texts()->with('text', 'tags')->paginate($request->input('paginate') ? $request->input('paginate') : 5);
     }
 
     /**
@@ -105,9 +105,9 @@ class TextsUsersController extends Controller
      */
     public function destroy(Request $request)
     {
-        $text = Text::where('id', $request->input('id'));
+        $text = TextUser::where('id', $request->input('id'));
         if ($text->count() && in_array($text->first()->id, $request->user()->texts->pluck('id')->toArray())){
-            return TextUser::destroy($id);
+            return TextUser::destroy($request->input('id'));
         }
         abort(403);
     }
