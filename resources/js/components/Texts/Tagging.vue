@@ -117,6 +117,7 @@ export default {
                         var lastIndex = this.words.findIndex(w => w.index === last.index)
                         var wordIndex = this.words.findIndex(w => w.index === word.index)
                         if (lastIndex < wordIndex){
+                            lastIndex++;
                             for (lastIndex; lastIndex <= wordIndex; lastIndex++){
                                 this.current.words.push(this.words[lastIndex])
                             }
@@ -158,6 +159,14 @@ export default {
                 })
                 this.current = {entity: {}, words: []}
             }
+            else {
+                this.$buefy.snackbar.open({
+                    message: "Please select entity and type!",
+                    type: 'is-warning',
+                    position: 'is-top',
+                    actionText: 'OK'
+                })
+            }
         },
 
         removeSelected(selected){
@@ -171,36 +180,46 @@ export default {
         },
 
         send(){
-            this.$buefy.dialog.confirm({
-                message: 'Continue on this task?',
-                onConfirm: () => {
-                    var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
-                    var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ')
-                    var data = {
-                        text_id: this.text.id,
-                        tagged_text: tagged_text
-                    }
-                    axios.post('/data/text', data).then(response => {
-                        console.log(response)
-                        if (response.status === 200){
+            if (this.selected.length){
+                this.$buefy.dialog.confirm({
+                    message: 'Continue on this task?',
+                    onConfirm: () => {
+                        var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
+                        var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ')
+                        var data = {
+                            text_id: this.text.id,
+                            tagged_text: tagged_text
+                        }
+                        axios.post('/data/text', data).then(response => {
+                            console.log(response)
+                            if (response.status === 200){
+                                this.$buefy.snackbar.open({
+                                    message:  response.data.message,
+                                    type: 'is-success',
+                                    position: 'is-top',
+                                    actionText: 'OK'
+                                })
+                            }
+                        }).catch(e => {
+                            console.log(e.response)
                             this.$buefy.snackbar.open({
-                                message:  response.data.message,
-                                type: 'is-success',
+                                message:  e.response.data.message,
+                                type: 'is-warning',
                                 position: 'is-top',
                                 actionText: 'OK'
                             })
-                        }
-                    }).catch(e => {
-                        console.log(e.response)
-                        this.$buefy.snackbar.open({
-                            message:  e.response.data.message,
-                            type: 'is-warning',
-                            position: 'is-top',
-                            actionText: 'OK'
                         })
-                    })
-                }
-            })
+                    }
+                })
+            }
+            else {
+                this.$buefy.snackbar.open({
+                    message: "Selected entities must at least 1!",
+                    type: 'is-warning',
+                    position: 'is-top',
+                    actionText: 'OK'
+                })
+            }
         }
     }
 }
