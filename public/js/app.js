@@ -2337,13 +2337,17 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       widgets: {
-        balance: {}
+        balance: {},
+        texts: {},
+        tags: {}
       },
       msg: 'Hello World'
     };
   },
   mounted: function mounted() {
     this.getWidgets("balance");
+    this.getWidgets("texts");
+    this.getWidgets("tags");
   },
   methods: {
     getWidgets: function getWidgets(scope) {
@@ -21473,7 +21477,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.create-btn[data-v-4782960d] {\n    float: right;\n}\n", ""]);
+exports.push([module.i, "\n.create-btn[data-v-4782960d] {\n    float: right;\n}\nspan.tag.is-info[data-v-4782960d] {\n    width: 50px;\n}\n", ""]);
 
 // exports
 
@@ -21492,7 +21496,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.home-widget[data-v-62bf918c] {\n    color: #000000 !important;\n}\n", ""]);
+exports.push([module.i, "\n.home-widget[data-v-62bf918c] {\n    color: #000000 !important;\n}\nspan.sub-text[data-v-62bf918c] {\n    font-size: 10px;\n}\n", ""]);
 
 // exports
 
@@ -53558,7 +53562,14 @@ var render = function() {
                 })
               ]),
               _vm._v(" "),
-              _c("button", { on: { click: _vm.store } }, [_vm._v("Kaydet")])
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary create-btn",
+                  on: { click: _vm.store }
+                },
+                [_vm._v("Kaydet")]
+              )
             ])
           ])
         ]
@@ -53603,7 +53614,14 @@ var render = function() {
                 })
               ]),
               _vm._v(" "),
-              _c("button", { on: { click: _vm.update } }, [_vm._v("Kaydet")])
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary create-btn",
+                  on: { click: _vm.update }
+                },
+                [_vm._v("Kaydet")]
+              )
             ])
           ])
         ]
@@ -53751,7 +53769,7 @@ var render = function() {
                             {
                               attrs: {
                                 field: "balance",
-                                label: "Balance",
+                                label: "Balance (TL)",
                                 width: "10%",
                                 sortable: ""
                               }
@@ -54113,7 +54131,10 @@ var render = function() {
                     _vm._v(_vm._s(_vm.widgets.balance.notVerifiedBalance)),
                     _c("b-icon", {
                       attrs: { icon: "currency-try", "custom-size": "mdi-14px" }
-                    })
+                    }),
+                    _c("span", { staticClass: "sub-text" }, [
+                      _vm._v("not verified balance")
+                    ])
                   ],
                   1
                 )
@@ -54122,12 +54143,67 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _vm._m(1),
+        _c("div", { staticClass: "col-lg-4" }, [
+          _c("div", { staticClass: "card bg-blue-400 home-widget" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "d-flex" }, [
+                _c("h3", { staticClass: "font-weight-semibold mb-0" }, [
+                  _vm._v(_vm._s(_vm.widgets.texts.today))
+                ]),
+                _vm._v(" "),
+                _vm._m(1)
+              ]),
+              _vm._v(" "),
+              _c("div", [
+                _vm._v(
+                  "\n                            Today marked texts\n                            "
+                ),
+                _c("div", { staticClass: "font-size-sm opacity-75" }, [
+                  _vm._v(_vm._s(_vm.widgets.texts.all) + " "),
+                  _c("span", { staticClass: "sub-text" }, [
+                    _vm._v("all marked texts")
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ]),
         _vm._v(" "),
-        _vm._m(2)
+        _c("div", { staticClass: "col-lg-4" }, [
+          _c("div", { staticClass: "card bg-teal-400 home-widget" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "d-flex" }, [
+                _c("h3", { staticClass: "font-weight-semibold mb-0" }, [
+                  _vm._v(_vm._s(_vm.widgets.tags.today))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "span",
+                  {
+                    staticClass:
+                      "badge bg-teal-800 badge-pill align-self-center ml-auto"
+                  },
+                  [_vm._v("+53,6%")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", [
+                _vm._v(
+                  "\n                            Today tags count\n                            "
+                ),
+                _c("div", { staticClass: "font-size-sm opacity-75" }, [
+                  _vm._v(_vm._s(_vm.widgets.tags.all) + " "),
+                  _c("span", { staticClass: "sub-text" }, [
+                    _vm._v("all tags count")
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
       ]),
       _vm._v(" "),
-      _vm._m(3)
+      _vm._m(2)
     ])
   ])
 }
@@ -54147,66 +54223,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-lg-4" }, [
-      _c("div", { staticClass: "card bg-blue-400 home-widget" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c("div", { staticClass: "d-flex" }, [
-            _c("h3", { staticClass: "font-weight-semibold mb-0" }, [
-              _vm._v("$18,390")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "list-icons ml-auto" }, [
-              _c("a", {
-                staticClass: "list-icons-item",
-                attrs: { "data-action": "reload" }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", [
-            _vm._v(
-              "\n                            Today's revenue\n                            "
-            ),
-            _c("div", { staticClass: "font-size-sm opacity-75" }, [
-              _vm._v("$37,578 avg")
-            ])
-          ])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-lg-4" }, [
-      _c("div", { staticClass: "card bg-teal-400 home-widget" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c("div", { staticClass: "d-flex" }, [
-            _c("h3", { staticClass: "font-weight-semibold mb-0" }, [
-              _vm._v("3,450")
-            ]),
-            _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass:
-                  "badge bg-teal-800 badge-pill align-self-center ml-auto"
-              },
-              [_vm._v("+53,6%")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", [
-            _vm._v(
-              "\n                            Members online\n                            "
-            ),
-            _c("div", { staticClass: "font-size-sm opacity-75" }, [
-              _vm._v("489 avg")
-            ])
-          ])
-        ])
-      ])
+    return _c("div", { staticClass: "list-icons ml-auto" }, [
+      _c("a", {
+        staticClass: "list-icons-item",
+        attrs: { "data-action": "reload" }
+      })
     ])
   },
   function() {

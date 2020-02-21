@@ -31,7 +31,7 @@
                                     {{ props.row.email }}
                                 </b-table-column>
                                 
-                                <b-table-column field="balance" label="Balance" width="10%" sortable>
+                                <b-table-column field="balance" label="Balance (TL)" width="10%" sortable>
                                     <b-tag type="is-info">
                                         {{ props.row.balance }}
                                         <b-icon icon="currency-try" custom-size="mdi-14px"></b-icon>
@@ -208,5 +208,8 @@ export default {
 <style scoped>
 .create-btn {
     float: right;
+}
+span.tag.is-info {
+    width: 50px;
 }
 </style>

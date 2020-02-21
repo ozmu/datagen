@@ -65,7 +65,7 @@ class User extends Authenticatable
             return $this->texts->where('is_verified', $verified)->count() * $coin_factor;
         }
         else if ($balance_calculation_type == "verified_tags") {
-            return $this->tags->where('is_verified', $verified)->count() * $coin_factor;
+            return $this->tags()->where('is_verified', $verified)->count() * $coin_factor;
         }
         else {
             // Verified Texts by default!

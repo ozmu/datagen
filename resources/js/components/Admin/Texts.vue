@@ -50,7 +50,7 @@
                         <label>Metin</label>
                         <textarea class="form-control" cols="5" rows="3" v-model="create.data.text"></textarea>
                     </div>
-                    <button @click="store">Kaydet</button>
+                    <button class="btn btn-primary create-btn" @click="store">Kaydet</button>
                 </div>
             </div>
         </b-modal>
@@ -64,7 +64,7 @@
                         <label>Metin</label>
                         <textarea class="form-control" cols="5" rows="3" v-model="edit.data.text"></textarea>
                     </div>
-                    <button @click="update">Kaydet</button>
+                    <button class="btn btn-primary create-btn" @click="update">Kaydet</button>
                 </div>
             </div>
         </b-modal>

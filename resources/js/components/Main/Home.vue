@@ -17,7 +17,7 @@
                             </div>
                             <div>
                                 Balance
-                                <div class="font-size-sm opacity-75">{{ widgets.balance.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon></div>
+                                <div class="font-size-sm opacity-75">{{ widgets.balance.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon><span class="sub-text">not verified balance</span></div>
                             </div>
                         </div>
                     </div>
@@ -30,15 +30,15 @@
                     <div class="card bg-blue-400 home-widget">
                         <div class="card-body">
                             <div class="d-flex">
-                                <h3 class="font-weight-semibold mb-0">$18,390</h3>
+                                <h3 class="font-weight-semibold mb-0">{{ widgets.texts.today }}</h3>
                                 <div class="list-icons ml-auto">
                                     <a class="list-icons-item" data-action="reload"></a>
                                 </div>
                             </div>
                             
                             <div>
-                                Today's revenue
-                                <div class="font-size-sm opacity-75">$37,578 avg</div>
+                                Today marked texts
+                                <div class="font-size-sm opacity-75">{{ widgets.texts.all }} <span class="sub-text">all marked texts</span></div>
                             </div>
                         </div>
                     </div>
@@ -51,13 +51,13 @@
                     <div class="card bg-teal-400 home-widget">
                         <div class="card-body">
                             <div class="d-flex">
-                                <h3 class="font-weight-semibold mb-0">3,450</h3>
+                                <h3 class="font-weight-semibold mb-0">{{ widgets.tags.today }}</h3>
                                 <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">+53,6%</span>
                             </div>
                             
                             <div>
-                                Members online
-                                <div class="font-size-sm opacity-75">489 avg</div>
+                                Today tags count
+                                <div class="font-size-sm opacity-75">{{ widgets.tags.all }} <span class="sub-text">all tags count</span></div>
                             </div>
                         </div>
                     </div>
@@ -122,7 +122,9 @@ export default {
     data(){
         return {
             widgets: {
-                balance: {}
+                balance: {},
+                texts: {},
+                tags: {}
             },
             msg: 'Hello World'
         }
@@ -130,6 +132,8 @@ export default {
 
     mounted(){
         this.getWidgets("balance")
+        this.getWidgets("texts")
+        this.getWidgets("tags")
     },
 
     methods: {
@@ -145,5 +149,8 @@ export default {
 <style scoped>
 .home-widget {
     color: #000000 !important;
+}
+span.sub-text {
+    font-size: 10px;
 }
 </style>
