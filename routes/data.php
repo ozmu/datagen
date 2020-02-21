@@ -26,6 +26,7 @@ Route::delete('text/destroy', 'TextsUsersController@destroy');
 Route::group(['prefix' => 'utils'], function(){
     Route::get('entities', 'UtilsController@entities');
     Route::get('widgets', 'UtilsController@widgets');
+    Route::get('charts', 'UtilsController@charts');
 });
 
 // Admin

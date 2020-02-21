@@ -34,4 +34,22 @@ class UtilsController extends Controller
             ];
         }
     }
+
+    public function charts(Request $request){
+        $scope = $request->input('scope');
+        if ($scope == "gains"){
+            // Kazançlar
+        }
+        else if ($scope == "texts"){
+            // günlük düzenlenen metin sayısı
+        }
+        else if ($scope == "tags"){
+            if ($period == "daily"){
+                // günlük işaretlenen tag oranı
+            }
+            else {
+                // tüm işaretlenen tag oranı
+            }
+        }
+    }
 }
