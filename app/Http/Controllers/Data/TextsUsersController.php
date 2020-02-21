@@ -19,19 +19,8 @@ class TextsUsersController extends Controller
      */
     public function index(Request $request)
     {
-        $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first()->value : 10;
-        $count = 0;
-        while (true){
-            $random = Text::all()->random();
-            if (!in_array($random->id, $request->user()->texts()->pluck('text_id')->toArray()) && $random->users()->get()->count() <= $maximum_user_for_text){
-                break;
-            }
-            $count++;
-            if ($count > Text::count()){
-                return response(null, 204);
-            }
-        }
-        return $random;
+        $text = Text::random($request->user()->id);
+        return collect($text)->isEmpty() ? response(null, 204) : $text;
     }
 
     /**
