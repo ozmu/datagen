@@ -2,6 +2,7 @@
 
 use App\Models\Text;
 use App\Models\Tag;
+use App\Models\Entity;
 use App\Models\TextUser;
 use Illuminate\Database\Seeder;
 
@@ -19,8 +20,9 @@ class TextAndTagSeeder extends Seeder
 
         $textUser1 = TextUser::create(['user_id' => 1, 'text_id' => $text1->id, 'tagged_text' => 'Hello <START:location> World <END> . I\'m from <START:location> Spain <END>']);
         $textUser2 = TextUser::create(['user_id' => 1, 'text_id' => $text2->id, 'tagged_text' => 'Fatih was born in <START:location> Istanbul <END>']);
-        $tag1 = Tag::create(['text_user_id' => $textUser1->id, 'type' => 'location', 'entity' => 'World']);
-        $tag2 = Tag::create(['text_user_id' => $textUser1->id, 'type' => 'location', 'entity' => 'Spain', 'is_verified' => true]);
-        $tag3 = Tag::create(['text_user_id' => $textUser2->id, 'type' => 'location', 'entity' => 'Istanbul']);
+        $entity = Entity::where('entity', 'LOCATION')->first();
+        $tag1 = Tag::create(['text_user_id' => $textUser1->id, 'entity_type_id' => $entity->id, 'entity_mention' => 'World']);
+        $tag2 = Tag::create(['text_user_id' => $textUser1->id, 'entity_type_id' => $entity->id, 'entity_mention' => 'Spain', 'is_verified' => true]);
+        $tag3 = Tag::create(['text_user_id' => $textUser2->id, 'entity_type_id' => $entity->id, 'entity_mention' => 'Istanbul']);
     }
 }

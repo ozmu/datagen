@@ -31,10 +31,10 @@ class TextsUsersController extends Controller
     public function last(Request $request){
         if ($request->input('scope') == 'all'){
             return [
-                "data" => $request->user()->texts()->with('text', 'tags')->get()
+                "data" => $request->user()->texts()->with('text', 'tags', 'tags.entityType')->get()
             ];
         }
-        return $request->user()->texts()->with('text', 'tags')->paginate($request->input('paginate') ? $request->input('paginate') : 5);
+        return $request->user()->texts()->with('text', 'tags', 'tags.entityType')->paginate($request->input('paginate') ? $request->input('paginate') : 5);
     }
 
     /**

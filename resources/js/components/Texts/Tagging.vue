@@ -171,7 +171,7 @@ export default {
                         position: 'is-top',
                         actionText: 'OK'
                     })
-                    this.$router.push({name: 'main-home'})
+                    this.$router.push({name: 'texts-tagged'})
                 }
             })
             this.current = {entity: {}, words: []}

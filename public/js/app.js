@@ -2449,6 +2449,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2714,7 +2718,7 @@ __webpack_require__.r(__webpack_exports__);
           });
 
           _this2.$router.push({
-            name: 'main-home'
+            name: 'texts-tagged'
           });
         }
       });
@@ -54528,23 +54532,62 @@ var render = function() {
                         _c(
                           "b-table-column",
                           {
-                            attrs: { label: "Tags", width: "20%", sortable: "" }
+                            attrs: {
+                              label: "Not Verified Tags",
+                              width: "15%",
+                              sortable: ""
+                            }
                           },
-                          _vm._l(props.row.tags, function(tag, id) {
-                            return _c(
-                              "b-tag",
-                              {
-                                key: id,
-                                attrs: {
-                                  type: tag.is_verified
-                                    ? "is-success"
-                                    : "is-danger",
-                                  title: tag.type
-                                }
-                              },
-                              [_vm._v(_vm._s(tag.entity))]
-                            )
-                          }),
+                          _vm._l(
+                            props.row.tags.filter(function(tag) {
+                              return !tag.is_verified
+                            }),
+                            function(tag, id) {
+                              return _c(
+                                "b-tag",
+                                {
+                                  key: id,
+                                  style: "background:" + tag.entity_type.color,
+                                  attrs: {
+                                    type: "is-danger",
+                                    title: tag.entity_type.entity
+                                  }
+                                },
+                                [_vm._v(_vm._s(tag.entity_mention))]
+                              )
+                            }
+                          ),
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-table-column",
+                          {
+                            attrs: {
+                              label: "Verified Tags",
+                              width: "15%",
+                              sortable: ""
+                            }
+                          },
+                          _vm._l(
+                            props.row.tags.filter(function(tag) {
+                              return tag.is_verified
+                            }),
+                            function(tag, id) {
+                              return _c(
+                                "b-tag",
+                                {
+                                  key: id,
+                                  style: "background:" + tag.entity_type.color,
+                                  attrs: {
+                                    type: "is-success",
+                                    title: tag.entity_type.entity
+                                  }
+                                },
+                                [_vm._v(_vm._s(tag.entity_mention))]
+                              )
+                            }
+                          ),
                           1
                         ),
                         _vm._v(" "),
@@ -54553,7 +54596,7 @@ var render = function() {
                           {
                             attrs: {
                               label: "Tagged Text",
-                              width: "40%",
+                              width: "30%",
                               sortable: ""
                             }
                           },

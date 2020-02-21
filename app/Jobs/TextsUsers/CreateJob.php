@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\TextUser;
 use App\Models\Tag;
 use App\Models\Setting;
+use App\Models\Entity;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -37,9 +38,12 @@ class CreateJob implements ShouldQueue
         for ($c = 0; $c < count($matches[2]); $c++){
             $data = [
                 "text_user_id" => $this->textUser->id,
-                "entity" => trim($matches[2][$c]),
-                "type" => $matches[1][$c]
+                "entity_mention" => trim($matches[2][$c]),
             ];
+            $entity = Entity::where('entity', strtoupper($matches[1][$c]));
+            if ($entity->count()){
+                $data["entity_type_id"] = $entity->first()->id;
+            }
             $created = Tag::create($data);
         }
     }
@@ -78,7 +82,7 @@ class CreateJob implements ShouldQueue
         foreach($allTexts as $text){
             $tags = Tag::where('text_user_id', $text->id)->get();
             foreach ($tags as $tag){
-                if (in_array($tag->type . ":" . $tag->entity, $verified_tags)){
+                if (in_array($tag->entityType->entity . ":" . $tag->entity_mention, $verified_tags)){
                     $tag->is_verified = true;
                     $tag->verified_at = (string) Carbon::now();
                     $tag->save();
