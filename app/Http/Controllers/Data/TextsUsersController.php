@@ -23,7 +23,7 @@ class TextsUsersController extends Controller
         $count = 0;
         while (true){
             $random = Text::all()->random();
-            if (!in_array($random->id, $request->user()->texts->pluck('text_id')->toArray()) && $random->users()->get()->count() <= $maximum_user_for_text){
+            if (!in_array($random->id, $request->user()->texts()->pluck('text_id')->toArray()) && $random->users()->get()->count() <= $maximum_user_for_text){
                 break;
             }
             $count++;

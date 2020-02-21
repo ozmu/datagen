@@ -341,12 +341,6 @@
 								<span>Son işaretlenenler</span>
 							</router-link>
 						</li>
-						<li class="nav-item">
-							<router-link :to="{name: 'texts-statistics'}" class="nav-link" :class="{'active': $route.name == 'texts-statistics'}">
-								<i class="icon-stats-dots"></i> 
-								<span>İstatistik</span>
-							</router-link>
-						</li>
 						<!-- /texts -->
 
 						<!-- Support -->

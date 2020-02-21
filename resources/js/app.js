@@ -35,7 +35,7 @@ var router = new VueRouter({
     routes
 })
 
-
+/*
 Vue.component('admin-users', require('./components/Admin/Users.vue').default);
 Vue.component('admin-texts', require('./components/Admin/Texts.vue').default);
 Vue.component('admin-settings', require('./components/Admin/Settings.vue').default);
@@ -46,7 +46,8 @@ Vue.component('support-contact', require('./components/Support/Contact.vue').def
 
 Vue.component('texts-tagging', require('./components/Texts/Tagging.vue').default);
 Vue.component('texts-tagged', require('./components/Texts/Tagged.vue').default);
-Vue.component('texts-statistics', require('./components/Texts/Statistics.vue').default);
+*/
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

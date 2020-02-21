@@ -9,15 +9,18 @@
                     <!-- Today's revenue -->
                     <div class="card bg-blue-400 home-widget">
                         <div class="card-body">
+                            <div class="overlay" v-if="widgets.balance.loading">
+                                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                            </div>
                             <div class="d-flex">
-                                <h3 class="font-weight-semibold mb-0">{{ widgets.balance.balance }}<b-icon icon="currency-try" custom-size="mdi-18px"></b-icon></h3>
+                                <h3 class="font-weight-semibold mb-0">{{ widgets.balance.data.balance }}<b-icon icon="currency-try" custom-size="mdi-18px"></b-icon></h3>
                                 <div class="list-icons ml-auto">
                                     <a class="list-icons-item" data-action="reload"></a>
                                 </div>
                             </div>
                             <div>
                                 Balance
-                                <div class="font-size-sm opacity-75">{{ widgets.balance.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon><span class="sub-text">not verified balance</span></div>
+                                <div class="font-size-sm opacity-75">{{ widgets.balance.data.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon><span class="sub-text">not verified balance</span></div>
                             </div>
                         </div>
                     </div>
@@ -29,8 +32,11 @@
                     <!-- Today's revenue -->
                     <div class="card bg-blue-400 home-widget">
                         <div class="card-body">
+                            <div class="overlay" v-if="widgets.texts.loading">
+                                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                            </div>
                             <div class="d-flex">
-                                <h3 class="font-weight-semibold mb-0">{{ widgets.texts.today }}</h3>
+                                <h3 class="font-weight-semibold mb-0">{{ widgets.texts.data.today }}</h3>
                                 <div class="list-icons ml-auto">
                                     <a class="list-icons-item" data-action="reload"></a>
                                 </div>
@@ -38,7 +44,7 @@
                             
                             <div>
                                 Today marked texts
-                                <div class="font-size-sm opacity-75">{{ widgets.texts.all }} <span class="sub-text">all marked texts</span></div>
+                                <div class="font-size-sm opacity-75">{{ widgets.texts.data.all }} <span class="sub-text">all marked texts</span></div>
                             </div>
                         </div>
                     </div>
@@ -50,14 +56,17 @@
                     <!-- Members online -->
                     <div class="card bg-teal-400 home-widget">
                         <div class="card-body">
+                            <div class="overlay" v-if="widgets.tags.loading">
+                                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                            </div>
                             <div class="d-flex">
-                                <h3 class="font-weight-semibold mb-0">{{ widgets.tags.today }}</h3>
+                                <h3 class="font-weight-semibold mb-0">{{ widgets.tags.data.today }}</h3>
                                 <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">+53,6%</span>
                             </div>
                             
                             <div>
                                 Today tags count
-                                <div class="font-size-sm opacity-75">{{ widgets.tags.all }} <span class="sub-text">all tags count</span></div>
+                                <div class="font-size-sm opacity-75">{{ widgets.tags.data.all }} <span class="sub-text">all tags count</span></div>
                             </div>
                         </div>
                     </div>
@@ -122,9 +131,18 @@ export default {
     data(){
         return {
             widgets: {
-                balance: {},
-                texts: {},
-                tags: {}
+                balance: {
+                    loading: true,
+                    data: {}
+                },
+                texts: {
+                    loading: true,
+                    data: {}
+                },
+                tags: {
+                    loading: true,
+                    data: {}
+                }
             },
             msg: 'Hello World'
         }
@@ -139,7 +157,8 @@ export default {
     methods: {
         getWidgets(scope){
             axios.get('/data/utils/widgets?scope=' + scope).then(response => {
-                this.widgets[scope] = response.data
+                this.widgets[scope].data = response.data
+                this.widgets[scope].loading = false
             })
         }
     }

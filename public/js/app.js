@@ -2333,13 +2333,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       widgets: {
-        balance: {},
-        texts: {},
-        tags: {}
+        balance: {
+          loading: true,
+          data: {}
+        },
+        texts: {
+          loading: true,
+          data: {}
+        },
+        tags: {
+          loading: true,
+          data: {}
+        }
       },
       msg: 'Hello World'
     };
@@ -2354,7 +2372,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get('/data/utils/widgets?scope=' + scope).then(function (response) {
-        _this.widgets[scope] = response.data;
+        _this.widgets[scope].data = response.data;
+        _this.widgets[scope].loading = false;
       });
     }
   }
@@ -54104,12 +54123,16 @@ var render = function() {
         _c("div", { staticClass: "col-lg-4" }, [
           _c("div", { staticClass: "card bg-blue-400 home-widget" }, [
             _c("div", { staticClass: "card-body" }, [
+              _vm.widgets.balance.loading
+                ? _c("div", { staticClass: "overlay" }, [_vm._m(0)])
+                : _vm._e(),
+              _vm._v(" "),
               _c("div", { staticClass: "d-flex" }, [
                 _c(
                   "h3",
                   { staticClass: "font-weight-semibold mb-0" },
                   [
-                    _vm._v(_vm._s(_vm.widgets.balance.balance)),
+                    _vm._v(_vm._s(_vm.widgets.balance.data.balance)),
                     _c("b-icon", {
                       attrs: { icon: "currency-try", "custom-size": "mdi-18px" }
                     })
@@ -54117,7 +54140,7 @@ var render = function() {
                   1
                 ),
                 _vm._v(" "),
-                _vm._m(0)
+                _vm._m(1)
               ]),
               _vm._v(" "),
               _c("div", [
@@ -54128,7 +54151,7 @@ var render = function() {
                   "div",
                   { staticClass: "font-size-sm opacity-75" },
                   [
-                    _vm._v(_vm._s(_vm.widgets.balance.notVerifiedBalance)),
+                    _vm._v(_vm._s(_vm.widgets.balance.data.notVerifiedBalance)),
                     _c("b-icon", {
                       attrs: { icon: "currency-try", "custom-size": "mdi-14px" }
                     }),
@@ -54146,12 +54169,16 @@ var render = function() {
         _c("div", { staticClass: "col-lg-4" }, [
           _c("div", { staticClass: "card bg-blue-400 home-widget" }, [
             _c("div", { staticClass: "card-body" }, [
+              _vm.widgets.texts.loading
+                ? _c("div", { staticClass: "overlay" }, [_vm._m(2)])
+                : _vm._e(),
+              _vm._v(" "),
               _c("div", { staticClass: "d-flex" }, [
                 _c("h3", { staticClass: "font-weight-semibold mb-0" }, [
-                  _vm._v(_vm._s(_vm.widgets.texts.today))
+                  _vm._v(_vm._s(_vm.widgets.texts.data.today))
                 ]),
                 _vm._v(" "),
-                _vm._m(1)
+                _vm._m(3)
               ]),
               _vm._v(" "),
               _c("div", [
@@ -54159,7 +54186,7 @@ var render = function() {
                   "\n                            Today marked texts\n                            "
                 ),
                 _c("div", { staticClass: "font-size-sm opacity-75" }, [
-                  _vm._v(_vm._s(_vm.widgets.texts.all) + " "),
+                  _vm._v(_vm._s(_vm.widgets.texts.data.all) + " "),
                   _c("span", { staticClass: "sub-text" }, [
                     _vm._v("all marked texts")
                   ])
@@ -54172,9 +54199,13 @@ var render = function() {
         _c("div", { staticClass: "col-lg-4" }, [
           _c("div", { staticClass: "card bg-teal-400 home-widget" }, [
             _c("div", { staticClass: "card-body" }, [
+              _vm.widgets.tags.loading
+                ? _c("div", { staticClass: "overlay" }, [_vm._m(4)])
+                : _vm._e(),
+              _vm._v(" "),
               _c("div", { staticClass: "d-flex" }, [
                 _c("h3", { staticClass: "font-weight-semibold mb-0" }, [
-                  _vm._v(_vm._s(_vm.widgets.tags.today))
+                  _vm._v(_vm._s(_vm.widgets.tags.data.today))
                 ]),
                 _vm._v(" "),
                 _c(
@@ -54192,7 +54223,7 @@ var render = function() {
                   "\n                            Today tags count\n                            "
                 ),
                 _c("div", { staticClass: "font-size-sm opacity-75" }, [
-                  _vm._v(_vm._s(_vm.widgets.tags.all) + " "),
+                  _vm._v(_vm._s(_vm.widgets.tags.data.all) + " "),
                   _c("span", { staticClass: "sub-text" }, [
                     _vm._v("all tags count")
                   ])
@@ -54203,11 +54234,22 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _vm._m(2)
+      _vm._m(5)
     ])
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -54223,11 +54265,33 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "list-icons ml-auto" }, [
       _c("a", {
         staticClass: "list-icons-item",
         attrs: { "data-action": "reload" }
       })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "lds-ring" }, [
+      _c("div"),
+      _c("div"),
+      _c("div"),
+      _c("div")
     ])
   },
   function() {
@@ -70105,14 +70169,19 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_page_transition__WEBPACK_IMPO
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: _routes__WEBPACK_IMPORTED_MODULE_5__["default"]
 });
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('admin-users', __webpack_require__(/*! ./components/Admin/Users.vue */ "./resources/js/components/Admin/Users.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('admin-texts', __webpack_require__(/*! ./components/Admin/Texts.vue */ "./resources/js/components/Admin/Texts.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('admin-settings', __webpack_require__(/*! ./components/Admin/Settings.vue */ "./resources/js/components/Admin/Settings.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('main-home', __webpack_require__(/*! ./components/Main/Home.vue */ "./resources/js/components/Main/Home.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('support-contact', __webpack_require__(/*! ./components/Support/Contact.vue */ "./resources/js/components/Support/Contact.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('texts-tagging', __webpack_require__(/*! ./components/Texts/Tagging.vue */ "./resources/js/components/Texts/Tagging.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('texts-tagged', __webpack_require__(/*! ./components/Texts/Tagged.vue */ "./resources/js/components/Texts/Tagged.vue")["default"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('texts-statistics', __webpack_require__(/*! ./components/Texts/Statistics.vue */ "./resources/js/components/Texts/Statistics.vue")["default"]);
+/*
+Vue.component('admin-users', require('./components/Admin/Users.vue').default);
+Vue.component('admin-texts', require('./components/Admin/Texts.vue').default);
+Vue.component('admin-settings', require('./components/Admin/Settings.vue').default);
+
+Vue.component('main-home', require('./components/Main/Home.vue').default);
+
+Vue.component('support-contact', require('./components/Support/Contact.vue').default);
+
+Vue.component('texts-tagging', require('./components/Texts/Tagging.vue').default);
+Vue.component('texts-tagged', require('./components/Texts/Tagged.vue').default);
+*/
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -70564,38 +70633,6 @@ component.options.__file = "resources/js/components/Support/Contact.vue"
 
 /***/ }),
 
-/***/ "./resources/js/components/Texts/Statistics.vue":
-/*!******************************************************!*\
-  !*** ./resources/js/components/Texts/Statistics.vue ***!
-  \******************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-var render, staticRenderFns
-var script = {}
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_0__["default"])(
-  script,
-  render,
-  staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-component.options.__file = "resources/js/components/Texts/Statistics.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
 /***/ "./resources/js/components/Texts/Tagged.vue":
 /*!**************************************************!*\
   !*** ./resources/js/components/Texts/Tagged.vue ***!
@@ -70785,8 +70822,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Admin_Settings_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Admin/Settings.vue */ "./resources/js/components/Admin/Settings.vue");
 /* harmony import */ var _components_Texts_Tagging_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Texts/Tagging.vue */ "./resources/js/components/Texts/Tagging.vue");
 /* harmony import */ var _components_Texts_Tagged_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/Texts/Tagged.vue */ "./resources/js/components/Texts/Tagged.vue");
-/* harmony import */ var _components_Texts_Statistics_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Texts/Statistics.vue */ "./resources/js/components/Texts/Statistics.vue");
-/* harmony import */ var _components_Support_Contact_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/Support/Contact.vue */ "./resources/js/components/Support/Contact.vue");
+/* harmony import */ var _components_Support_Contact_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Support/Contact.vue */ "./resources/js/components/Support/Contact.vue");
 // BEGIN:Main Routes
 
 var main = [{
@@ -70816,7 +70852,6 @@ var admin = [{
 
 
 
-
 var texts = [{
   path: '/tagging',
   name: 'texts-tagging',
@@ -70825,10 +70860,6 @@ var texts = [{
   path: '/tagged',
   name: 'texts-tagged',
   component: _components_Texts_Tagged_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
-}, {
-  path: '/statistics',
-  name: 'texts-statistics',
-  component: _components_Texts_Statistics_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
 }]; // END:Texts Routes
 // BEGIN:Support Routes
 
@@ -70836,7 +70867,7 @@ var texts = [{
 var support = [{
   path: '/support',
   name: 'support-contact',
-  component: _components_Support_Contact_vue__WEBPACK_IMPORTED_MODULE_7__["default"]
+  component: _components_Support_Contact_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
 }]; // END:Support Routes
 
 var routes = [].concat(main, admin, texts, support);
