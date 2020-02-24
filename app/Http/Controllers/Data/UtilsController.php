@@ -90,8 +90,14 @@ class UtilsController extends Controller
         if ($scope == "tags" && $request->input('period') == "all"){
             $tags = [];
             foreach($request->user()->tags() as $tag){
-                array_push($tags, $tag["entity_type"]["entity"]);
+                array_push($tags, $tag["entity_type"]);
             }
+            return collect($tags)->groupBy('entity')->map(function ($item, $key){
+                return [
+                    "count" => $item->count(),
+                    "color" => $item[0]["color"]
+                ];
+            });
             $data->put('data', array_count_values($tags));
         }
         return $data;

@@ -174,7 +174,6 @@ export default {
                         subCaption : "All marked tags",
                         showValues:"1",
                         showPercentInTooltip : "0",
-                        numberPrefix : "$",
                         enableMultiSlicing:"1",
                         theme: "fusion"
                     },
@@ -232,8 +231,8 @@ export default {
         /** Pie chart */
         axios.get('/data/utils/charts?scope=tags&period=all').then(response => {
             var data = []
-            for (let [key, value] of Object.entries(response.data.data)) {
-                data.push({label: key.charAt(0) + key.slice(1).toLowerCase(), value: value})
+            for (let [key, value] of Object.entries(response.data)) {
+                data.push({label: key.charAt(0) + key.slice(1).toLowerCase(), value: value.count, color: value.color})
             }
             this.dataSource.pie.data = data
             this.charts.pie.loading = false
