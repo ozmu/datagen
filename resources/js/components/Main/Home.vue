@@ -76,51 +76,37 @@
             </div>
             <!-- /quick stats boxes -->
 
-            <!-- Marketing campaigns -->
             <div class="card">
-                <div class="card-header header-elements-sm-inline">
-                    <h6 class="card-title">Marketing campaigns</h6>
-                    <div class="header-elements">
-                        <span class="badge bg-success badge-pill">28 active</span>
-                        <div class="list-icons ml-3">
-                            <div class="dropdown">
-                                <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"><i class="icon-menu7"></i></a>
-                                <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item"><i class="icon-sync"></i> Update data</a>
-                                    <a href="#" class="dropdown-item"><i class="icon-list-unordered"></i> Detailed log</a>
-                                    <a href="#" class="dropdown-item"><i class="icon-pie5"></i> Statistics</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item"><i class="icon-cross3"></i> Clear list</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-body d-sm-flex align-items-sm-center justify-content-sm-between flex-sm-wrap">
-                    <div class="d-flex align-items-center mb-3 mb-sm-0">
-                        <div id="campaigns-donut"></div>
-                        <div class="ml-3">
-                            <h5 class="font-weight-semibold mb-0">38,289 <span class="text-success font-size-sm font-weight-normal"><i class="icon-arrow-up12"></i> (+16.2%)</span></h5>
-                            <span class="badge badge-mark border-success mr-1"></span> <span class="text-muted">May 12, 12:30 am</span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center mb-3 mb-sm-0">
-                        <div id="campaign-status-pie"></div>
-                        <div class="ml-3">
-                            <h5 class="font-weight-semibold mb-0">2,458 <span class="text-danger font-size-sm font-weight-normal"><i class="icon-arrow-down12"></i> (-4.9%)</span></h5>
-                            <span class="badge badge-mark border-danger mr-1"></span> <span class="text-muted">Jun 4, 4:00 am</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <a href="#" class="btn bg-indigo-300"><i class="icon-statistics mr-2"></i> View report</a>
-                    </div>
+                <div class="col-md-12">
+                    <fusioncharts
+                        type="timeseries"
+                        width="100%"
+                        height="350"
+                        dataFormat="json"
+                        :dataSource="dataSource.timeseries"
+                        ></fusioncharts>
                 </div>
             </div>
-            <!-- /marketing campaigns -->
-
+            <div class="row">
+                <div class="card col-md-6">
+                    <fusioncharts
+                    type="column2d"
+                    width="100%"
+                    height="350"
+                    dataFormat="json"
+                    :dataSource="dataSource.column"
+                    ></fusioncharts>
+                </div>
+                <div class="card col-md-6">
+                    <fusioncharts
+                    type="pie3d"
+                    width="100%"
+                    height="350"
+                    dataFormat="json"
+                    :dataSource="dataSource.pie"
+                    ></fusioncharts>
+                </div>
+            </div>
         </div>
     </div>
     <!-- /dashboard content -->
@@ -130,6 +116,93 @@
 export default {
     data(){
         return {
+            dataSource: {
+                column: {
+                    "chart": {
+                        "caption": "Countries With Most Oil Reserves [2017-18]",
+                        "subCaption": "In MMbbl = One Million barrels",
+                        "xAxisName": "Country",
+                        "yAxisName": "Reserves (MMbbl)",
+                        "numberSuffix": "K",
+                        "theme": "fusion"
+                    },
+                    "data": [{
+                        "label": "Venezuela",
+                        "value": "290"
+                    }, {
+                        "label": "Saudi",
+                        "value": "260"
+                    }, {
+                        "label": "Canada",
+                        "value": "180"
+                    }, {
+                        "label": "Iran",
+                        "value": "140"
+                    }, {
+                        "label": "Russia",
+                        "value": "115"
+                    }, {
+                        "label": "UAE",
+                        "value": "100"
+                    }, {
+                        "label": "US",
+                        "value": "30"
+                    }, {
+                        "label": "China",
+                        "value": "30"
+                    }]
+                },
+
+                timeseries: {
+                    data: null,
+                    caption: {
+                        text: "Sales Analysis"
+                    },
+                    subcaption: {
+                        text: "Grocery"
+                    },
+                    yAxis: [
+                        {
+                            plot: {
+                            value: "Grocery Sales Value",
+                            type: "line"
+                            },
+                            format: {
+                            prefix: "$"
+                            },
+                            title: "Sale Value"
+                        }
+                    ]
+                },
+
+                pie: {
+                    chart: {
+                        caption: "All time tags",
+                        subCaption : "All marked tags",
+                        showValues:"1",
+                        showPercentInTooltip : "0",
+                        numberPrefix : "$",
+                        enableMultiSlicing:"1",
+                        theme: "fusion"
+                    },
+                    data: null/*[{
+                        "label": "Equity",
+                        "value": "300000"
+                    }, {
+                        "label": "Debt",
+                        "value": "230000"
+                    }, {
+                        "label": "Bullion",
+                        "value": "180000"
+                    }, {
+                        "label": "Real-estate",
+                        "value": "270000"
+                    }, {
+                        "label": "Insurance",
+                        "value": "20000"
+                    }]*/
+                }
+            },
             widgets: {
                 balance: {
                     loading: true,
@@ -152,6 +225,138 @@ export default {
         this.getWidgets("balance")
         this.getWidgets("texts")
         this.getWidgets("tags")
+        /** Pie chart */
+        axios.get('/data/utils/charts?scope=tags&period=all').then(response => {
+            console.log('Pie: ')
+            console.log(response.data)
+            var data = []
+            for (let [key, value] of Object.entries(response.data.data)) {
+                data.push({label: key, value: value})
+            }
+            this.dataSource.pie.data = data
+        })
+        const data = [
+                        [
+                            "01-Feb-11",
+                            8866
+                        ],
+                        [
+                            "02-Feb-11",
+                            2174
+                        ],
+                        [
+                            "03-Feb-11",
+                            2084
+                        ],
+                        [
+                            "04-Feb-11",
+                            1503
+                        ],
+                        [
+                            "05-Feb-11",
+                            4928
+                        ],
+                        [
+                            "06-Feb-11",
+                            4667
+                        ],
+                        [
+                            "07-Feb-11",
+                            1064
+                        ],
+                        [
+                            "08-Feb-11",
+                            851
+                        ],
+                        [
+                            "09-Feb-11",
+                            7326
+                        ],
+                        [
+                            "10-Feb-11",
+                            8399
+                        ],
+                        [
+                            "11-Feb-11",
+                            4084
+                        ],
+                        [
+                            "12-Feb-11",
+                            4012
+                        ],
+                        [
+                            "13-Feb-11",
+                            1673
+                        ],
+                        [
+                            "14-Feb-11",
+                            6018
+                        ],
+                        [
+                            "15-Feb-11",
+                            9011
+                        ],
+                        [
+                            "16-Feb-11",
+                            5817
+                        ],
+                        [
+                            "17-Feb-11",
+                            5813
+                        ],
+                        [
+                            "18-Feb-11",
+                            566
+                        ],
+                        [
+                            "19-Feb-11",
+                            9065
+                        ],
+                        [
+                            "20-Feb-11",
+                            6734
+                        ],
+                        [
+                            "21-Feb-11",
+                            6937
+                        ],
+                        [
+                            "22-Feb-11",
+                            3038
+                        ],
+                        [
+                            "23-Feb-11",
+                            4445
+                        ],
+                        [
+                            "24-Feb-11",
+                            8782
+                        ],
+                        [
+                            "25-Feb-11",
+                            9489
+                        ],
+                        [
+                            "26-Feb-11",
+                            9624
+                        ],
+                        ]
+        const schema = [
+            {
+                "name": "Time",
+                "type": "date",
+                "format": "%d-%b-%y"
+            },
+            {
+                "name": "Grocery Sales Value",
+                "type": "number"
+            }
+            ]
+        const fusionTable = new FusionCharts.DataStore().createDataTable(
+            data,
+            schema
+        )
+        this.dataSource.timeseries.data = fusionTable
     },
 
     methods: {

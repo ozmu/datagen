@@ -24,11 +24,17 @@ import VueRouter from 'vue-router'
 import VuePageTransition from 'vue-page-transition'
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
+import VueFusionCharts from 'vue-fusioncharts';
+import FusionCharts from 'fusioncharts';
+import Charts from 'fusioncharts/fusioncharts.charts';
+import TimeSeries from 'fusioncharts/fusioncharts.timeseries';
+import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion'
 
-Vue.use(Buefy)
 
 Vue.use(VueRouter)
 Vue.use(VuePageTransition)
+Vue.use(Buefy)
+Vue.use(VueFusionCharts, FusionCharts, Charts, FusionTheme, TimeSeries);
 
 import routes from './routes'
 var router = new VueRouter({

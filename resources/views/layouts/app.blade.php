@@ -369,7 +369,7 @@
 
 
 		<!-- Main content -->
-		<div class="content-wrapper">
+		<div class="content-wrapper" style="max-height: calc(100vh - 55px);">
             @yield('content')
 		</div>
 		<!-- /main content -->
