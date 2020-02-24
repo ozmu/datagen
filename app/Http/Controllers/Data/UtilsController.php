@@ -51,17 +51,15 @@ class UtilsController extends Controller
                 $balance_calculation_type = Setting::where('key', 'balance_calculation_type')->first() ? Setting::where('key', 'balance_calculation_type')->first()->value : "verified_texts";
                 if ($balance_calculation_type == "verified_tags") {
                     $data->push([
-                        "start" => $current,
-                        "end" => $next,
-                        "data" => $request->user()->tags()->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
+                        $current->format('d-M-y'),
+                        $request->user()->tags()->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
                     ]);
                 }
                 else {
                     // Verified Texts by default!
                     $data->push([
-                        "start" => $current,
-                        "end" => $next,
-                        "data" => $request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
+                        $current->format('d-M-y'),
+                        $request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
                     ]);
                 }
             }

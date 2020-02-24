@@ -81,7 +81,7 @@
                     <fusioncharts
                         type="timeseries"
                         width="100%"
-                        height="350"
+                        height="600"
                         dataFormat="json"
                         :dataSource="dataSource.timeseries"
                         ></fusioncharts>
@@ -92,7 +92,7 @@
                     <fusioncharts
                     type="column2d"
                     width="100%"
-                    height="350"
+                    height="400"
                     dataFormat="json"
                     :dataSource="dataSource.column"
                     ></fusioncharts>
@@ -101,7 +101,7 @@
                     <fusioncharts
                     type="pie3d"
                     width="100%"
-                    height="350"
+                    height="400"
                     dataFormat="json"
                     :dataSource="dataSource.pie"
                     ></fusioncharts>
@@ -120,21 +120,21 @@ export default {
                 timeseries: {
                     data: null,
                     caption: {
-                        text: "Sales Analysis"
+                        text: "Daily Gains"
                     },
                     subcaption: {
-                        text: "Grocery"
+                        text: "Daily balances"
                     },
                     yAxis: [
                         {
                             plot: {
-                            value: "Grocery Sales Value",
-                            type: "line"
+                                value: "Daily Gain",
+                                type: "line"
                             },
                             format: {
-                            prefix: "$"
+                                prefix: "₺"
                             },
-                            title: "Sale Value"
+                            title: "Balance"
                         }
                     ]
                 },
@@ -185,6 +185,26 @@ export default {
         this.getWidgets("balance")
         this.getWidgets("texts")
         this.getWidgets("tags")
+        /** TimeSeries chart */
+        axios.get('/data/utils/charts?scope=gains').then(response => {
+            const data = response.data;
+            const schema = [
+                {
+                    "name": "Time",
+                    "type": "date",
+                    "format": "%d-%b-%y"
+                },
+                {
+                    "name": "Daily Gain",
+                    "type": "number"
+                }
+            ]
+            const fusionTable = new FusionCharts.DataStore().createDataTable(
+                data,
+                schema
+            )
+            this.dataSource.timeseries.data = fusionTable
+        })
         /** Column chart */
         axios.get('/data/utils/charts?scope=texts').then(response => {
             this.dataSource.column.data = response.data
@@ -197,128 +217,6 @@ export default {
             }
             this.dataSource.pie.data = data
         })
-        const data = [
-                        [
-                            "01-Feb-11",
-                            8866
-                        ],
-                        [
-                            "02-Feb-11",
-                            2174
-                        ],
-                        [
-                            "03-Feb-11",
-                            2084
-                        ],
-                        [
-                            "04-Feb-11",
-                            1503
-                        ],
-                        [
-                            "05-Feb-11",
-                            4928
-                        ],
-                        [
-                            "06-Feb-11",
-                            4667
-                        ],
-                        [
-                            "07-Feb-11",
-                            1064
-                        ],
-                        [
-                            "08-Feb-11",
-                            851
-                        ],
-                        [
-                            "09-Feb-11",
-                            7326
-                        ],
-                        [
-                            "10-Feb-11",
-                            8399
-                        ],
-                        [
-                            "11-Feb-11",
-                            4084
-                        ],
-                        [
-                            "12-Feb-11",
-                            4012
-                        ],
-                        [
-                            "13-Feb-11",
-                            1673
-                        ],
-                        [
-                            "14-Feb-11",
-                            6018
-                        ],
-                        [
-                            "15-Feb-11",
-                            9011
-                        ],
-                        [
-                            "16-Feb-11",
-                            5817
-                        ],
-                        [
-                            "17-Feb-11",
-                            5813
-                        ],
-                        [
-                            "18-Feb-11",
-                            566
-                        ],
-                        [
-                            "19-Feb-11",
-                            9065
-                        ],
-                        [
-                            "20-Feb-11",
-                            6734
-                        ],
-                        [
-                            "21-Feb-11",
-                            6937
-                        ],
-                        [
-                            "22-Feb-11",
-                            3038
-                        ],
-                        [
-                            "23-Feb-11",
-                            4445
-                        ],
-                        [
-                            "24-Feb-11",
-                            8782
-                        ],
-                        [
-                            "25-Feb-11",
-                            9489
-                        ],
-                        [
-                            "26-Feb-11",
-                            9624
-                        ],
-                        ]
-        const schema = [
-            {
-                "name": "Time",
-                "type": "date",
-                "format": "%d-%b-%y"
-            },
-            {
-                "name": "Grocery Sales Value",
-                "type": "number"
-            }
-            ]
-        const fusionTable = new FusionCharts.DataStore().createDataTable(
-            data,
-            schema
-        )
-        this.dataSource.timeseries.data = fusionTable
     },
 
     methods: {
