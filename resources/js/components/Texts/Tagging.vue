@@ -396,18 +396,6 @@ export default {
     overflow-y: auto;
     height: 45%;
 }
-.scrollbar::-webkit-scrollbar {
-    width: .35em;
-    height: .35em;
-}
-.scrollbar::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-}
-.scrollbar::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
-}
 .selected {
     color: #fff;
     padding: 5px;

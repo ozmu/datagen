@@ -363,7 +363,7 @@
 
 
 		<!-- Main content -->
-		<div class="content-wrapper" style="max-height: calc(100vh - 55px);">
+		<div class="content-wrapper scrollbar bold" style="max-height: calc(100vh - 54px);">
             @yield('content')
 		</div>
 		<!-- /main content -->
