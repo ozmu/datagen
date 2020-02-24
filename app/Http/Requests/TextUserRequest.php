@@ -16,7 +16,7 @@ class TextUserRequest extends FormRequest
     {
         $text = Text::where('id', $this->input('text_id'));
         if ($text->count()){
-            $inArray = in_array($text->first()->id, $this->user()->texts->pluck('id')->toArray());
+            $inArray = in_array($text->first()->id, $this->user()->texts->pluck('text_id')->toArray());
             if (($this->method() == "POST" && !$inArray) || ($this->method() == "PUT" && $inArray)){
                 return true;
             }
