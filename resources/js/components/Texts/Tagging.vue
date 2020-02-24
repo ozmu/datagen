@@ -7,21 +7,33 @@
                 </div>
                 <div class="row card-row">
                     <div class="col-md-8">
-                        <div @mouseup="getSelection($event)" class="form-control text" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
+                        <div class="row">
+                            <div class="entities scrollbar">
+                                <div style="display: inherit">
+                                    <span 
+                                    v-for="entity in entities" 
+                                    :key="entity.id" 
+                                    class="entity-tag" 
+                                    :class="{'selected entity': entity.id === current.entity.id}" 
+                                    @click="current.entity = entity"
+                                    :style="entity.id === current.entity.id ? 'background:' + entity.color : ''">{{ entity.entity }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-control text scrollbar" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
-                        <div class="entities">
-                            <span v-for="entity in entities" :key="entity.id" class="entity-tag" :class="{'selected entity': entity.id === current.entity.id}" @click="current.entity = entity">{{ entity.entity }}</span>
-                        </div>
-                        <div class="words">
+                        <div class="words scrollbar">
                             <span v-for="(word, id) in words" :key="id" class="entity-tag entity-word" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
                         </div>
-                        <div class="selecteds">
+                        <div class="selecteds scrollbar">
                             <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
                                 {{ s.words.map(word => word.value).join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
+                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
                         <button class="btn btn-primary send-btn" @click="send">Gönder</button>
                     </div>
                 </div>
@@ -71,6 +83,12 @@ export default {
     },
 
     mounted(){
+        var self = this;
+        document.addEventListener('keypress', function(e){
+            if (e.key === 'Enter'){
+                self.addEntity()
+            }
+        })
         // Get Entities
         axios.get('/data/utils/entities').then(response => {
             this.entities = response.data
@@ -158,6 +176,7 @@ export default {
     },
 
     methods: {
+        /*
         getSelection(event){
             var selection = window.getSelection()
             if (selection.toString().length){
@@ -173,6 +192,7 @@ export default {
 
             }
         },
+        */
 
         getNewText(){
             axios.get('/data/text/new').then(response => {
@@ -356,29 +376,35 @@ export default {
     height: calc(100vh - 230px);
 }
 .card-row .text {
-    height: 100%;
+    overflow-y: auto;
+    height: calc(100vh - 290px);
 }
 /** Entities and words */
 .entities, .words, .selecteds {
-    padding: 5px 0;
+    padding: 10px;
     margin-bottom: 10px;
     overflow-y: hidden;
     overflow-x: auto;
     border: 1px solid #e1e1e1;
     min-height: 30px;
 }
-.words {
-    height: calc(100% - 400px);
-    overflow: auto;
+.entities {
+    overflow-x: auto;
+    display: inherit;
 }
-.words::-webkit-scrollbar {
+.words, .selecteds {
+    overflow-y: auto;
+    height: 45%;
+}
+.scrollbar::-webkit-scrollbar {
     width: .35em;
+    height: .35em;
 }
-.words::-webkit-scrollbar-track {
+.scrollbar::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
-.words::-webkit-scrollbar-thumb {
+.scrollbar::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
@@ -392,11 +418,12 @@ export default {
     background: green !important;
 }
 .selected.entity {
-    background: red !important;
+    box-shadow: 0 0 10px #000;
 }
 .selecteds span.tag {
     margin-right: 5px;
     margin-bottom: 5px;
+    line-height: 20px;
     display: inline-block;
 }
 .entity-tag {

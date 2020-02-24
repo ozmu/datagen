@@ -16,6 +16,7 @@ class CreateEntitiesTable extends Migration
         Schema::create('entities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('entity');
+            $table->string('type')->nullable();
             $table->string('localized')->nullable();
             $table->string('color')->nullable();
             $table->timestamps();
