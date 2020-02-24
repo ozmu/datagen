@@ -16,7 +16,7 @@
                                     class="entity-tag" 
                                     :class="{'selected entity': entity.id === current.entity.id}" 
                                     @click="current.entity = entity"
-                                    :style="entity.id === current.entity.id ? 'background:' + entity.color : ''">{{ entity.entity }}</span>
+                                    :style="entity.id === current.entity.id ? 'background:' + entity.color : ''" :title="entity.entity">{{ entity.localized }}</span>
                                 </div>
                             </div>
                         </div>
