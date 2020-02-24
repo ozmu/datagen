@@ -24,7 +24,7 @@
                                 </b-table-column>
                                 
                                 <b-table-column field="text" label="Text" width="85%">
-                                    {{ props.row.text }}
+                                    <span :title="props.row.text">{{ props.row.text | truncate(500) }}</span>
                                 </b-table-column>
                                 
                                 <b-table-column label="Actions" width="10%">
@@ -169,6 +169,15 @@ export default {
                     })
                 }
             })
+        }
+    },
+
+    filters: {
+        truncate: function(value, limit){
+            if (value.length > limit) {
+                value = value.substring(0, (limit - 3)) + '...';
+            }
+            return value
         }
     }
 }

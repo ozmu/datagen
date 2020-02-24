@@ -7,7 +7,7 @@
                 </div>
                 <div class="row card-row">
                     <div class="col-md-8">
-                        <div class="form-control text" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
+                        <div @mouseup="getSelection($event)" class="form-control text" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
                     </div>
                     <div class="col-md-4">
                         <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
@@ -158,6 +158,22 @@ export default {
     },
 
     methods: {
+        getSelection(event){
+            var selection = window.getSelection()
+            if (selection.toString().length){
+                console.log(selection)
+                var range = selection.getRangeAt(0);
+                console.log('Range start: ', range.startOffset)
+                console.log('Range end: ', range.endOffset)
+                var beginText = `<span|style="background:red">` + selection.toString()
+                var endText = `</span>`
+                //this.text.text = this.text.text.splice(range.startOffset, selection.toString().length, beginText + endText)
+            }
+            else {
+
+            }
+        },
+
         getNewText(){
             axios.get('/data/text/new').then(response => {
                 if (response.status === 200){
@@ -229,7 +245,8 @@ export default {
         
         addEntity(){
             if (!_.isEmpty(this.current.entity) && this.current.words.length > 0){
-                var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join('|') === this.current.words.map(word => word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")).join('|')) return true})
+                //var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join('|') === this.current.words.map(word => word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")).join('|')) return true})
+                var filtered = this.selected.filter(s => s.words[0].index === this.current.words[0].index)
                 if (filtered.length){
                     this.$buefy.snackbar.open({
                         message: "Entity already added!",
