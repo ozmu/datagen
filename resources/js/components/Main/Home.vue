@@ -201,8 +201,7 @@ export default {
                     loading: true,
                     data: {}
                 }
-            },
-            msg: 'Hello World'
+            }
         }
     },
 
