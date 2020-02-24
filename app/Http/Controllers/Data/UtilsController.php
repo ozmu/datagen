@@ -67,9 +67,10 @@ class UtilsController extends Controller
             }
             else if ($scope == "texts"){
                 $data->push([
-                    "start" => $current,
-                    "end" => $next,
-                    "data" => $request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->count()
+                    //"start" => $current,
+                    //"end" => $next,
+                    "label" => $current->format('d M'),//$current->format('d') . "-" . $next->format('d M'),
+                    "value" => $request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->count()
                 ]);
             }
             else if ($scope == "tags"){

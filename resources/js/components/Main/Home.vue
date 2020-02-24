@@ -117,42 +117,6 @@ export default {
     data(){
         return {
             dataSource: {
-                column: {
-                    "chart": {
-                        "caption": "Countries With Most Oil Reserves [2017-18]",
-                        "subCaption": "In MMbbl = One Million barrels",
-                        "xAxisName": "Country",
-                        "yAxisName": "Reserves (MMbbl)",
-                        "numberSuffix": "K",
-                        "theme": "fusion"
-                    },
-                    "data": [{
-                        "label": "Venezuela",
-                        "value": "290"
-                    }, {
-                        "label": "Saudi",
-                        "value": "260"
-                    }, {
-                        "label": "Canada",
-                        "value": "180"
-                    }, {
-                        "label": "Iran",
-                        "value": "140"
-                    }, {
-                        "label": "Russia",
-                        "value": "115"
-                    }, {
-                        "label": "UAE",
-                        "value": "100"
-                    }, {
-                        "label": "US",
-                        "value": "30"
-                    }, {
-                        "label": "China",
-                        "value": "30"
-                    }]
-                },
-
                 timeseries: {
                     data: null,
                     caption: {
@@ -175,6 +139,17 @@ export default {
                     ]
                 },
 
+                column: {
+                    chart: {
+                        caption: "Daily marked text",
+                        subCaption: "Daily marked text on a weekly basis",
+                        xAxisName: "Day",
+                        yAxisName: "Count",
+                        theme: "fusion"
+                    },
+                    data: null
+                },
+
                 pie: {
                     chart: {
                         caption: "All time tags",
@@ -185,22 +160,7 @@ export default {
                         enableMultiSlicing:"1",
                         theme: "fusion"
                     },
-                    data: null/*[{
-                        "label": "Equity",
-                        "value": "300000"
-                    }, {
-                        "label": "Debt",
-                        "value": "230000"
-                    }, {
-                        "label": "Bullion",
-                        "value": "180000"
-                    }, {
-                        "label": "Real-estate",
-                        "value": "270000"
-                    }, {
-                        "label": "Insurance",
-                        "value": "20000"
-                    }]*/
+                    data: null
                 }
             },
             widgets: {
@@ -225,13 +185,15 @@ export default {
         this.getWidgets("balance")
         this.getWidgets("texts")
         this.getWidgets("tags")
+        /** Column chart */
+        axios.get('/data/utils/charts?scope=texts').then(response => {
+            this.dataSource.column.data = response.data
+        })
         /** Pie chart */
         axios.get('/data/utils/charts?scope=tags&period=all').then(response => {
-            console.log('Pie: ')
-            console.log(response.data)
             var data = []
             for (let [key, value] of Object.entries(response.data.data)) {
-                data.push({label: key, value: value})
+                data.push({label: key.charAt(0) + key.slice(1).toLowerCase(), value: value})
             }
             this.dataSource.pie.data = data
         })
