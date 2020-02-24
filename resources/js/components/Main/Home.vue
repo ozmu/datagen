@@ -77,7 +77,10 @@
             <!-- /quick stats boxes -->
 
             <div class="card">
-                <div class="col-md-12">
+                <div class="col-md-12 card-body">
+                    <div class="overlay" v-if="charts.timeseries.loading">
+                        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    </div>
                     <fusioncharts
                         type="timeseries"
                         width="100%"
@@ -89,22 +92,32 @@
             </div>
             <div class="row">
                 <div class="card col-md-6">
-                    <fusioncharts
-                    type="column2d"
-                    width="100%"
-                    height="400"
-                    dataFormat="json"
-                    :dataSource="dataSource.column"
-                    ></fusioncharts>
+                    <div class="card-body">
+                        <div class="overlay" v-if="charts.column.loading">
+                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                        </div>
+                        <fusioncharts
+                        type="column2d"
+                        width="100%"
+                        height="400"
+                        dataFormat="json"
+                        :dataSource="dataSource.column"
+                        ></fusioncharts>
+                    </div>
                 </div>
                 <div class="card col-md-6">
-                    <fusioncharts
-                    type="pie3d"
-                    width="100%"
-                    height="400"
-                    dataFormat="json"
-                    :dataSource="dataSource.pie"
-                    ></fusioncharts>
+                    <div class="card-body">
+                        <div class="overlay" v-if="charts.pie.loading">
+                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                        </div>
+                        <fusioncharts
+                        type="pie3d"
+                        width="100%"
+                        height="400"
+                        dataFormat="json"
+                        :dataSource="dataSource.pie"
+                        ></fusioncharts>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,6 +129,11 @@
 export default {
     data(){
         return {
+            charts: {
+                timeseries: {loading: true},
+                column: {loading: true},
+                pie: {loading: true}
+            },
             dataSource: {
                 timeseries: {
                     data: null,
@@ -204,10 +222,12 @@ export default {
                 schema
             )
             this.dataSource.timeseries.data = fusionTable
+            this.charts.timeseries.loading = false
         })
         /** Column chart */
         axios.get('/data/utils/charts?scope=texts').then(response => {
             this.dataSource.column.data = response.data
+            this.charts.column.loading = false
         })
         /** Pie chart */
         axios.get('/data/utils/charts?scope=tags&period=all').then(response => {
@@ -216,6 +236,7 @@ export default {
                 data.push({label: key.charAt(0) + key.slice(1).toLowerCase(), value: value})
             }
             this.dataSource.pie.data = data
+            this.charts.pie.loading = false
         })
     },
 
