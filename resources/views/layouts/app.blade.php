@@ -105,13 +105,7 @@
 			<span class="badge bg-success ml-md-3 mr-md-auto">Online</span>
 
 			<ul class="navbar-nav">
-				<li class="nav-item dropdown">
-					<a href="#" class="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">
-						<i class="icon-bubbles4"></i>
-						<span class="d-md-none ml-2">Messages</span>
-						<span class="badge badge-pill bg-warning-400 ml-auto ml-md-0">2</span>
-					</a>
-					
+				<li class="nav-item dropdown">					
 					<div class="dropdown-menu dropdown-menu-right dropdown-content wmin-md-350">
 						<div class="dropdown-content-header">
 							<span class="font-weight-semibold">Messages</span>

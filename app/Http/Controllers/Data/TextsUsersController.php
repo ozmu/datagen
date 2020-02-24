@@ -51,7 +51,7 @@ class TextsUsersController extends Controller
             'tagged_text' => $request->input('tagged_text')
         ]);
         if ($created){
-            CreateJob::dispatch($created);
+            CreateJob::dispatch($created)->onQueue('computing');
             return ["status" => 200, "message" => "Tagged text created successfully!", "data" => $created];
         }
         abort(500);
