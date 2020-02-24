@@ -49,4 +49,6 @@
       transform: rotate(360deg);
     }
   }
-  
+  text[fill-opacity="0.5"] {
+    display: none;
+}
