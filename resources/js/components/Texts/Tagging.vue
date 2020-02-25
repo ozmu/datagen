@@ -202,7 +202,7 @@ export default {
                 }
                 else if (response.status === 204){
                     this.$buefy.snackbar.open({
-                        message: "All texts done!",
+                        message: "Tüm yazılar etiketlenmiştir!",
                         type: 'is-warning',
                         position: 'is-top',
                         actionText: 'OK'
@@ -269,7 +269,7 @@ export default {
                 var filtered = this.selected.filter(s => s.words[0].index === this.current.words[0].index)
                 if (filtered.length){
                     this.$buefy.snackbar.open({
-                        message: "Entity already added!",
+                        message: "Entity zaten eklenmiş!",
                         type: 'is-warning',
                         position: 'is-top',
                         actionText: 'OK'
@@ -286,7 +286,7 @@ export default {
             }
             else {
                 this.$buefy.snackbar.open({
-                    message: "Please select entity and type!",
+                    message: "Lütfen entity ve tipini eksiksiz seçin!",
                     type: 'is-warning',
                     position: 'is-top',
                     actionText: 'OK'
@@ -320,7 +320,7 @@ export default {
         send(){
             if (this.selected.length){
                 this.$buefy.dialog.confirm({
-                    message: 'Continue on this task?',
+                    message: 'Devam etmek ister misiniz?',
                     onConfirm: () => {
                         var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
                         var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ')
@@ -357,7 +357,7 @@ export default {
             }
             else {
                 this.$buefy.snackbar.open({
-                    message: "Selected entities must at least 1!",
+                    message: "En az bir adet Entity işaretlenmelidir!",
                     type: 'is-warning',
                     position: 'is-top',
                     actionText: 'OK'
