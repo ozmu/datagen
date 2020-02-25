@@ -39,6 +39,9 @@
                                 </b-table-column>
                                 
                                 <b-table-column label="Actions" width="10%">
+                                    <b-tag type="is-warning" @click.native="statistics(props.row)" title="Statistics" class="action">
+                                        <b-icon icon="chart-bar" custom-size="mdi-18px"></b-icon>
+                                    </b-tag>
                                     <b-tag type="is-warning" @click.native="redirect(props.row)" title="Edit" class="action">
                                         <b-icon icon="file-edit-outline" custom-size="mdi-18px"></b-icon>
                                     </b-tag>
@@ -98,6 +101,10 @@ export default {
                 this.taggedTexts = response.data.data
                 this.loading = false;
             })
+        },
+
+        statistics(text){
+            this.$router.push({name: 'texts-statistics', params: {text_user_id: text.id}});
         },
 
         redirect(text){

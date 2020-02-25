@@ -65,7 +65,7 @@ class TextsUsersController extends Controller
      */
     public function show(Request $request, $id)
     {
-        return TextUser::with('text')->where('id', (int) $id)->first();
+        return TextUser::where('id', (int) $id)->with('text', 'tags', 'tags.entityType')->first();
     }
 
     /**
