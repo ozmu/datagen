@@ -10,8 +10,9 @@
                         <button class="btn btn-primary create-btn" @click="create.modal = true">
                             <b-icon icon="plus-circle"></b-icon>
                         </button>
+                        <input v-model="search" type="text" class="form-control search-text" placeholder="Search">
                         <b-table
-                        :data="texts"
+                        :data="filteredTexts"
                         :paginated="true"
                         :per-page="10"
                         width="100%"
@@ -83,6 +84,7 @@ export default {
     data(){
         return {
             loading: true,
+            search: '',
             create: {
                 modal: false,
                 data: {}
@@ -92,6 +94,15 @@ export default {
                 data: {}
             },
             texts: []
+        }
+    },
+
+    computed: {  
+        filteredTexts(){
+            if (this.search){
+                return this.texts.filter(text => text.text.toLowerCase().includes(this.search.toLowerCase()))
+            }
+            return this.texts
         }
     },
 
@@ -190,7 +201,12 @@ export default {
 </script>
 
 <style scoped>
-.create-btn {
+.create-btn, .search-text {
     float: right;
+}
+.search-text {
+    width: 200px;
+    margin-right: 10px;
+    padding: 20px;
 }
 </style>

@@ -10,8 +10,9 @@
                         <button class="btn btn-primary create-btn" @click="create.modal = true">
                             <b-icon icon="plus-circle"></b-icon>
                         </button>
+                        <input v-model="search" type="text" class="form-control search-text" placeholder="Search">
                         <b-table
-                        :data="users"
+                        :data="filteredUsers"
                         :paginated="true"
                         :per-page="10"
                         width="100%"
@@ -31,14 +32,19 @@
                                     {{ props.row.email }}
                                 </b-table-column>
                                 
-                                <b-table-column field="balance" label="Balance (TL)" width="10%" sortable>
+                                <b-table-column field="balance" label="Balance (TL)" width="5%" sortable>
                                     <b-tag type="is-info">
                                         {{ props.row.balance }}
                                         <b-icon icon="currency-try" custom-size="mdi-14px"></b-icon>
                                     </b-tag>
                                 </b-table-column>
                                 
-                                <b-table-column field="is_deleted" label="Deleted" width="10%" sortable>
+                                <b-table-column field="is_admin" label="Yetki" width="5%" sortable>
+                                    <b-tag v-if="props.row.is_admin" type="is-danger">Admin</b-tag>
+                                    <b-tag v-else type="is-warning">Kullanıcı</b-tag>
+                                </b-table-column>
+                                
+                                <b-table-column field="is_deleted" label="Durum" width="10%" sortable>
                                     <b-tag v-if="props.row.is_deleted" type="is-danger">Silindi</b-tag>
                                     <b-tag v-else type="is-success">Kayıtlı</b-tag>
                                 </b-table-column>
@@ -105,6 +111,7 @@ export default {
     data(){
         return {
             loading: true,
+            search: '',
             create: {
                 modal: false,
                 data: {}
@@ -114,6 +121,15 @@ export default {
                 data: {}
             },
             users: []
+        }
+    },
+
+    computed: {
+        filteredUsers(){
+            if (this.search){
+                return this.users.filter(user => user.name.toLowerCase().includes(this.search.toLowerCase()) || user.email.toLowerCase().includes(this.search.toLowerCase()))
+            }
+            return this.users
         }
     },
 
@@ -206,8 +222,13 @@ export default {
 </script>
 
 <style scoped>
-.create-btn {
+.create-btn, .search-text {
     float: right;
+}
+.search-text {
+    width: 200px;
+    margin-right: 10px;
+    padding: 20px;
 }
 span.tag.is-info {
     width: 50px;
