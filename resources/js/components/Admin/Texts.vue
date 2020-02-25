@@ -15,6 +15,7 @@
                         :paginated="true"
                         :per-page="10"
                         width="100%"
+                        height="100%"
                         :striped="true"
                         :pagination-simple="false"
                         sort-icon="arrow-up">
@@ -23,8 +24,13 @@
                                     {{ props.row.id }}
                                 </b-table-column>
                                 
-                                <b-table-column field="text" label="Text" width="85%">
-                                    <span :title="props.row.text">{{ props.row.text | truncate(500) }}</span>
+                                <b-table-column field="text" label="Text" width="80%">
+                                    <span :title="props.row.text">{{ props.row.text | truncate(250) }}</span>
+                                </b-table-column>
+
+                                <b-table-column field="is_verified" label="Verified" width="5%" sortable>
+                                    <b-tag v-if="props.row.is_verified" type="is-success">Verified</b-tag>
+                                    <b-tag v-else type="is-danger">Not verified</b-tag>
                                 </b-table-column>
                                 
                                 <b-table-column label="Actions" width="10%">
