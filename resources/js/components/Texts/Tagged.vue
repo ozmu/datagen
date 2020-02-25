@@ -10,8 +10,9 @@
                         <button class="btn btn-primary create-btn" @click="$router.push({name: 'texts-tagging'})">
                             <b-icon icon="plus-circle"></b-icon>
                         </button>
+                        <input v-model="search" type="text" class="form-control search-text" placeholder="Search">
                         <b-table
-                        :data="taggedTexts"
+                        :data="filteredTaggedTexts"
                         :paginated="true"
                         :per-page="10"
                         width="100%"
@@ -24,11 +25,13 @@
                                 </b-table-column>
                                 
                                 <b-table-column :custom-sort="sortTags" label="Not Verified Tags" width="15%" sortable>
-                                    <b-tag type="is-danger" v-for="(tag,id) in props.row.tags.filter(tag => !tag.is_verified)" :key="id" :title="tag.entity_type.entity" :style="'background:' + tag.entity_type.color">{{ tag.entity_mention }}</b-tag>
+                                    <b-tag type="is-danger" v-for="(tag,id) in props.row.tags.filter(tag => !tag.is_verified).slice(0, 5)" :key="id" :title="tag.entity_type.entity" :style="'background:' + tag.entity_type.color">{{ tag.entity_mention }}</b-tag>
+                                    <span v-if="props.row.tags.filter(tag => !tag.is_verified).length > 5">+ {{ props.row.tags.filter(tag => !tag.is_verified).length - 5 }} more</span>
                                 </b-table-column>
                                 
                                 <b-table-column :custom-sort="sortTags" label="Verified Tags" width="15%" sortable>
-                                    <b-tag type="is-success" v-for="(tag,id) in props.row.tags.filter(tag => tag.is_verified)" :key="id" :title="tag.entity_type.entity" :style="'background:' + tag.entity_type.color">{{ tag.entity_mention }}</b-tag>
+                                    <b-tag type="is-success" v-for="(tag,id) in props.row.tags.filter(tag => tag.is_verified).slice(0, 5)" :key="id" :title="tag.entity_type.entity" :style="'background:' + tag.entity_type.color">{{ tag.entity_mention }}</b-tag>
+                                    <span v-if="props.row.tags.filter(tag => tag.is_verified).length > 5">+ {{ props.row.tags.filter(tag => tag.is_verified).length - 5 }} more</span>
                                 </b-table-column>
                                 
                                 <b-table-column label="Tagged Text" width="30%" sortable>
@@ -58,8 +61,18 @@ export default {
     data(){
         return {
             loading: true,
+            search: '',
             taggedTexts: [],
             nextPageUrl: "/data/text/last"
+        }
+    },
+
+    computed: {
+        filteredTaggedTexts(){
+            if (this.search){
+                return this.taggedTexts.filter(t => t.text.text.toLowerCase().includes(this.search.toLowerCase()) || t.tagged_text.toLowerCase().includes(this.search.toLowerCase()))
+            }
+            return this.taggedTexts
         }
     },
 
@@ -132,8 +145,13 @@ export default {
 .card-body {
   min-height: calc(100vh - 195px);
 }
-.create-btn {
+.create-btn, .search-text {
     float: right;
+}
+.search-text {
+    width: 200px;
+    margin-right: 10px;
+    padding: 20px;
 }
 span.tag.is-danger, span.tag.is-success {
     color: #fff;
