@@ -23,11 +23,11 @@
                                     <span :title="props.row.text.text">{{ props.row.text.text | truncate(200) }}</span>
                                 </b-table-column>
                                 
-                                <b-table-column label="Not Verified Tags" width="15%" sortable>
+                                <b-table-column :custom-sort="sortTags" label="Not Verified Tags" width="15%" sortable>
                                     <b-tag type="is-danger" v-for="(tag,id) in props.row.tags.filter(tag => !tag.is_verified)" :key="id" :title="tag.entity_type.entity" :style="'background:' + tag.entity_type.color">{{ tag.entity_mention }}</b-tag>
                                 </b-table-column>
                                 
-                                <b-table-column label="Verified Tags" width="15%" sortable>
+                                <b-table-column :custom-sort="sortTags" label="Verified Tags" width="15%" sortable>
                                     <b-tag type="is-success" v-for="(tag,id) in props.row.tags.filter(tag => tag.is_verified)" :key="id" :title="tag.entity_type.entity" :style="'background:' + tag.entity_type.color">{{ tag.entity_mention }}</b-tag>
                                 </b-table-column>
                                 
@@ -110,6 +110,10 @@ export default {
                     })
                 }
             })
+        },
+
+        sortTags(a,b){
+            return a.length - b.length
         }
     },
 

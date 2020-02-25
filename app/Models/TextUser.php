@@ -9,7 +9,7 @@ class TextUser extends Model
     protected $table = "texts_users";
 
     protected $fillable = [
-        "user_id", "text_id", "tagged_text", "is_verified"
+        "user_id", "text_id", "tagged_text", "is_verified", "verified_at"
     ];
 
     public function user(){

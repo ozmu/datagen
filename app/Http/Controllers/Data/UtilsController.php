@@ -52,14 +52,16 @@ class UtilsController extends Controller
                 if ($balance_calculation_type == "verified_tags") {
                     $data->push([
                         $current->format('d-M-y'),
-                        $request->user()->tags()->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
+                        $request->user()->tags()->whereBetween('verified_at', [$current, $next])->where('is_verified', true)->count() * $coin_factor
+                        //$request->user()->tags()->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
                     ]);
                 }
                 else {
                     // Verified Texts by default!
                     $data->push([
                         $current->format('d-M-y'),
-                        $request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
+                        $request->user()->texts->whereBetween('verified_at', [$current, $next])->where('is_verified', true)->count() * $coin_factor
+                        //$request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
                     ]);
                 }
             }

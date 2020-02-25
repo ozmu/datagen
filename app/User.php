@@ -61,10 +61,7 @@ class User extends Authenticatable
     public function balance($verified = true){
         $coin_factor = Setting::where('key', 'coin_factor')->first() ? (float) Setting::where('key', 'coin_factor')->first()->value : 1;
         $balance_calculation_type = Setting::where('key', 'balance_calculation_type')->first() ? Setting::where('key', 'balance_calculation_type')->first()->value : "verified_texts";
-        if ($balance_calculation_type == "verified_texts"){
-            return $this->texts->where('is_verified', $verified)->count() * $coin_factor;
-        }
-        else if ($balance_calculation_type == "verified_tags") {
+        if ($balance_calculation_type == "verified_tags") {
             return $this->tags()->where('is_verified', $verified)->count() * $coin_factor;
         }
         else {

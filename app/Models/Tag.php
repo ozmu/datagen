@@ -13,7 +13,7 @@ class Tag extends Model
     ];
 
     protected $fillable = [
-        'text_user_id', 'entity_mention', 'entity_type_id', 'is_verified'
+        'text_user_id', 'entity_mention', 'entity_type_id', 'is_verified', 'verified_at'
     ];
     
     public function textUser(){
