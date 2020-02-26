@@ -28,14 +28,9 @@
                         <div class="words scrollbar">
                             <span v-for="(word, id) in words" :key="id" class="entity-tag entity-word" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
                         </div>
-                        <div v-if="!Object.keys($route.params).includes('text_user_id')" class="selecteds scrollbar">
+                        <div class="selecteds scrollbar">
                             <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
-                                {{ s.words.map(word => word.value).join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
-                            </span>
-                        </div>
-                        <div v-else class="selecteds scrollbar">
-                            <span v-for="(s, id) in editSelected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
-                                {{ printEditSelected(s.word) }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
+                                {{ s.words ? s.words.map(word => word.value).join(' ') : printEditSelected(s.word)}} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
                         <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
@@ -61,7 +56,6 @@ export default {
                 words: []
             },
             selected: [],
-            editSelected: [],
             selectedUpdateType: '',
             entities: []
         }
@@ -196,7 +190,7 @@ export default {
                     while (match != null){
                         var matchPattern = new RegExp('(<span[|]id="tag-)(1000)("[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#000000)(">)' + match[2] + '(<\/span>)', 'i')
                         replaced = replaced.replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')                        
-                        this.editSelected.push({
+                        this.selected.push({
                             entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
                             word: match[0].replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')
                         })
@@ -365,7 +359,14 @@ export default {
         addEntity(){
             if (!_.isEmpty(this.current.entity) && this.current.words.length > 0){
                 //var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join('|') === this.current.words.map(word => word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")).join('|')) return true})
-                var filtered = this.selected.filter(s => s.words[0].index === this.current.words[0].index)
+                var filtered = this.selected.filter(s => {
+                    if (s.words){
+                        return s.words[0].index === this.current.words[0].index
+                    }
+                    else {
+                        return new RegExp("<span(.+?)>(.+?)<\/span>", "gi").exec(s.word)[2] === this.current.words.map(w => w.value).join('|')
+                    }
+                })
                 if (filtered.length){
                     this.$buefy.snackbar.open({
                         message: "Entity zaten eklenmiş!",
@@ -408,9 +409,9 @@ export default {
         */
 
         removeSelected(selected){
-            if (!Object.keys(this.$route.params).includes('text_user_id')){
+            this.selectedUpdateType = "decrease";
+            if (selected.words || !Object.keys(this.$route.params).includes('text_user_id')){
                 var index = this.selected.indexOf(selected);
-                this.selectedUpdateType = "decrease";
                 this.selected.splice(index, 1);
                 var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
                 this.text.text = this.text.text.replace(regex, selected.words.map(word => word.value).join(' ')).replace("  ", " ")
@@ -418,10 +419,8 @@ export default {
             }
             else {
                 var selectedWord = new RegExp("<span(.+?)>(.+?)<\/span>", "gi").exec(selected.word)[2]
-                this.editSelected.splice(this.editSelected.indexOf(selected), 1)
-                // var index = this.editSelected.filter(s => s.word === selected.word)[0]
-                // this.editSelected.slice(this.editSelected.indexOf(index), 1)
-                this.text.text = this.text.text.replace(selected.word, selectedWord)
+                    this.text.text = this.text.text.replace(selected.word, selectedWord)
+                    this.selected.splice(this.selected.indexOf(this.selected.filter(s => s.word === selected.word)[0]), 1)
             }
         },
 
@@ -485,6 +484,7 @@ export default {
 }
 .card-row .text {
     overflow-y: auto;
+    line-height: 30px;
     height: calc(100vh - 290px);
 }
 /** Entities and words */
