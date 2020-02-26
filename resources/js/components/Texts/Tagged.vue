@@ -66,7 +66,7 @@ export default {
             loading: true,
             search: '',
             taggedTexts: [],
-            nextPageUrl: "/data/text/last"
+            nextPageUrl: "/data/text/last?scope=all"
         }
     },
 

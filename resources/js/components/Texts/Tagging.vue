@@ -33,8 +33,9 @@
                                 {{ s.words ? s.words.map(word => word.value).join(' ') : printEditSelected(s.word)}} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
-                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
-                        <button class="btn btn-primary send-btn" @click="send">Gönder</button>
+                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity(false)" class="add-btn">Ekle</b-icon>
+                        <button v-if="!Object.keys($route.params).includes('text_user_id')" class="btn btn-primary send-btn" @click="send">Gönder</button>
+                        <button v-else class="btn btn-primary send-btn" @click="update">Güncelle</button>
                     </div>
                 </div>
             </div>
@@ -86,7 +87,7 @@ export default {
         var self = this;
         document.addEventListener('keypress', function(e){
             if (e.key === 'Enter'){
-                self.addEntity()
+                self.addEntity(true)
             }
         })
 
@@ -356,7 +357,7 @@ export default {
             }
         },
         
-        addEntity(){
+        addEntity(enter = false){
             if (!_.isEmpty(this.current.entity) && this.current.words.length > 0){
                 //var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join('|') === this.current.words.map(word => word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")).join('|')) return true})
                 var filtered = this.selected.filter(s => {
@@ -385,12 +386,14 @@ export default {
                 this.current = {entity: {}, words: []}
             }
             else {
-                this.$buefy.snackbar.open({
-                    message: "Lütfen entity ve tipini eksiksiz seçin!",
-                    type: 'is-warning',
-                    position: 'is-top',
-                    actionText: 'OK'
-                })
+                if (!enter){
+                    this.$buefy.snackbar.open({
+                        message: "Lütfen entity ve tipini eksiksiz seçin!",
+                        type: 'is-warning',
+                        position: 'is-top',
+                        actionText: 'OK'
+                    })
+                }
             }
         },
 
@@ -429,13 +432,63 @@ export default {
                 this.$buefy.dialog.confirm({
                     message: 'Devam etmek ister misiniz?',
                     onConfirm: () => {
-                        var regex = new RegExp('<span[|]id="tag-[0-9]{4}"[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
-                        var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ')
+                        var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'gi');
+                        var tagged_text = this.text.text.replace(regex, ' <START:$2> $3 <END> ').replace(/(<span([^>]+)>)?|(<\/span>)?/ig, '').replace(/[|]/g, ' ').replace('  ', ' ')
                         var data = {
                             text_id: this.text.id,
                             tagged_text: tagged_text
                         }
                         axios.post('/data/text', data).then(response => {
+                            console.log(response.data)
+                            if (response.status === 200){
+                                this.$buefy.snackbar.open({
+                                    message:  response.data.message,
+                                    type: 'is-success',
+                                    position: 'is-top',
+                                    actionText: 'OK',
+                                    indefinite: true,
+                                    onAction: () => {
+                                        this.selected = []
+                                        this.selectedUpdateType = ""
+                                        this.getNewText();
+                                    }
+                                })
+                            }
+                        }).catch(e => {
+                            console.log(e.response)
+                            this.$buefy.snackbar.open({
+                                message:  e.response.data.message,
+                                type: 'is-warning',
+                                position: 'is-top',
+                                actionText: 'OK'
+                            })
+                        })
+                    }
+                })
+            }
+            else {
+                this.$buefy.snackbar.open({
+                    message: "En az bir adet Entity işaretlenmelidir!",
+                    type: 'is-warning',
+                    position: 'is-top',
+                    actionText: 'OK'
+                })
+            }
+        },
+
+        update(){
+            if (this.selected.length){
+                this.$buefy.dialog.confirm({
+                    message: 'Devam etmek ister misiniz?',
+                    onConfirm: () => {
+                        var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
+                        var tagged_text = this.text.text.replace(regex, ' <START:$2> $3 <END> ').replace(/(<span(.+?)>)|(<\/span>)/ig, '').replace(/[|]/g, ' ').replace('  ', ' ')
+                        var data = {
+                            text_id: this.$route.params.text_user_id,
+                            tagged_text: tagged_text
+                        }
+                        axios.put('/data/text', data).then(response => {
+                            console.log(response.data)
                             if (response.status === 200){
                                 this.$buefy.snackbar.open({
                                     message:  response.data.message,

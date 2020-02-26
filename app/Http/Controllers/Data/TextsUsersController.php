@@ -77,13 +77,17 @@ class TextsUsersController extends Controller
      */
     public function update(TextUserRequest $request)
     {
-        $updated = TextUser::find($request->input('text_id'))->update([
-            'tagged_text' => $request->input('tagged_text')
-        ]);
-        if ($updated){
-            return ["status" => 200];
+        $textUser = TextUser::find($request->input('text_id'));
+        if ($textUser){
+            $textUser->tagged_text = $request->input('tagged_text');
+            $updated = $textUser->save();
+            if ($updated){
+                CreateJob::dispatch(TextUser::find($request->input('text_id')))->onQueue('computing');
+                return ["status" => 200, "message" => "Tagged text created successfully!", "data" => $updated];
+            }
+            return ["status" => 500, "message" => "Server Error!"];
         }
-        return ["status" => 500];
+        return ["status" => 404, "message" => "Text not found!"];
     }
 
     /**

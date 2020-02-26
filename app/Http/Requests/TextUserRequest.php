@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Text;
+use App\Models\TextUser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TextUserRequest extends FormRequest
@@ -14,10 +15,15 @@ class TextUserRequest extends FormRequest
      */
     public function authorize()
     {
-        $text = Text::where('id', $this->input('text_id'));
-        if ($text->count()){
-            $inArray = in_array($text->first()->id, $this->user()->texts->pluck('text_id')->toArray());
-            if (($this->method() == "POST" && !$inArray) || ($this->method() == "PUT" && $inArray)){
+        if ($this->method() == "POST"){
+            $text = Text::where('id', $this->input('text_id'));
+            if ($text->count() && !in_array($text->first()->id, $this->user()->texts->pluck('text_id')->toArray())){
+                return true;
+            }
+        }
+        else if ($this->method() == "PUT"){
+            $textUser = TextUser::where('id', $this->input('text_id'));
+            if ($textUser->count() && in_array($textUser->first()->id, $this->user()->texts->pluck('id')->toArray())){
                 return true;
             }
         }
