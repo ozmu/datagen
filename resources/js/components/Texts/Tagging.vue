@@ -28,9 +28,14 @@
                         <div class="words scrollbar">
                             <span v-for="(word, id) in words" :key="id" class="entity-tag entity-word" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
                         </div>
-                        <div class="selecteds scrollbar">
+                        <div v-if="!Object.keys($route.params).includes('text_user_id')" class="selecteds scrollbar">
                             <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
                                 {{ s.words.map(word => word.value).join(' ') }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
+                            </span>
+                        </div>
+                        <div v-else class="selecteds scrollbar">
+                            <span v-for="(s, id) in editSelected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
+                                {{ printEditSelected(s.word) }} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
                             </span>
                         </div>
                         <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity" class="add-btn">Ekle</b-icon>
@@ -56,6 +61,7 @@ export default {
                 words: []
             },
             selected: [],
+            editSelected: [],
             selectedUpdateType: '',
             entities: []
         }
@@ -89,6 +95,7 @@ export default {
                 self.addEntity()
             }
         })
+
         // Get Entities
         axios.get('/data/utils/entities').then(response => {
             this.entities = response.data
@@ -103,13 +110,53 @@ export default {
                 if (response.status === 200){
                     /*
                     this.text = response.data.text
-                    var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi")
+                    //var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi")
+                    var pattern = new RegExp("([A-Za-z0-9,.!':\"]+?)?[ ]?([A-Za-z0-9,.!':\"]+)?[ ]<START:(.+?)> (.+?) <END>[ ]([A-Za-z0-9,.!':\"]+)?[ ]?([A-Za-z0-9,.!':\"]+)?[ ]?", "gi")
                     var matches = response.data.tagged_text.match(pattern)
                     for (var match in matches){
+                        var matchedDetails = new RegExp("(.+?)?<START:(.+?)> (.+?) <END>(.+?)?").exec(matches[match])
+                        console.log('matchedDetails: ', matchedDetails)
+                        var before = matchedDetails[1] ? matchedDetails[1].trim().split(' ') : [];
+                        var type = matchedDetails[2];
+                        var entity = matchedDetails[3] ? matchedDetails[3].trim().split(' ') : [];
+                        var after = matchedDetails[4] ? matchedDetails[4].trim().split(' ') : [];
+                        console.log('Before: ', before)
+                        console.log('After: ', after)
+                        console.log('entity: ', entity)
+                        
+                        var found = this.findSubArray(this.words, [].concat(before, entity, after), 0)
+                        console.log(found) // find sub array
+                        if (found === -1){
+                            console.log('Bulamadım..')
+                            console.log('=============================================')
+                        }
+                        else {
+                            this.current.entity = this.entities.filter(e => e.entity.toLowerCase() === type.toLowerCase())[0]
+                            for (var e in entity){
+                                if (entity[e] == this.words[found].value){
+                                    this.current.words.push(this.words[found])
+                                }
+                            }
+                        }
+
+                        /*
+                        for (var word in this.words){
+                            var splittedEntity = entity.split(' ')
+                            if (splittedEntity.length === 1){
+                                if (this.words[word] === splittedEntity[0]){
+                                    if (before && before.trim().split(' ').length === 1){
+
+                                    }
+                                }
+                            }
+                        }
+                        */
+
+                        /*
                         var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1] // Entity Type
                         var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1] // Entity Mention
-                        console.log("typeMatch: ", typeMatch)
-                        console.log("entityMatch: ", entityMatch)
+                        // console.log("typeMatch: ", typeMatch)
+                        // console.log("entityMatch: ", entityMatch)
                         var type = this.entities.filter(type => type.entity === typeMatch)
                         if (type.length){
                             this.current.entity = type[0]
@@ -132,21 +179,56 @@ export default {
                                 }
                             }
                         }
-                    }
-                    */
+                        */
+                    // }
+                    // this.loading = false;
                     // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
+                    
+
+                    
                     var tagPattern = new RegExp('<START:(.+?)> (.+?) <END>', 'gi')
-                    var spanPattern = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)<\/span>', 'gi')
-                    var replaced = response.data.tagged_text.replace(tagPattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#000000">$2</span>')
+                    var spanPattern = new RegExp('<span[|]id="tag-[0-9]{4}"[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)<\/span>', 'gi')
+                    var replaced = response.data.tagged_text.replace(tagPattern, '<span|id="tag-1000"|class="tag"|title="$1"|style="color:#fff;background:#000000">$2</span>')
+                    
+                    //this.text.text = replaced
                     var match = spanPattern.exec(replaced)
+                    var count = 0;
                     while (match != null){
-                        var matchPattern = new RegExp('(<span[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#000000)(">)' + match[2] + '(<\/span>)', 'i')
-                        replaced = replaced.replace(matchPattern, '$1' + this.entities.filter(e => e.entity === match[1])[0].color + '$3' + match[2].replace(/ /gi, '|') + '$4')
+                        var matchPattern = new RegExp('(<span[|]id="tag-)(1000)("[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#000000)(">)' + match[2] + '(<\/span>)', 'i')
+                        replaced = replaced.replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')                        
+                        this.editSelected.push({
+                            entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
+                            word: match[0]
+                        })
                         match = spanPattern.exec(replaced)
+                        count++;
+                        /*
+                        console.log('Span pattern: ', spanPattern)
+                        console.log('Match[2]: ', match[2])
+                        console.log('Pushinggg...')
+                        console.log('This words length: ', this.words.length)
+                        console.log('Text: ', this.text.text.length)
+                        console.log({
+                            entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
+                            words: this.words.filter(w => w.value.includes(match[2].replace(/[ ]/gi, '|'))) //this.words.filter(w => match[2].split(' ').some(r => w.value.includes(r)))
+                        })
+                        console.log(match[2].replace(/[ ]/gi, '|'))
+                        console.log('=========================')
+
+                        this.selected.push({
+                            entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
+                            words: this.words.filter(w => w.value.includes(match[2].replace(/[ ]/gi, '|')))
+                        })
+                        */
                     }
                     this.text = response.data.text
                     this.text.text = replaced
+                    var allMatches = this.text.text.match(spanPattern)
+                    console.log(allMatches)
                     this.loading = false;
+                    
+
+
                     /*
                     var match = spanPattern.exec(this.text.text)
                     while (match != null){
@@ -160,7 +242,7 @@ export default {
                     */
                 }
             }).catch(e => {
-                console.log(e.response)
+                console.log(e.response ? e.response : e)
             })
         }
 
@@ -176,6 +258,24 @@ export default {
     },
 
     methods: {
+        findSubArray(arr, subarr, from_index) {
+            var i = from_index >>> 0,
+                sl = subarr.length,
+                l = arr.length + 1 - sl;
+
+            loop: for (; i<l; i++) {
+                for (var j=0; j<sl; j++)
+                    if (arr[i+j] !== subarr[j])
+                        continue loop;
+                return i;
+            }
+            return -1;
+        },
+
+        printEditSelected(word){
+            return word.replace(/<span(.+?)>(.+?)<\/span>/i, '$2')
+        },
+
         /*
         getSelection(event){
             var selection = window.getSelection()
@@ -312,7 +412,7 @@ export default {
             var index = this.selected.indexOf(selected);
             this.selectedUpdateType = "decrease";
             this.selected.splice(index, 1);
-            var regex = new RegExp('<span[|]class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
+            var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
             this.text.text = this.text.text.replace(regex, selected.words.map(word => word.value).join(' ')).replace("  ", " ")
             this.current = {entity: {}, words: []}
         },
@@ -322,7 +422,7 @@ export default {
                 this.$buefy.dialog.confirm({
                     message: 'Devam etmek ister misiniz?',
                     onConfirm: () => {
-                        var regex = new RegExp('<span[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
+                        var regex = new RegExp('<span[|]id="tag-[0-9]{4}"[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
                         var tagged_text = this.text.text.replace(regex, ' <START:$1> $2 <END> ').replace(/[|]/g, ' ').replace('  ', ' ')
                         var data = {
                             text_id: this.text.id,
