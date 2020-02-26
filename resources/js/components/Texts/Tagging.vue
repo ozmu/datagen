@@ -198,7 +198,7 @@ export default {
                         replaced = replaced.replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')                        
                         this.editSelected.push({
                             entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
-                            word: match[0]
+                            word: match[0].replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')
                         })
                         match = spanPattern.exec(replaced)
                         count++;
@@ -224,7 +224,6 @@ export default {
                     this.text = response.data.text
                     this.text.text = replaced
                     var allMatches = this.text.text.match(spanPattern)
-                    console.log(allMatches)
                     this.loading = false;
                     
 
@@ -273,7 +272,7 @@ export default {
         },
 
         printEditSelected(word){
-            return word.replace(/<span(.+?)>(.+?)<\/span>/i, '$2')
+            return word.replace(/<span(.+?)>(.+?)<\/span>/i, '$2').replace(/[|]/gi, ' ')
         },
 
         /*
@@ -409,12 +408,21 @@ export default {
         */
 
         removeSelected(selected){
-            var index = this.selected.indexOf(selected);
-            this.selectedUpdateType = "decrease";
-            this.selected.splice(index, 1);
-            var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
-            this.text.text = this.text.text.replace(regex, selected.words.map(word => word.value).join(' ')).replace("  ", " ")
-            this.current = {entity: {}, words: []}
+            if (!Object.keys(this.$route.params).includes('text_user_id')){
+                var index = this.selected.indexOf(selected);
+                this.selectedUpdateType = "decrease";
+                this.selected.splice(index, 1);
+                var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
+                this.text.text = this.text.text.replace(regex, selected.words.map(word => word.value).join(' ')).replace("  ", " ")
+                this.current = {entity: {}, words: []}
+            }
+            else {
+                var selectedWord = new RegExp("<span(.+?)>(.+?)<\/span>", "gi").exec(selected.word)[2]
+                this.editSelected.splice(this.editSelected.indexOf(selected), 1)
+                // var index = this.editSelected.filter(s => s.word === selected.word)[0]
+                // this.editSelected.slice(this.editSelected.indexOf(index), 1)
+                this.text.text = this.text.text.replace(selected.word, selectedWord)
+            }
         },
 
         send(){
