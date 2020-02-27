@@ -1,0 +1,8 @@
+version: '2.1'
+
+services:
+  datagen:
+    image: datagen
+    build: .
+    ports:
+      - 80:80
