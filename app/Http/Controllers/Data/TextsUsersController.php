@@ -9,6 +9,7 @@ use App\Http\Requests\TextUserRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobs\TextsUsers\CreateJob;
+use App\Jobs\TextsUsers\UpdateJob;
 
 class TextsUsersController extends Controller
 {
@@ -79,10 +80,11 @@ class TextsUsersController extends Controller
     {
         $textUser = TextUser::find($request->input('text_id'));
         if ($textUser){
+            $beforeTaggedText = $textUser->tagged_text;
             $textUser->tagged_text = $request->input('tagged_text');
             $updated = $textUser->save();
             if ($updated){
-                CreateJob::dispatch(TextUser::find($request->input('text_id')))->onQueue('computing');
+                UpdateJob::dispatch(TextUser::find($request->input('text_id')), $beforeTaggedText)->onQueue('computing');
                 return ["status" => 200, "message" => "Tagged text created successfully!", "data" => $updated];
             }
             return ["status" => 500, "message" => "Server Error!"];

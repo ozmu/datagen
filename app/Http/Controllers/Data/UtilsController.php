@@ -104,4 +104,51 @@ class UtilsController extends Controller
         }
         return $data;
     }
+
+    /**
+     * Get entities to array
+     * Ex. ["entity" => $entity, "type" => $type]
+     */
+    private function entitiesq($data){
+        $d = collect();
+        for ($i = 0; $i < count($data[2]); $i++){
+            $d->push(collect([
+                'entity' => trim($data[2][$i]),
+                'type' => $data[1][$i]
+            ]));
+        }
+        return $d;
+    }
+
+    public function test(Request $request){
+        $before = "Merhaba <START:LOCATION> Dünya <END> . I'm from Spain .";
+        $after = "Merhaba <START:LOCATION> Dünya <END> . I'm from <START:COUNTRY> Spain <END> . Test <START:MISC> etc. <END>";
+        $pattern = "/<START:(.+?)>(.+?)<END>/i";
+        preg_match_all($pattern, $before, $matchesBefore);
+        preg_match_all($pattern, $after, $matchesAfter);
+        return $this->entitiesq($matchesAfter)->diff($this->entitiesq($matchesBefore));
+        /*
+        for ($i = 0; $i < count($matchesAfter[2]); $i++){
+            $entity = Entity::where('entity', $matchesAfter[1][$i]);
+            if ($entity->count()){
+                $e = $entity->first();
+                $tagged = Tag::where(['text_user_id' => '', 'entity_type_id' => $e->id, 'entity_mention' => $matchesAfter[2][$i]]);
+                if ($tagged->count()){
+                    continue;
+                }
+                else {
+                    Tag::create([
+                        'text_user_id' => '',
+                        'entity_mention' => $matchesAfter[2][$i],
+                        'entity_type_id' => $e->id
+                    ]);
+                }
+            }
+        }
+        */
+        return [
+            "before" => $matchesBefore,
+            "after" => $matchesAfter
+        ];
+    }
 }
