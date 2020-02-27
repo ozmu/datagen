@@ -85,7 +85,7 @@ class TextsUsersController extends Controller
             $updated = $textUser->save();
             if ($updated){
                 UpdateJob::dispatch(TextUser::find($request->input('text_id')), $beforeTaggedText)->onQueue('computing');
-                return ["status" => 200, "message" => "Tagged text created successfully!", "data" => $updated];
+                return ["status" => 200, "message" => "Tagged text updated successfully!", "data" => $updated];
             }
             return ["status" => 500, "message" => "Server Error!"];
         }
