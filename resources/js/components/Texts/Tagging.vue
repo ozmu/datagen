@@ -450,6 +450,7 @@ export default {
                                     onAction: () => {
                                         this.selected = []
                                         this.selectedUpdateType = ""
+                                        this.loading = true;
                                         this.getNewText();
                                     }
                                 })

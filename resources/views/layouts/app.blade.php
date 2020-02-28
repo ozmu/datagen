@@ -101,7 +101,7 @@
 				</li>
 			</ul>
 
-			<span class="badge bg-success ml-md-3 mr-md-auto">Online</span>
+			<span class="badge bg-success ml-md-3 mr-md-auto" style="opacity:0;">Online</span>
 
 			<header-user :user="{{ $user }}"></header-user>
 		</div>

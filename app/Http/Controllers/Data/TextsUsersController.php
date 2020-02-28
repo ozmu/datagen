@@ -53,7 +53,7 @@ class TextsUsersController extends Controller
         ]);
         if ($created){
             CreateJob::dispatch($created)->onQueue('computing');
-            return ["status" => 200, "message" => "Tagged text created successfully!", "data" => $created];
+            return ["status" => 200, "message" => "Metin başarıyla oluşturuldu!", "data" => $created];
         }
         abort(500);
     }
@@ -85,11 +85,11 @@ class TextsUsersController extends Controller
             $updated = $textUser->save();
             if ($updated){
                 UpdateJob::dispatch(TextUser::find($request->input('text_id')), $beforeTaggedText)->onQueue('computing');
-                return ["status" => 200, "message" => "Tagged text updated successfully!", "data" => $updated];
+                return ["status" => 200, "message" => "Metin başarıyla güncellendi!", "data" => $updated];
             }
-            return ["status" => 500, "message" => "Server Error!"];
+            return ["status" => 500, "message" => "Sunucu hatası!"];
         }
-        return ["status" => 404, "message" => "Text not found!"];
+        return ["status" => 404, "message" => "Metin bulunamadı!"];
     }
 
     /**
