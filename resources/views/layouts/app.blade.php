@@ -75,189 +75,187 @@
 </head>
 
 <body>
-	<div id="app">
-		<!-- Main navbar -->
-		<div class="navbar navbar-expand-md navbar-dark" style="background-color:#324148;">
-			<div class="navbar-brand">
-				<a href="index.html" class="d-inline-block">
-					<img src="../../../../global_assets/images/logo_light.png" alt="">
+	<!-- Main navbar -->
+	<div class="navbar navbar-expand-md navbar-dark" id="header" style="background-color:#324148;">
+		<div class="navbar-brand">
+			<a href="index.html" class="d-inline-block">
+				<img src="../../../../global_assets/images/logo_light.png" alt="">
+			</a>
+		</div>
+
+		<div class="d-md-none">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
+				<i class="icon-tree5"></i>
+			</button>
+			<button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
+				<i class="icon-paragraph-justify3"></i>
+			</button>
+		</div>
+
+		<div class="collapse navbar-collapse" id="navbar-mobile">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
+						<i class="icon-paragraph-justify3"></i>
+					</a>
+				</li>
+			</ul>
+
+			<span class="badge bg-success ml-md-3 mr-md-auto">Online</span>
+
+			<header-user :user="{{ $user }}"></header-user>
+		</div>
+	</div>
+	<!-- /main navbar -->
+
+	<!-- Page content -->
+	<div class="page-content" id="app">
+		<!-- Main sidebar -->
+		<div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
+
+			<!-- Sidebar mobile toggler -->
+			<div class="sidebar-mobile-toggler text-center">
+				<a href="#" class="sidebar-mobile-main-toggle">
+					<i class="icon-arrow-left8"></i>
+				</a>
+				Navigation
+				<a href="#" class="sidebar-mobile-expand">
+					<i class="icon-screen-full"></i>
+					<i class="icon-screen-normal"></i>
 				</a>
 			</div>
-
-			<div class="d-md-none">
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
-					<i class="icon-tree5"></i>
-				</button>
-				<button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
-					<i class="icon-paragraph-justify3"></i>
-				</button>
-			</div>
-
-			<div class="collapse navbar-collapse" id="navbar-mobile">
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
-							<i class="icon-paragraph-justify3"></i>
-						</a>
-					</li>
-				</ul>
-
-				<span class="badge bg-success ml-md-3 mr-md-auto">Online</span>
-
-				<header-user :user="{{ $user }}"></header-user>
-			</div>
-		</div>
-		<!-- /main navbar -->
-
-		<!-- Page content -->
-		<div class="page-content">
-			<!-- Main sidebar -->
-			<div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
-
-				<!-- Sidebar mobile toggler -->
-				<div class="sidebar-mobile-toggler text-center">
-					<a href="#" class="sidebar-mobile-main-toggle">
-						<i class="icon-arrow-left8"></i>
-					</a>
-					Navigation
-					<a href="#" class="sidebar-mobile-expand">
-						<i class="icon-screen-full"></i>
-						<i class="icon-screen-normal"></i>
-					</a>
-				</div>
-				<!-- /sidebar mobile toggler -->
+			<!-- /sidebar mobile toggler -->
 
 
-				<!-- Sidebar content -->
-				<div class="sidebar-content">
+			<!-- Sidebar content -->
+			<div class="sidebar-content">
 
-					<!-- User menu -->
-					<div class="sidebar-user">
-						<div class="card-body">
-							<div class="media">
-								<div class="mr-3">
-									<a href="#"><img src="../../../../global_assets/images/placeholders/placeholder.jpg" width="38" height="38" class="rounded-circle" alt=""></a>
+				<!-- User menu -->
+				<div class="sidebar-user">
+					<div class="card-body">
+						<div class="media">
+							<div class="mr-3">
+								<a href="#"><img src="../../../../global_assets/images/placeholders/placeholder.jpg" width="38" height="38" class="rounded-circle" alt=""></a>
+							</div>
+
+							<div class="media-body">
+								<div class="media-title font-weight-semibold">{{ $user->name }}</div>
+								<div class="font-size-xs opacity-50">
+									<i class="icon-envelop3 font-size-sm"></i> {{ $user->email }}
 								</div>
+							</div>
 
-								<div class="media-body">
-									<div class="media-title font-weight-semibold">{{ $user->name }}</div>
-									<div class="font-size-xs opacity-50">
-										<i class="icon-envelop3 font-size-sm"></i> {{ $user->email }}
-									</div>
-								</div>
-
-								<div class="ml-3 align-self-center">
-									<a href="#" class="text-white"><i class="icon-cog3"></i></a>
-								</div>
+							<div class="ml-3 align-self-center">
+								<a href="#" class="text-white"><i class="icon-cog3"></i></a>
 							</div>
 						</div>
 					</div>
-					<!-- /user menu -->
-
-
-					<!-- Main navigation -->
-					<div class="card card-sidebar-mobile">
-						<ul class="nav nav-sidebar" data-nav-type="accordion">
-
-							<!-- Main -->
-							<li class="nav-item-header">
-								<div class="text-uppercase font-size-xs line-height-xs">Main</div> 
-								<i class="icon-menu" title="Main"></i>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'main-home'}" class="nav-link" :class="{'active': $route.name == 'main-home'}">
-									<i class="icon-home4"></i>
-									<span>Dashboard</span>
-								</router-link>
-							</li>						
-							<!-- /main -->
-
-							@if (request()->user()->is_admin)
-							<!-- admin -->
-							<li class="nav-item-header">
-								<div class="text-uppercase font-size-xs line-height-xs">Admin</div> 
-								<i class="icon-menu" title="Admin"></i>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'admin-users'}" class="nav-link" :class="{'active': $route.name == 'admin-users'}">
-									<i class="icon-users"></i>
-									<span>Kullanıcılar</span>
-								</router-link>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'admin-texts'}" class="nav-link" :class="{'active': $route.name == 'admin-texts'}">
-									<i class="icon-paragraph-center3 "></i>
-									<span>Metinler</span>
-								</router-link>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'admin-settings'}" class="nav-link" :class="{'active': $route.name == 'admin-settings'}">
-									<i class="icon-gear"></i>
-									<span>Ayarlar</span>
-								</router-link>
-							</li>							
-							<!-- /admin -->
-							@endif
-
-							<!-- Texts -->
-							<li class="nav-item-header">
-								<div class="text-uppercase font-size-xs line-height-xs">Metinler</div> 
-								<i class="icon-menu" title="Metinler"></i>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'texts-tagging'}" class="nav-link" :class="{'active': $route.name == 'texts-tagging'}">
-									<i class="icon-pencil3"></i> 
-									<span>İşaretle</span>
-								</router-link>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'texts-tagged'}" class="nav-link" :class="{'active': $route.name == 'texts-tagged'}">
-									<i class="icon-quill4"></i> 
-									<span>Son işaretlenenler</span>
-								</router-link>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'texts-statistics'}" class="nav-link" :class="{'active': $route.name == 'texts-statistics'}">
-									<i class="icon-stats-dots"></i> 
-									<span>İstatistik</span>
-								</router-link>
-							</li>
-							<!-- /texts -->
-
-							<!-- Support -->
-							<li class="nav-item-header">
-								<div class="text-uppercase font-size-xs line-height-xs">Destek</div> 
-								<i class="icon-menu" title="Destek"></i>
-							</li>
-							<li class="nav-item">
-								<router-link :to="{name: 'support-contact'}" class="nav-link" :class="{'active': $route.name == 'support-contact'}">
-									<i class="icon-comment-discussion"></i> 
-									<span>İletişim</span>
-								</router-link>
-							</li>
-							<!-- /support -->
-							
-
-						</ul>
-					</div>
-					<!-- /main navigation -->
-
 				</div>
-				<!-- /sidebar content -->
-				
+				<!-- /user menu -->
+
+
+				<!-- Main navigation -->
+				<div class="card card-sidebar-mobile">
+					<ul class="nav nav-sidebar" data-nav-type="accordion">
+
+						<!-- Main -->
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Main</div> 
+							<i class="icon-menu" title="Main"></i>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'main-home'}" class="nav-link" :class="{'active': $route.name == 'main-home'}">
+								<i class="icon-home4"></i>
+								<span>Dashboard</span>
+							</router-link>
+						</li>						
+						<!-- /main -->
+
+						@if (request()->user()->is_admin)
+						<!-- admin -->
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Admin</div> 
+							<i class="icon-menu" title="Admin"></i>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'admin-users'}" class="nav-link" :class="{'active': $route.name == 'admin-users'}">
+								<i class="icon-users"></i>
+								<span>Kullanıcılar</span>
+							</router-link>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'admin-texts'}" class="nav-link" :class="{'active': $route.name == 'admin-texts'}">
+								<i class="icon-paragraph-center3 "></i>
+								<span>Metinler</span>
+							</router-link>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'admin-settings'}" class="nav-link" :class="{'active': $route.name == 'admin-settings'}">
+								<i class="icon-gear"></i>
+								<span>Ayarlar</span>
+							</router-link>
+						</li>							
+						<!-- /admin -->
+						@endif
+
+						<!-- Texts -->
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Metinler</div> 
+							<i class="icon-menu" title="Metinler"></i>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'texts-tagging'}" class="nav-link" :class="{'active': $route.name == 'texts-tagging'}">
+								<i class="icon-pencil3"></i> 
+								<span>İşaretle</span>
+							</router-link>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'texts-tagged'}" class="nav-link" :class="{'active': $route.name == 'texts-tagged'}">
+								<i class="icon-quill4"></i> 
+								<span>Son işaretlenenler</span>
+							</router-link>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'texts-statistics'}" class="nav-link" :class="{'active': $route.name == 'texts-statistics'}">
+								<i class="icon-stats-dots"></i> 
+								<span>İstatistik</span>
+							</router-link>
+						</li>
+						<!-- /texts -->
+
+						<!-- Support -->
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Destek</div> 
+							<i class="icon-menu" title="Destek"></i>
+						</li>
+						<li class="nav-item">
+							<router-link :to="{name: 'support-contact'}" class="nav-link" :class="{'active': $route.name == 'support-contact'}">
+								<i class="icon-comment-discussion"></i> 
+								<span>İletişim</span>
+							</router-link>
+						</li>
+						<!-- /support -->
+						
+
+					</ul>
+				</div>
+				<!-- /main navigation -->
+
 			</div>
-			<!-- /main sidebar -->
-
-
-			<!-- Main content -->
-			<div class="content-wrapper scrollbar bold" style="max-height: calc(100vh - 54px);">
-				@yield('content')
-			</div>
-			<!-- /main content -->
-
+			<!-- /sidebar content -->
+			
 		</div>
-		<!-- /page content -->
+		<!-- /main sidebar -->
+
+
+		<!-- Main content -->
+		<div class="content-wrapper scrollbar bold" style="max-height: calc(100vh - 54px);">
+			@yield('content')
+		</div>
+		<!-- /main content -->
+
 	</div>
+	<!-- /page content -->
 </body>
 <!-- Vue Component Loader -->
 <script src="{{ mix('js/app.js') }}"></script>

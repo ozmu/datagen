@@ -68,3 +68,7 @@ const app = new Vue({
     router,
     el: '#app'
 });
+
+const header = new Vue({
+    el: '#header'
+})
