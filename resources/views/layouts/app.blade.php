@@ -139,9 +139,9 @@
 							</div>
 
 							<div class="media-body">
-								<div class="media-title font-weight-semibold">{{ $user->name }}</div>
-								<div class="font-size-xs opacity-50">
-									<i class="icon-envelop3 font-size-sm"></i> {{ $user->email }}
+								<div class="media-title font-weight-semibold" title="{{ $user->name }}">{{ \Illuminate\Support\Str::limit($user->name, 16, $end='...') }}</div>
+								<div class="font-size-xs opacity-50" title="{{ $user->email }}">
+									<i class="icon-envelop3 font-size-sm"></i> {{ \Illuminate\Support\Str::limit($user->email, 16, $end='...') }}
 								</div>
 							</div>
 

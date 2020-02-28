@@ -21,8 +21,10 @@
                                 </div>
                             </div>
                             <div>
-                                Balance
-                                <div class="font-size-sm opacity-75">{{ widgets.balance.data.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon><span class="sub-text">not verified balance</span></div>
+                                Bakiye
+                                <div class="font-size-sm opacity-75">{{ widgets.balance.data.notVerifiedBalance }}<b-icon icon="currency-try" custom-size="mdi-14px"></b-icon>
+                                    <span class="sub-text">onaylanmamış bakiye</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -47,8 +49,8 @@
                             </div>
                             
                             <div>
-                                Today marked texts
-                                <div class="font-size-sm opacity-75">{{ widgets.texts.data.all }} <span class="sub-text">all marked texts</span></div>
+                                Bugün işaretlenilen metinler
+                                <div class="font-size-sm opacity-75">{{ widgets.texts.data.all }} <span class="sub-text">tüm işaretlenmiş metinler</span></div>
                             </div>
                         </div>
                     </div>
@@ -73,8 +75,8 @@
                             </div>
                             
                             <div>
-                                Today tags count
-                                <div class="font-size-sm opacity-75">{{ widgets.tags.data.all }} <span class="sub-text">all tags count</span></div>
+                                Bugün işaretlenen etiketler
+                                <div class="font-size-sm opacity-75">{{ widgets.tags.data.all }} <span class="sub-text">tüm işaretlenmiş etiketler</span></div>
                             </div>
                         </div>
                     </div>

@@ -551,7 +551,8 @@ export default {
 }
 .entities {
     overflow-x: auto;
-    display: inherit;
+    padding-bottom: 5px;
+    /* display: inherit; */
 }
 .words, .selecteds {
     overflow-y: auto;
@@ -579,6 +580,7 @@ export default {
     cursor: pointer;
     padding: 5px;
     margin-right: 5px;
+    margin-bottom: 5px;
     background: #e2e2e2;
     display: inline-block;
     border-radius: 5px;
