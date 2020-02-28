@@ -41,6 +41,3 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function(){
     Route::get('settings', 'AdminController@getSettings');
     Route::put('settings', 'AdminController@updateSettings');
 });
-
-// Test
-Route::get('test', 'UtilsController@test')->middleware('admin');

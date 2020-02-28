@@ -9,7 +9,7 @@ class Entity extends Model
     protected $table = "entities";
 
     protected $fillable = [
-        "entity", "type", "localized", "color"
+        "entity", "type", "localized", "color", "is_active"
     ];
 
     protected $hidden = [

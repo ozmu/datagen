@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 class UtilsController extends Controller
 {
     public function entities(Request $request){
-        return Entity::all();
+        return Entity::where('is_active', true)->get();
     }
 
     public function widgets(Request $request){
@@ -103,29 +103,5 @@ class UtilsController extends Controller
             $data->put('data', array_count_values($tags));
         }
         return $data;
-    }
-
-    /**
-     * Get entities to array
-     * Ex. ["entity" => $entity, "type" => $type]
-     */
-    private function entitiesq($data){
-        $d = collect();
-        for ($i = 0; $i < count($data[2]); $i++){
-            $d->push(collect([
-                'entity' => trim($data[2][$i]),
-                'type' => $data[1][$i]
-            ]));
-        }
-        return $d;
-    }
-
-    public function test(Request $request){
-        $before = "Merhaba <START:LOCATION> Dünya <END> . I'm from <START:COUNTRY> Spain <END> .";
-        $after = "Merhaba <START:LOCATION> Dünya <END> . I'm from Spain . Test <START:MISC> etc. <END>";
-        $pattern = "/<START:(.+?)>(.+?)<END>/i";
-        preg_match_all($pattern, $before, $matchesBefore);
-        preg_match_all($pattern, $after, $matchesAfter);
-        return $this->entitiesq($matchesBefore)->diff($this->entitiesq($matchesAfter));
     }
 }

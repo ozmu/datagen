@@ -13,9 +13,9 @@ class EntitySeeder extends Seeder
     public function run()
     {
         // named entities
-        Entity::create(["entity" => "PERSON", "type"=> "named", "localized" => "ŞAHIS", "color" => "#C62828"]);
-        Entity::create(["entity" => "LOCATION", "type"=> "named", "localized" => "LOKASYON", "color" => "#1565C0"]);
-        Entity::create(["entity" => "ORGANIZATION", "type"=> "named", "localized" => "ORGANİZASYON", "color" => "#42A5F5"]);
+        Entity::create(["entity" => "PERSON", "type"=> "named", "localized" => "ŞAHIS", "color" => "#C62828", "is_active" => true]);
+        Entity::create(["entity" => "LOCATION", "type"=> "named", "localized" => "LOKASYON", "color" => "#1565C0", "is_active" => true]);
+        Entity::create(["entity" => "ORGANIZATION", "type"=> "named", "localized" => "ORGANİZASYON", "color" => "#42A5F5", "is_active" => true]);
         Entity::create(["entity" => "MISC", "type"=> "named", "localized" => "ÇEŞİTLİ", "color" => "#E57373"]);
 
         // numerical entities
@@ -37,7 +37,7 @@ class EntitySeeder extends Seeder
         Entity::create(["entity" => "COUNTRY", "type"=> "fine-grained", "localized" => "ÜLKE", "color" => "#00695C"]);
         Entity::create(["entity" => "NATIONALITY", "type"=> "fine-grained", "localized" => "MİLLİYET", "color" => "#26A69A"]);
         Entity::create(["entity" => "RELIGION", "type"=> "fine-grained", "localized" => "DİN", "color" => "#558B2F"]);
-        Entity::create(["entity" => "TITLE", "type"=> "fine-grained", "localized" => "POZİSYON(İŞ)", "color" => "#9CCC65"]);
+        Entity::create(["entity" => "TITLE", "type"=> "fine-grained", "localized" => "POZİSYON(İŞ)", "color" => "#9CCC65", "is_active" => true]);
         Entity::create(["entity" => "IDEOLOGY", "type"=> "fine-grained", "localized" => "İDEOLOJİ", "color" => "#EF6C00"]);
         Entity::create(["entity" => "CAUSE_OF_DEATH", "type"=> "fine-grained", "localized" => "ÖLÜM_SEBEBİ", "color" => "#6DCC41"]);
     }
