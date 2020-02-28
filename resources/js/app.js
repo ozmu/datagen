@@ -41,6 +41,9 @@ var router = new VueRouter({
     routes
 })
 
+Vue.component('header-user', require('./components/Header/User.vue').default);
+
+
 /*
 Vue.component('admin-users', require('./components/Admin/Users.vue').default);
 Vue.component('admin-texts', require('./components/Admin/Texts.vue').default);
