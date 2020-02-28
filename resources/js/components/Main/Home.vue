@@ -15,7 +15,9 @@
                             <div class="d-flex">
                                 <h3 class="font-weight-semibold mb-0">{{ widgets.balance.data.balance }}<b-icon icon="currency-try" custom-size="mdi-18px"></b-icon></h3>
                                 <div class="list-icons ml-auto">
-                                    <a class="list-icons-item" data-action="reload"></a>
+                                    <a class="list-icons-item" @click="reload('balance')">
+                                        <b-icon icon="reload"></b-icon>
+                                    </a>
                                 </div>
                             </div>
                             <div>
@@ -38,7 +40,9 @@
                             <div class="d-flex">
                                 <h3 class="font-weight-semibold mb-0">{{ widgets.texts.data.today }}</h3>
                                 <div class="list-icons ml-auto">
-                                    <a class="list-icons-item" data-action="reload"></a>
+                                    <a class="list-icons-item" @click="reload('texts')">
+                                        <b-icon icon="reload"></b-icon>
+                                    </a>
                                 </div>
                             </div>
                             
@@ -61,7 +65,11 @@
                             </div>
                             <div class="d-flex">
                                 <h3 class="font-weight-semibold mb-0">{{ widgets.tags.data.today }}</h3>
-                                <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">+53,6%</span>
+                                <div class="list-icons ml-auto">
+                                    <a class="list-icons-item" @click="reload('tags')">
+                                        <b-icon icon="reload"></b-icon>
+                                    </a>
+                                </div>
                             </div>
                             
                             <div>
@@ -247,6 +255,11 @@ export default {
     },
 
     methods: {
+        reload(scope){
+            this.widgets[scope].loading = true;
+            this.getWidgets(scope)
+        },
+
         getWidgets(scope){
             axios.get('/data/utils/widgets?scope=' + scope).then(response => {
                 this.widgets[scope].data = response.data
@@ -263,5 +276,8 @@ export default {
 }
 span.sub-text {
     font-size: 10px;
+}
+.card.home-widget {
+    height: 120px;
 }
 </style>
