@@ -73,3 +73,13 @@ outline: 1px solid slategrey;
 .card {
   border-radius: 10px;
 }
+.selected {
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  transition: all ease .4s;
+}
+.close-icon {
+  margin-left: 5px;
+  cursor: pointer;
+}

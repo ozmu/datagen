@@ -1,42 +1,17 @@
 <template>
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="overlay" v-if="loading">
-                    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-                </div>
-                <div class="row card-row">
-                    <div class="col-md-8">
-                        <div class="row">
-                            <div class="entities scrollbar">
-                                <div style="display: inherit">
-                                    <span 
-                                    v-for="entity in entities" 
-                                    :key="entity.id" 
-                                    class="entity-tag" 
-                                    :class="{'selected entity': entity.id === current.entity.id}" 
-                                    @click="current.entity = entity"
-                                    :style="entity.id === current.entity.id ? 'background:' + entity.color : ''" :title="entity.entity">{{ entity.localized }}</span>
-                                </div>
-                            </div>
+    <div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card full-height">
+                    <div class="card-body">
+                        <div class="overlay" v-if="loading">
+                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                         </div>
-                        <div class="row">
-                            <div class="form-control text scrollbar" v-if="text.text" v-html="text.text.replace(/(<span)[|](.+?)[|](.*?)[|](.+?)>(.+?)<\/span>/gi, '$1 $2 $3 $4> $5 </span>').replace(/[|]/gi, ' ')"></div>
-                        </div>
+                        <highlightable v-if="entities.length" @action="handleAction" :entities="entities">
+                            <p id="text" class="text scrollbar">{{ text.text }}</p>
+                        </highlightable>
                     </div>
-                    <div class="col-md-4">
-                        <div class="words scrollbar">
-                            <span v-for="(word, id) in words" :key="id" class="entity-tag entity-word" :class="{'selected word': current.words.includes(word)}" @click="selectWord($event, word)">{{ word.value.replace(/(<([^>]+)>)/ig, "").replace(/[|]/gi, " ").replace("  ", " ") }}</span>
-                        </div>
-                        <div class="selecteds scrollbar">
-                            <span v-for="(s, id) in selected" :key="id" class="tag" :title="s.entity.entity" :style="'color:#fff;background:' + s.entity.color">
-                                {{ s.words ? s.words.map(word => word.value).join(' ') : printEditSelected(s.word)}} <i class="mdi mdi-close-circle mdi-14px close-icon" @click="removeSelected(s)"></i>
-                            </span>
-                        </div>
-                        <b-icon icon="plus-circle" size="is-medium" @click.native="addEntity(false)" class="add-btn">Ekle</b-icon>
-                        <button v-if="!Object.keys($route.params).includes('text_user_id')" class="btn btn-primary send-btn" @click="send">Gönder</button>
-                        <button v-else class="btn btn-primary send-btn" @click="update">Güncelle</button>
-                    </div>
+                    <button class="btn btn-primary send-btn" @click="send">Gönder</button>
                 </div>
             </div>
         </div>
@@ -44,53 +19,26 @@
 </template>
 
 <script>
+import Highlightable from '../Utils/Highlightable'
 export default {
+    components: {
+        Highlightable
+    },
+
     data(){
         return {
             loading: true,
+            div: null,
+            tagCount: 1000,
             text: {
                 id: null,
                 text: ''
             },
-            current: {
-                entity: {},
-                words: []
-            },
-            selected: [],
-            selectedUpdateType: '',
             entities: []
         }
     },
 
-    computed: {
-        words(){
-            return this.splitWithIndex(this.text.text, " ")
-            //return this.splitWithIndex(this.text.text.replace(/(<([^>]+)>)/ig, "").replace("  ", " "), " ")
-        }
-    },
-
-    watch: {
-        'selected': function(newVal, oldVal){
-            if (this.selectedUpdateType === "increase"){
-                var last = newVal[newVal.length - 1]
-                var entity = last.words.map(word => word.value).join('|')
-                var beginIndex = last.words[0].index
-                var lastIndex = last.words[last.words.length - 1].index + last.words[last.words.length - 1].value.length
-                var beginText = '<span|class="tag"|title="' + last.entity.entity + '"|style="color:#fff;background:' + last.entity.color + '">'
-                var endText = '</span>'
-                this.text.text = this.text.text.replaceAt(beginIndex, beginText + entity + endText, lastIndex)
-            }
-        }
-    },
-
     mounted(){
-        var self = this;
-        document.addEventListener('keypress', function(e){
-            if (e.key === 'Enter'){
-                self.addEntity(true)
-            }
-        })
-
         // Get Entities
         axios.get('/data/utils/entities').then(response => {
             this.entities = response.data
@@ -103,190 +51,48 @@ export default {
         else {
             axios.get('/data/text/' + this.$route.params.text_user_id).then(response => {
                 if (response.status === 200){
-                    /*
-                    this.text = response.data.text
-                    //var pattern = new RegExp("<START:(.+?)> (.+?) <END>", "gi")
-                    var pattern = new RegExp("([A-Za-z0-9,.!':\"]+?)?[ ]?([A-Za-z0-9,.!':\"]+)?[ ]<START:(.+?)> (.+?) <END>[ ]([A-Za-z0-9,.!':\"]+)?[ ]?([A-Za-z0-9,.!':\"]+)?[ ]?", "gi")
-                    var matches = response.data.tagged_text.match(pattern)
-                    for (var match in matches){
-                        var matchedDetails = new RegExp("(.+?)?<START:(.+?)> (.+?) <END>(.+?)?").exec(matches[match])
-                        console.log('matchedDetails: ', matchedDetails)
-                        var before = matchedDetails[1] ? matchedDetails[1].trim().split(' ') : [];
-                        var type = matchedDetails[2];
-                        var entity = matchedDetails[3] ? matchedDetails[3].trim().split(' ') : [];
-                        var after = matchedDetails[4] ? matchedDetails[4].trim().split(' ') : [];
-                        console.log('Before: ', before)
-                        console.log('After: ', after)
-                        console.log('entity: ', entity)
-                        
-                        var found = this.findSubArray(this.words, [].concat(before, entity, after), 0)
-                        console.log(found) // find sub array
-                        if (found === -1){
-                            console.log('Bulamadım..')
-                            console.log('=============================================')
-                        }
-                        else {
-                            this.current.entity = this.entities.filter(e => e.entity.toLowerCase() === type.toLowerCase())[0]
-                            for (var e in entity){
-                                if (entity[e] == this.words[found].value){
-                                    this.current.words.push(this.words[found])
-                                }
-                            }
-                        }
-
-                        /*
-                        for (var word in this.words){
-                            var splittedEntity = entity.split(' ')
-                            if (splittedEntity.length === 1){
-                                if (this.words[word] === splittedEntity[0]){
-                                    if (before && before.trim().split(' ').length === 1){
-
-                                    }
-                                }
-                            }
-                        }
-                        */
-
-                        /*
-                        var typeMatch = matches[match].match(new RegExp(":(.+?)>", "i"))[1] // Entity Type
-                        var entityMatch = matches[match].match(new RegExp("> (.+?) <", "i"))[1] // Entity Mention
-                        // console.log("typeMatch: ", typeMatch)
-                        // console.log("entityMatch: ", entityMatch)
-                        var type = this.entities.filter(type => type.entity === typeMatch)
-                        if (type.length){
-                            this.current.entity = type[0]
-                            var splitted = entityMatch.split(' ')
-                            if (splitted.length > 1){
-                                for (var s in splitted){
-                                    var filtered = this.words.filter(word => word.value === splitted[s])
-                                    console.log("filtered: ", filtered)
-                                    if (filtered.length === 1){
-                                        this.current.words.push(filtered[0])
-                                        this.addEntity()
-                                    }
-                                }
-                            }
-                            else if (splitted.length === 1){
-                                var filtered = this.words.filter(word => word.value === splitted[0])
-                                if (filtered.length === 1){
-                                    this.current.words.push(filtered[0])
-                                    this.addEntity()
-                                }
-                            }
-                        }
-                        */
-                    // }
-                    // this.loading = false;
-                    // console.log(response.data.tagged_text.replace(pattern, '<span|class="tag"|title="$1"|style="color:#fff;background:#asdads">$2</span>'))
-                    
-
-                    
-                    var tagPattern = new RegExp('<START:(.+?)> (.+?) <END>', 'gi')
-                    var spanPattern = new RegExp('<span[|]id="tag-[0-9]{4}"[|]class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)<\/span>', 'gi')
-                    var replaced = response.data.tagged_text.replace(tagPattern, '<span|id="tag-1000"|class="tag"|title="$1"|style="color:#fff;background:#000000">$2</span>')
-                    
-                    //this.text.text = replaced
-                    var match = spanPattern.exec(replaced)
-                    var count = 0;
-                    while (match != null){
-                        var matchPattern = new RegExp('(<span[|]id="tag-)(1000)("[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#000000)(">)' + match[2] + '(<\/span>)', 'i')
-                        replaced = replaced.replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')                        
-                        this.selected.push({
-                            entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
-                            word: match[0].replace(matchPattern, '$1' + (count + 1000) + '$3' + this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0].color + '$5' + match[2].replace(/ /gi, '|') + '$6')
-                        })
-                        match = spanPattern.exec(replaced)
-                        count++;
-                        /*
-                        console.log('Span pattern: ', spanPattern)
-                        console.log('Match[2]: ', match[2])
-                        console.log('Pushinggg...')
-                        console.log('This words length: ', this.words.length)
-                        console.log('Text: ', this.text.text.length)
-                        console.log({
-                            entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
-                            words: this.words.filter(w => w.value.includes(match[2].replace(/[ ]/gi, '|'))) //this.words.filter(w => match[2].split(' ').some(r => w.value.includes(r)))
-                        })
-                        console.log(match[2].replace(/[ ]/gi, '|'))
-                        console.log('=========================')
-
-                        this.selected.push({
-                            entity: this.entities.filter(e => e.entity.toLowerCase() === match[1].toLowerCase())[0],
-                            words: this.words.filter(w => w.value.includes(match[2].replace(/[ ]/gi, '|')))
-                        })
-                        */
-                    }
-                    this.text = response.data.text
-                    this.text.text = replaced
-                    var allMatches = this.text.text.match(spanPattern)
-                    this.loading = false;
-                    
-
-
-                    /*
-                    var match = spanPattern.exec(this.text.text)
-                    while (match != null){
-                        var matchPattern = new RegExp('(<span[|]class="tag"[|]title="' + match[1] + '"[|]style="color:#fff;background:)(#[A-Za-z0-9]{6})(">)' + match[2] + '(<\/span>)', 'i')
-                        this.selected.push({
-                            entity: this.entities.filter(e => e.entity === match[1])[0],
-                            words: this.words.filter(w => w.value.includes(match[2].replace(/ /gi, '|')))
-                        })
-                        match = spanPattern.exec(this.text.text)
-                    }
-                    */
+                    console.log(response.data)
                 }
             }).catch(e => {
                 console.log(e.response ? e.response : e)
             })
         }
-
-        // Add splice method to Strings
-        String.prototype.splice = function(idx, rem, str) {
-            return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
-        };
-
-        // Add replaceAt method to Strings
-        String.prototype.replaceAt = function(index, replacement, lastIndex) {
-            return this.substr(0, index) + replacement + this.substr(lastIndex);
-        }
     },
 
     methods: {
-        findSubArray(arr, subarr, from_index) {
-            var i = from_index >>> 0,
-                sl = subarr.length,
-                l = arr.length + 1 - sl;
-
-            loop: for (; i<l; i++) {
-                for (var j=0; j<sl; j++)
-                    if (arr[i+j] !== subarr[j])
-                        continue loop;
-                return i;
+        unwrap(wrapper) {
+            var docFrag = document.createDocumentFragment();
+            while (wrapper.firstChild) {
+                var child = wrapper.removeChild(wrapper.firstChild);
+                if (child.nodeType === 3){
+                    docFrag.appendChild(child);
+                }
             }
-            return -1;
+            wrapper.parentNode.replaceChild(docFrag, wrapper);
         },
 
-        printEditSelected(word){
-            return word.replace(/<span(.+?)>(.+?)<\/span>/i, '$2').replace(/[|]/gi, ' ')
-        },
-
-        /*
-        getSelection(event){
-            var selection = window.getSelection()
-            if (selection.toString().length){
-                console.log(selection)
-                var range = selection.getRangeAt(0);
-                console.log('Range start: ', range.startOffset)
-                console.log('Range end: ', range.endOffset)
-                var beginText = `<span|style="background:red">` + selection.toString()
-                var endText = `</span>`
-                //this.text.text = this.text.text.splice(range.startOffset, selection.toString().length, beginText + endText)
+        handleAction (data){
+            var self = this;
+            var entity = this.entities.filter(e => e.entity === data.type).length ? this.entities.filter(e => e.entity === data.type)[0] : {}
+            var selection = data.selection
+            var selection_text = selection.toString();
+            var span = document.createElement('span');
+            span.id = self.tagCount;
+            self.tagCount++;
+            span.classList.add('selected')
+            span.title = entity.entity
+            span.style.backgroundColor = entity.color
+            span.textContent = selection_text;
+            var icon = document.createElement('i');
+            icon.classList.add('mdi', 'mdi-close-circle', 'mdi-14px', 'close-icon');
+            icon.onclick = function(){
+                self.unwrap(this.parentElement)
             }
-            else {
-
-            }
+            span.appendChild(icon)
+            var range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(span);
         },
-        */
 
         getNewText(){
             axios.get('/data/text/new').then(response => {
@@ -307,136 +113,19 @@ export default {
             this.current = {entity: {}, words: []}
         },
 
-        splitWithIndex(str, delim){
-            //str = str.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")
-            var ret=[]
-            var splits= str ? str.split(delim) : [""]
-            var index=0
-            for(var i=0;i<splits.length;i++){
-                if (splits[i].length > 0){
-                    ret.push({
-                        index,
-                        value: splits[i]
-                    })
-                }
-                index += splits[i].length+delim.length
-            }
-            return ret
-        },
-
-        selectWord(event, word){
-            if (this.current.words.includes(word)){
-                this.current.words.splice(this.current.words.indexOf(word), 1)
-            }
-            else {
-                if (event.ctrlKey){
-                    if (this.current.words.length){
-                        var last = this.current.words[this.current.words.length - 1]
-                        var lastIndex = this.words.findIndex(w => w.index === last.index)
-                        var wordIndex = this.words.findIndex(w => w.index === word.index)
-                        if (lastIndex < wordIndex){
-                            lastIndex++;
-                            for (lastIndex; lastIndex <= wordIndex; lastIndex++){
-                                this.current.words.push(this.words[lastIndex])
-                            }
-                        }
-                        else {
-                            lastIndex--;
-                            for (lastIndex; lastIndex >= wordIndex; lastIndex--){
-                                this.current.words.push(this.words[lastIndex])
-                            }
-                        }
-                    }
-                    else {
-                        this.current.words.push(word) 
-                    }
-                }
-                else {
-                    this.current.words = [word]
-                } 
-            }
-        },
-        
-        addEntity(enter = false){
-            if (!_.isEmpty(this.current.entity) && this.current.words.length > 0){
-                //var filtered = this.selected.filter(s => {if (s.words.map(word => word.value).join('|') === this.current.words.map(word => word.value.replace(/(<([^>]+)>)/ig, "").replace("  ", " ")).join('|')) return true})
-                var filtered = this.selected.filter(s => {
-                    if (s.words){
-                        return s.words[0].index === this.current.words[0].index
-                    }
-                    else {
-                        return new RegExp("<span(.+?)>(.+?)<\/span>", "gi").exec(s.word)[2] === this.current.words.map(w => w.value).join('|')
-                    }
-                })
-                if (filtered.length){
-                    this.$buefy.snackbar.open({
-                        message: "Entity zaten eklenmiş!",
-                        type: 'is-warning',
-                        position: 'is-top',
-                        actionText: 'OK'
-                    })
-                    this.current = {entity: {}, words: []}
-                    return
-                }
-                this.selectedUpdateType = "increase";
-                this.selected.push({
-                    entity: this.current.entity, 
-                    words: _.orderBy(this.current.words, "index")
-                })
-                this.current = {entity: {}, words: []}
-            }
-            else {
-                if (!enter){
-                    this.$buefy.snackbar.open({
-                        message: "Lütfen entity ve tipini eksiksiz seçin!",
-                        type: 'is-warning',
-                        position: 'is-top',
-                        actionText: 'OK'
-                    })
-                }
-            }
-        },
-
-        /*
-        printSelected(selected){
-            var pattern = new RegExp('<span[|]class="tag"[|]title="(.+?)[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'i')
-            var values = selected.words.map(word => word.value)
-            if (pattern.test(values)){
-                console.log('Selected: ', selected)
-                return selected.words[0].value.match(pattern)[2].replace(/[|]/g, ' ')
-            }
-            else {
-                return values.join(' ')
-            }
-        },
-        */
-
-        removeSelected(selected){
-            this.selectedUpdateType = "decrease";
-            if (selected.words || !Object.keys(this.$route.params).includes('text_user_id')){
-                var index = this.selected.indexOf(selected);
-                this.selected.splice(index, 1);
-                var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="' + selected.entity.entity + '"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">' + selected.words.map(word => word.value).join('[|]') + '</span>');
-                this.text.text = this.text.text.replace(regex, selected.words.map(word => word.value).join(' ')).replace("  ", " ")
-                this.current = {entity: {}, words: []}
-            }
-            else {
-                var selectedWord = new RegExp("<span(.+?)>(.+?)<\/span>", "gi").exec(selected.word)[2]
-                    this.text.text = this.text.text.replace(selected.word, selectedWord)
-                    this.selected.splice(this.selected.indexOf(this.selected.filter(s => s.word === selected.word)[0]), 1)
-            }
-        },
-
+        /** Necessary */
         send(){
-            if (this.selected.length){
+            var text = document.getElementById('text')
+            if (text.getElementsByTagName('span').length){
                 this.$buefy.dialog.confirm({
                     message: 'Devam etmek ister misiniz?',
                     onConfirm: () => {
-                        var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'gi');
-                        var tagged_text = this.text.text.replace(regex, ' <START:$2> $3 <END> ').replace(/(<span([^>]+)>)?|(<\/span>)?/ig, '').replace(/[|]/g, ' ').replace('  ', ' ')
+                        var html = text.innerHTML;
+                        var pattern = new RegExp('<span id="([0-9]{4})" class="selected" title="(.+?)" style="(.+?)">(.+?)<i class="mdi mdi-close-circle mdi-14px close-icon"></i></span>', 'gi')
+                        var taggedText = html.replace(pattern, ' <START:$2>$4<END> ')
                         var data = {
                             text_id: this.text.id,
-                            tagged_text: tagged_text
+                            tagged_text: taggedText
                         }
                         axios.post('/data/text', data).then(response => {
                             console.log(response.data)
@@ -477,6 +166,7 @@ export default {
             }
         },
 
+        /** Necessary */
         update(){
             if (this.selected.length){
                 this.$buefy.dialog.confirm({
@@ -530,7 +220,7 @@ export default {
 </script>
 
 <style scoped>
-.card {
+.card.full-height {
     height: calc(100vh - 190px);
 }
 .card-row {
@@ -539,67 +229,13 @@ export default {
 .card-row .text {
     overflow-y: auto;
     line-height: 30px;
-    height: calc(100vh - 290px);
 }
-/** Entities and words */
-.entities, .words, .selecteds {
-    padding: 10px;
-    margin-bottom: 10px;
-    overflow-y: hidden;
-    overflow-x: auto;
-    border: 1px solid #e1e1e1;
-    min-height: 30px;
-}
-.entities {
-    overflow-x: auto;
-    padding-bottom: 5px;
-    /* display: inherit; */
-}
-.words, .selecteds {
+p.text {
+    line-height: 30px;
+    text-align: justify;
+    padding: 0 50px;
+    max-height: calc(100vh - 270px);
     overflow-y: auto;
-    height: 45%;
-}
-.selected {
-    color: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    transition: all ease .4s;
-}
-.selected.word {
-    background: green !important;
-}
-.selected.entity {
-    box-shadow: 0 0 10px #000;
-}
-.selecteds span.tag {
-    margin-right: 5px;
-    margin-bottom: 5px;
-    line-height: 20px;
-    display: inline-block;
-}
-.entity-tag {
-    cursor: pointer;
-    padding: 5px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    background: #e2e2e2;
-    display: inline-block;
-    border-radius: 5px;
-}
-.entity-tag.entity-word {
-    margin-bottom: 5px;
-}
-.close-icon {
-    margin-left: 5px;
-    cursor: pointer;
-}
-.add-btn {
-    cursor: pointer;
-    transition: all ease .4s;
-}
-.add-btn:hover {
-    color: #30ab84;
-    transition: all ease .4s;
 }
 .send-btn {
     float: right;
