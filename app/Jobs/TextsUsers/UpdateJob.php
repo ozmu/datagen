@@ -37,35 +37,31 @@ class UpdateJob implements ShouldQueue
         $pattern = "/<START:(.+?)>(.+?)<END>/i";
         preg_match_all($pattern, $this->beforeTaggedText, $matchesBefore);
         preg_match_all($pattern, $this->textUser["tagged_text"], $matchesAfter);
-        if (count($matchesAfter) >= count($matchesBefore)){
-            $diff = $this->entities($matchesAfter)->diff($this->entities($matchesBefore));
-            foreach($diff as $key => $value){
-                $entity = Entity::where('entity', $value["type"]);
-                if ($entity->count()){
-                    $e = $entity->first();
-                    $data = [
-                        "text_user_id" => $this->textUser->id,
-                        "entity_type_id" => $e->id,
-                        "entity_mention" => $value["entity"]
-                    ];
-                    Tag::create($data);
+        // Appends
+        $appends = $this->entities($matchesAfter)->diff($this->entities($matchesBefore));
+        foreach($appends as $key => $value){
+            $entity = Entity::where('entity', $value["type"]);
+            if ($entity->count()){
+                $e = $entity->first();
+                $data = [
+                    "text_user_id" => $this->textUser->id,
+                    "entity_type_id" => $e->id,
+                    "entity_mention" => $value["entity"]
+                ];
+                Tag::create($data);
+            }
+        }
+        // Removed
+        $removeds = $this->entities($matchesBefore)->diff($this->entities($matchesAfter));
+        foreach($removeds as $key => $value){
+            $entity = Entity::where('entity', $value["type"]);
+            if ($entity->count()){
+                $tag = Tag::where(["text_user_id" => $this->textUser->id, "entity_type_id" => $entity->first()->id, "entity_mention" => $value["entity"]]);
+                if ($tag->count()){
+                    $tag->first()->delete();
                 }
             }
         }
-        else {
-            $diff = $this->entities($matchesBefore)->diff($this->entities($matchesAfter));
-            foreach($diff as $key => $value){
-                $entity = Entity::where('entity', $value["type"]);
-                if ($entity->count()){
-                    $e = $entity->first();
-                    $tag = Tag::where(["text_user_id" => $this->textUser->id, "entity_type_id" => $e->id, "entity_mention" => $value["entity"]]);
-                    if ($tag->count()){
-                        $tag->first()->delete();
-                    }
-                }
-            }
-        }
-        
     }
 
     /**
