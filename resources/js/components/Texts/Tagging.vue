@@ -11,7 +11,8 @@
                             <p id="text" class="text scrollbar"></p>
                         </highlightable>
                     </div>
-                    <button class="btn btn-primary send-btn" @click="send">Gönder</button>
+                    <button class="btn btn-primary send-btn" @click="send" v-if="!Object.keys($route.params).includes('text_user_id')">Gönder</button>
+                    <button class="btn btn-primary send-btn" @click="update" v-else>Güncelle</button>
                 </div>
             </div>
         </div>
@@ -189,18 +190,19 @@ export default {
         },
 
         update(){
-            if (this.selected.length){
+            var text = document.getElementById('text')
+            if (text.getElementsByTagName('span').length){
                 this.$buefy.dialog.confirm({
                     message: 'Devam etmek ister misiniz?',
                     onConfirm: () => {
-                        var regex = new RegExp('<span[|](id="tag-[0-9]{4}"[|])?class="tag"[|]title="(.+?)"[|]style="color:#fff;background:#[A-Za-z0-9]{6}">(.+?)</span>', 'g');
-                        var tagged_text = this.text.text.replace(regex, ' <START:$2> $3 <END> ').replace(/(<span(.+?)>)|(<\/span>)/ig, '').replace(/[|]/g, ' ').replace('  ', ' ')
+                        var html = text.innerHTML;
+                        var pattern = new RegExp('<span id="([0-9]{4})" class="selected" title="(.+?)" style="(.+?)">(.+?)<i class="mdi mdi-close-circle mdi-14px close-icon"></i></span>', 'gi')
+                        var taggedText = html.replace(pattern, ' <START:$2>$4<END> ')
                         var data = {
-                            text_id: this.$route.params.text_user_id,
-                            tagged_text: tagged_text
+                            text_id: this.text.id,
+                            tagged_text: taggedText
                         }
                         axios.put('/data/text', data).then(response => {
-                            console.log(response.data)
                             if (response.status === 200){
                                 this.$buefy.snackbar.open({
                                     message:  response.data.message,
@@ -209,9 +211,9 @@ export default {
                                     actionText: 'OK',
                                     indefinite: true,
                                     onAction: () => {
-                                        this.selected = []
-                                        this.selectedUpdateType = ""
+                                        this.loading = true;
                                         this.getNewText();
+                                        document.getElementById('text').innerHTML = ""
                                     }
                                 })
                             }
