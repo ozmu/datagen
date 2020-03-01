@@ -12,6 +12,7 @@
                         </button>
                         <input v-model="search" type="text" class="form-control search-text" placeholder="Ara..">
                         <b-table
+                        v-if="filteredTaggedTexts.length"
                         :data="filteredTaggedTexts"
                         :paginated="true"
                         :per-page="10"

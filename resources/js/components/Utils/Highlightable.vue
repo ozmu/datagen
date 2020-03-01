@@ -1,7 +1,7 @@
 <template>
     <div id="highlightable">
         <div v-show="showTools" class="tools" :style="{left: `${x}px`, top: `${y}px`}" @mousedown.prevent="">
-            <span class="item" v-for="entity in entities" :key="entity.id" @mousedown.prevent="sendAction(entity.entity)">{{ entity.entity }}</span>
+            <span class="item" v-for="entity in entities" :key="entity.id" :title="entity.entity" @mousedown.prevent="sendAction(entity.entity)">{{ entity.entity }}</span>
         </div>
         <slot/>
     </div>
@@ -75,7 +75,7 @@ export default {
   top: 0;
   left: 0;
   /*transform: translate(-50%, -100%);*/
-  transform: translate(-150%,-350%);
+  transform: translate(-152%,-350%);
   transition: 0.2s all;
   display: flex;
   justify-content: center;

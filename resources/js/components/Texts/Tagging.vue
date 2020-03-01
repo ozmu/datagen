@@ -8,7 +8,7 @@
                             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                         </div>
                         <highlightable v-if="entities.length" @action="handleAction" :entities="entities">
-                            <p id="text" class="text scrollbar">{{ text.text }}</p>
+                            <p id="text" class="text scrollbar"></p>
                         </highlightable>
                     </div>
                     <button class="btn btn-primary send-btn" @click="send">Gönder</button>
@@ -51,7 +51,16 @@ export default {
         else {
             axios.get('/data/text/' + this.$route.params.text_user_id).then(response => {
                 if (response.status === 200){
-                    console.log(response.data)
+                    var self = this;
+                    this.text = response.data
+                    document.getElementById('text').innerHTML = this.taggedTextReplace(response.data.tagged_text)
+                    var icons = Array.from(document.getElementsByClassName('close-icon'))
+                    icons.forEach(function(icon){
+                        icon.addEventListener("click", function(){
+                            self.unwrap(this.parentElement)
+                        })
+                    })
+                    this.loading = false;
                 }
             }).catch(e => {
                 console.log(e.response ? e.response : e)
@@ -98,6 +107,7 @@ export default {
             axios.get('/data/text/new').then(response => {
                 if (response.status === 200){
                     this.text = response.data
+                    document.getElementById('text').innerText = response.data.text
                     this.loading = false;
                 }
                 else if (response.status === 204){
@@ -110,10 +120,24 @@ export default {
                     this.$router.push({name: 'texts-tagged'})
                 }
             })
-            this.current = {entity: {}, words: []}
         },
 
-        /** Necessary */
+        taggedTextReplace(taggedText){
+            var pattern = new RegExp('<START:(.+?)>(.+?)<END>', 'gi')
+            var match;
+            do {
+                match = pattern.exec(taggedText)
+                if (match){
+                    var e = this.entities.filter(entity => entity.entity === match[1])
+                    var entity = e.length ? e[0] : {}
+                    taggedText = taggedText.replace('<START:' + match[1] + '>' + match[2] + '<END>', '<span id="' + this.tagCount + '" class="selected" title="' + 
+                    match[1] + '" style="background-color: ' + entity.color + '">' + match[2] + '<i class="mdi mdi-close-circle mdi-14px close-icon"></i></span>')
+                    this.tagCount++;
+                }
+            } while (match)
+            return taggedText
+        },
+
         send(){
             var text = document.getElementById('text')
             if (text.getElementsByTagName('span').length){
@@ -128,7 +152,6 @@ export default {
                             tagged_text: taggedText
                         }
                         axios.post('/data/text', data).then(response => {
-                            console.log(response.data)
                             if (response.status === 200){
                                 this.$buefy.snackbar.open({
                                     message:  response.data.message,
@@ -137,10 +160,9 @@ export default {
                                     actionText: 'OK',
                                     indefinite: true,
                                     onAction: () => {
-                                        this.selected = []
-                                        this.selectedUpdateType = ""
                                         this.loading = true;
                                         this.getNewText();
+                                        document.getElementById('text').innerHTML = ""
                                     }
                                 })
                             }
@@ -166,7 +188,6 @@ export default {
             }
         },
 
-        /** Necessary */
         update(){
             if (this.selected.length){
                 this.$buefy.dialog.confirm({
