@@ -132,9 +132,21 @@ export default {
 
     computed: {
         highlight(){
-            var pattern = new RegExp('<START:(.+?)>(.+?)<END>', 'gi')
             if (this.text.tagged_text){
-                return this.text.tagged_text.replace(pattern, '<span style="background:#fd1d4a;color:#fff;padding:5px;border-radius:5px;">&lt;START:$1&gt;$2&lt;END&gt;</span>')
+                var pattern = new RegExp('<START:(.+?)>(.+?)<END>', 'gi')
+                var replaced = this.text.tagged_text
+                var match;
+                do {
+                    match = pattern.exec(replaced)
+                    if (match){
+                        var entity_mention = this.text.tags.filter(tag => tag.entity_mention === match[2] && tag.entity_type.entity === match[1])
+                        if (entity_mention.length){
+                            replaced = replaced.replace('<START:' + match[1] + '>' + match[2] + '<END>', '<span style="background:'+ 
+                            (entity_mention[0].is_verified ? '#23d160' : '#fd1d4a') + ';color:#fff;padding:5px;border-radius:5px;">&lt;START:' + match[1] + '&gt;' + match[2] + '&lt;END&gt;</span>')
+                        }
+                    }
+                } while (match)
+                return replaced
             }
             return this.text
         },
@@ -197,6 +209,7 @@ export default {
 .card-body.highlighted {
     line-height: 30px;
     height: 607px;
+    padding-top: 15px !important;
     overflow-y: auto;
 }
 .create-btn {
