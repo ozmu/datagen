@@ -29,6 +29,14 @@
                                     <span :title="props.row.tagged_text">{{ props.row.tagged_text | truncate(200) }}</span>
                                 </b-table-column>
                                 
+                                <b-table-column label="Oluşturulma" width="15%" sortable>
+                                    <span :title="props.row.created_at">{{ props.row.created_at }}</span>
+                                </b-table-column>
+                                
+                                <b-table-column label="Son güncelleme" width="15%" sortable>
+                                    <span :title="props.row.updated_at">{{ props.row.updated_at }}</span>
+                                </b-table-column>
+                                
                                 <b-table-column label="İşlemler" width="10%">
                                     <b-tag type="is-warning" @click.native="redirect(props.row)" title="Düzenle" class="action">
                                         <b-icon icon="file-edit-outline" custom-size="mdi-18px"></b-icon>

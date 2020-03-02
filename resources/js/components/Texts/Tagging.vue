@@ -8,7 +8,7 @@
                             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                         </div>
                         <div class="tool-menu" v-if="!loading">
-                            <span class="tool-item" 
+                            <span class="tool-item"
                             @click="tools.autoSave.auto = !tools.autoSave.auto"
                             :title="'Otomatik kaydetme ' + (tools.autoSave.auto ? 'açık' : 'kapalı') + '.. ' + printLastSave()">
                                 <b-icon icon="content-save"></b-icon>
@@ -65,29 +65,38 @@ export default {
             this.entities = response.data
         })
 
-        if (!Object.keys(this.$route.params).includes("text_user_id")){
-            // Get Random Text
-            this.getNewText();
+        const routeParams = Object.keys(this.$route.params)
+        var path, id;
+        if (routeParams.includes("draft_id")){
+            path = '/data/draft/'
+            id =  this.$route.params.draft_id
+        }
+        else if (routeParams.includes("text_user_id")){
+            path = '/data/text/' 
+            id =  this.$route.params.text_user_id
         }
         else {
-            axios.get('/data/text/' + this.$route.params.text_user_id).then(response => {
-                if (response.status === 200){
-                    var self = this;
-                    this.text = response.data
-                    document.getElementById('text').innerHTML = this.taggedTextReplace(response.data.tagged_text)
-                    var icons = Array.from(document.getElementsByClassName('close-icon'))
-                    icons.forEach(function(icon){
-                        icon.addEventListener("click", function(){
-                            self.unwrap(this.parentElement);
-                            self.saveDraft();
-                        })
-                    })
-                    this.loading = false;
-                }
-            }).catch(e => {
-                console.log(e.response ? e.response : e)
-            })
+            // Get Random Text
+            this.getNewText();
+            return;
         }
+        axios.get(path + id).then(response => {
+            if (response.status === 200){
+                var self = this;
+                this.text = response.data
+                document.getElementById('text').innerHTML = this.taggedTextReplace(response.data.tagged_text)
+                var icons = Array.from(document.getElementsByClassName('close-icon'))
+                icons.forEach(function(icon){
+                    icon.addEventListener("click", function(){
+                        self.unwrap(this.parentElement);
+                        self.saveDraft();
+                    })
+                })
+                this.loading = false;
+            }
+        }).catch(e => {
+            console.log(e.response ? e.response : e)
+        })
     },
 
     methods: {
@@ -157,8 +166,9 @@ export default {
                 var html = text.innerHTML;
                 var pattern = new RegExp('<span id="([0-9]{4})" class="selected" title="(.+?)" style="(.+?)">(.+?)<i class="mdi mdi-close-circle mdi-14px close-icon"></i></span>', 'gi')
                 var taggedText = html.replace(pattern, ' <START:$2>$4<END> ')
+                var text_id = !Object.keys(this.$route.params).includes("draft_id") && !Object.keys(this.$route.params).includes("text_user_id") ? this.text.id : this.text.text.id
                 var postData = {
-                    text_id: this.text.id,
+                    text_id: text_id,
                     tagged_text: taggedText,
                 }
                 axios.post('/data/text?draft=true', postData).then(response => {
@@ -319,7 +329,8 @@ p.text {
     top: 0px;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #e1e1e1;
+    background: #fff;
+    border: 1px solid #e0e0e0;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 8px 6px -6px #000;

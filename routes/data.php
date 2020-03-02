@@ -20,6 +20,7 @@ Route::get('text/drafts', 'TextsUsersController@drafts');
 Route::get('text/last', 'TextsUsersController@last');
 Route::post('text', 'TextsUsersController@store');
 Route::get('text/{id}', 'TextsUsersController@show');
+Route::get('draft/{id}', 'TextsUsersController@showDraft');
 Route::put('text', 'TextsUsersController@update');
 Route::delete('draft/destroy', 'TextsUsersController@destroyDraft');
 Route::delete('text/destroy', 'TextsUsersController@destroy');
