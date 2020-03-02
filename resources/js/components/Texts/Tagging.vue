@@ -7,6 +7,17 @@
                         <div class="overlay" v-if="loading">
                             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                         </div>
+                        <div class="tool-menu" v-if="!loading">
+                            <span class="tool-item" title="Otomatik kaydetme">
+                                <b-icon icon="content-save"></b-icon>
+                            </span>
+                            <span class="tool-item" title="Yeni Metin" @click="getNewText">
+                                <b-icon icon="refresh"></b-icon>
+                            </span>
+                            <span class="tool-item" title="Hata Bildir">
+                                <b-icon icon="alert-rhombus"></b-icon>
+                            </span>
+                        </div>
                         <highlightable v-if="entities.length" @action="handleAction" :entities="entities">
                             <p id="text" class="text scrollbar"></p>
                         </highlightable>
@@ -105,6 +116,7 @@ export default {
         },
 
         getNewText(){
+            this.loading = true;
             axios.get('/data/text/new').then(response => {
                 if (response.status === 200){
                     this.text = response.data
@@ -245,6 +257,7 @@ export default {
 <style scoped>
 .card.full-height {
     height: calc(100vh - 190px);
+    margin-top: 10px;
 }
 .card-row {
     height: calc(100vh - 230px);
@@ -256,11 +269,29 @@ export default {
 p.text {
     line-height: 30px;
     text-align: justify;
-    padding: 0 50px;
+    padding: 20px 50px;
     max-height: calc(100vh - 270px);
     overflow-y: auto;
 }
 .send-btn {
     float: right;
+}
+.tool-menu {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #e1e1e1;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 8px 6px -6px #000;
+}
+.tool-menu .tool-item {
+    cursor: pointer;
+    transition: all ease .4s;
+}
+.tool-menu .tool-item:hover {
+    color: #2196F3;
+    transition: all ease .4s;
 }
 </style>
