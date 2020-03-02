@@ -8,7 +8,9 @@
                             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                         </div>
                         <div class="tool-menu" v-if="!loading">
-                            <span class="tool-item" title="Otomatik kaydetme">
+                            <span class="tool-item" 
+                            @click="tools.autoSave.auto = !tools.autoSave.auto"
+                            :title="'Otomatik kaydetme ' + (tools.autoSave.auto ? 'açık' : 'kapalı') + '.. ' + printLastSave()">
                                 <b-icon icon="content-save"></b-icon>
                             </span>
                             <span class="tool-item" title="Yeni Metin" @click="getNewText">
@@ -46,7 +48,14 @@ export default {
                 id: null,
                 text: ''
             },
-            entities: []
+            entities: [],
+            tools: {
+                autoSave: {
+                    auto: true,
+                    message: '',
+                    time: ''
+                }
+            }
         }
     },
 
@@ -69,7 +78,8 @@ export default {
                     var icons = Array.from(document.getElementsByClassName('close-icon'))
                     icons.forEach(function(icon){
                         icon.addEventListener("click", function(){
-                            self.unwrap(this.parentElement)
+                            self.unwrap(this.parentElement);
+                            self.saveDraft();
                         })
                     })
                     this.loading = false;
@@ -92,6 +102,10 @@ export default {
             wrapper.parentNode.replaceChild(docFrag, wrapper);
         },
 
+        printLastSave(){
+            return this.tools.autoSave.time ? 'Son kaydetme: ' + moment(this.tools.autoSave.time).fromNow() : ''
+        },
+
         handleAction (data){
             var self = this;
             var entity = this.entities.filter(e => e.entity === data.type).length ? this.entities.filter(e => e.entity === data.type)[0] : {}
@@ -108,11 +122,13 @@ export default {
             icon.classList.add('mdi', 'mdi-close-circle', 'mdi-14px', 'close-icon');
             icon.onclick = function(){
                 self.unwrap(this.parentElement)
+                self.saveDraft()
             }
             span.appendChild(icon)
             var range = selection.getRangeAt(0);
             range.deleteContents();
             range.insertNode(span);
+            this.saveDraft();
         },
 
         getNewText(){
@@ -133,6 +149,28 @@ export default {
                     this.$router.push({name: 'texts-tagged'})
                 }
             })
+        },
+
+        saveDraft(){
+            if (this.tools.autoSave.auto){
+                var text = document.getElementById('text')
+                var html = text.innerHTML;
+                var pattern = new RegExp('<span id="([0-9]{4})" class="selected" title="(.+?)" style="(.+?)">(.+?)<i class="mdi mdi-close-circle mdi-14px close-icon"></i></span>', 'gi')
+                var taggedText = html.replace(pattern, ' <START:$2>$4<END> ')
+                var postData = {
+                    text_id: this.text.id,
+                    tagged_text: taggedText,
+                }
+                axios.post('/data/text?draft=true', postData).then(response => {
+                    if (response.data.status === 200){
+                        this.tools.autoSave.message = response.data.message
+                        this.tools.autoSave.time = response.data.time
+                    }
+                    else {
+                        console.log('Error while saving draft...', repsonse.data);
+                    }
+                })
+            }
         },
 
         taggedTextReplace(taggedText){

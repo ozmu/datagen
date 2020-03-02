@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Data;
 
+use Carbon\Carbon;
 use App\Models\Text;
 use App\Models\TextUser;
+use App\Models\Draft;
 use App\Models\Setting;
 use App\Http\Requests\TextUserRequest;
 use Illuminate\Http\Request;
@@ -22,6 +24,16 @@ class TextsUsersController extends Controller
     {
         $text = Text::random($request->user()->id);
         return collect($text)->isEmpty() ? response(null, 204) : $text;
+    }
+
+    /**
+     * Display drafts texts
+     * @return \Illuminate\Http\Response
+     */
+    public function drafts(Request $request){
+        return [
+            "data" => $request->user()->drafts()->with('text')->get()
+        ];
     }
 
     /**
@@ -46,16 +58,40 @@ class TextsUsersController extends Controller
      */
     public function store(TextUserRequest $request)
     {
-        $created = TextUser::create([
-            'user_id' => $request->user()->id,
-            'text_id' => $request->input('text_id'),
-            'tagged_text' => $request->input('tagged_text')
-        ]);
-        if ($created){
-            CreateJob::dispatch($created)->onQueue('computing');
-            return ["status" => 200, "message" => "Metin başarıyla oluşturuldu!", "data" => $created];
+        $draft = Draft::where(['user_id' => $request->user()->id, 'text_id' => $request->input('text_id')]);
+        if ($request->input('draft') == 'true'){
+            if ($draft->count()){
+                $d = $draft->first();
+                $d->tagged_text = $request->input('tagged_text');
+                $updated = $d->save();
+            }
+            else {
+                $updated = Draft::create([
+                    'user_id' => $request->user()->id,
+                    'text_id' => $request->input('text_id'),
+                    'tagged_text' => $request->input('tagged_text')
+                ]);
+            }
+            if ($updated){
+                return ["status" => 200, "message" => "Taslak kaydedildi.", "time" => Carbon::now()];
+            }
+            return ["status" => 400, "message" => "Taslak kaydederken hata!"];
         }
-        abort(500);
+        else {
+            if ($draft->count()){
+                $draft->first()->delete();
+            } 
+            $created = TextUser::create([
+                'user_id' => $request->user()->id,
+                'text_id' => $request->input('text_id'),
+                'tagged_text' => $request->input('tagged_text')
+            ]);
+            if ($created){
+                CreateJob::dispatch($created)->onQueue('computing');
+                return ["status" => 200, "message" => "Metin başarıyla oluşturuldu!", "data" => $created];
+            }
+            abort(500);
+        }
     }
 
     /**
@@ -90,6 +126,21 @@ class TextsUsersController extends Controller
             return ["status" => 500, "message" => "Sunucu hatası!"];
         }
         return ["status" => 404, "message" => "Metin bulunamadı!"];
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyDraft(Request $request)
+    {
+        $draft = Draft::where('id', $request->input('id'));
+        if ($draft->count() && in_array($draft->first()->id, $request->user()->drafts->pluck('id')->toArray())){
+            return Draft::destroy($request->input('id'));
+        }
+        abort(403);
     }
 
     /**

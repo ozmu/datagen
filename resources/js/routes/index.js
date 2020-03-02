@@ -34,6 +34,7 @@ const admin = [
 
 // BEGIN:Texts Routes
 import TextsTagging from '../components/Texts/Tagging.vue'
+import TextsDrafts from '../components/Texts/Drafts.vue'
 import TextsTagged from '../components/Texts/Tagged.vue'
 import TextsStatistics from '../components/Texts/Statistics.vue'
 const texts = [
@@ -41,6 +42,11 @@ const texts = [
         path: '/tagging',
         name: 'texts-tagging',
         component: TextsTagging
+    },
+    {
+        path: '/drafts',
+        name: 'texts-drafts',
+        component: TextsDrafts
     },
     {
         path: '/tagged',

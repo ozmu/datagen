@@ -16,6 +16,9 @@ class TextUserRequest extends FormRequest
     public function authorize()
     {
         if ($this->method() == "POST"){
+            if ($this->input('draft') == 'true'){
+                return true;
+            }
             $text = Text::where('id', $this->input('text_id'));
             if ($text->count() && !in_array($text->first()->id, $this->user()->texts->pluck('text_id')->toArray())){
                 return true;

@@ -46,6 +46,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\TextUser', 'user_id', 'id');
     }
 
+    public function drafts(){
+        return $this->hasMany('App\Models\Draft', 'user_id', 'id');
+    }
+
     public function tags(){
         $tags = [];
         foreach($this->texts as $text){

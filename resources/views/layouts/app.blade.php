@@ -210,6 +210,12 @@
 							</router-link>
 						</li>
 						<li class="nav-item">
+							<router-link :to="{name: 'texts-drafts'}" class="nav-link" :class="{'active': $route.name == 'texts-drafts'}">
+								<i class="icon-file-locked2"></i> 
+								<span>Taslaklar</span>
+							</router-link>
+						</li>
+						<li class="nav-item">
 							<router-link :to="{name: 'texts-tagged'}" class="nav-link" :class="{'active': $route.name == 'texts-tagged'}">
 								<i class="icon-quill4"></i> 
 								<span>Son işaretlenenler</span>
