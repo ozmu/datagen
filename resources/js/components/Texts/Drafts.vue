@@ -30,11 +30,11 @@
                                 </b-table-column>
                                 
                                 <b-table-column label="Oluşturulma" width="15%" sortable>
-                                    <span :title="props.row.created_at">{{ props.row.created_at }}</span>
+                                    <b-tag type="is-info" :title="props.row.created_at">{{ moment(props.row.created_at).fromNow() }}</b-tag>
                                 </b-table-column>
                                 
                                 <b-table-column label="Son güncelleme" width="15%" sortable>
-                                    <span :title="props.row.updated_at">{{ props.row.updated_at }}</span>
+                                    <b-tag type="is-info"  :title="props.row.updated_at">{{ moment(props.row.updated_at).fromNow() }}</b-tag>
                                 </b-table-column>
                                 
                                 <b-table-column label="İşlemler" width="10%">
@@ -92,6 +92,10 @@ export default {
     },
 
     methods: {
+        moment(){
+            return moment();
+        },
+
         more(){
             if (this.nextPageUrl){
                 this.loading = true;

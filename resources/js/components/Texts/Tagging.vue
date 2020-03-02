@@ -10,7 +10,7 @@
                         <div class="tool-menu" v-if="!loading">
                             <span class="tool-item"
                             @click="tools.autoSave.auto = !tools.autoSave.auto"
-                            :title="'Otomatik kaydetme ' + (tools.autoSave.auto ? 'açık' : 'kapalı') + '.. ' + printLastSave()">
+                            :title="'Otomatik kaydetme ' + (tools.autoSave.auto ? 'açık' : 'kapalı') + '.. ' + (tools.autoSave.time ? 'Son kaydetme: ' + moment(tools.autoSave.time).fromNow() : '')">
                                 <b-icon icon="content-save"></b-icon>
                             </span>
                             <span class="tool-item" title="Yeni Metin" @click="getNewText">
@@ -100,6 +100,10 @@ export default {
     },
 
     methods: {
+        moment(){
+            return moment();
+        },
+
         unwrap(wrapper) {
             var docFrag = document.createDocumentFragment();
             while (wrapper.firstChild) {
@@ -109,10 +113,6 @@ export default {
                 }
             }
             wrapper.parentNode.replaceChild(docFrag, wrapper);
-        },
-
-        printLastSave(){
-            return this.tools.autoSave.time ? 'Son kaydetme: ' + moment(this.tools.autoSave.time).fromNow() : ''
         },
 
         handleAction (data){
