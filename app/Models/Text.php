@@ -20,11 +20,13 @@ class Text extends Model
 
     public static function random($userId){
         $maximum_user_for_text = Setting::where('key', 'maximum_user_for_text')->first() ? (int)Setting::where('key', 'maximum_user_for_text')->first()->value : 10;
+        $texts = collect([]);
         foreach(Text::all() as $text){
             if (TextUser::where('text_id', $text->id)->count() < $maximum_user_for_text && !in_array($userId, $text->users()->pluck('user_id')->toArray())){
-                return $text;
+                $texts->push($text->id);
             }
         }
+        return Text::find($texts->random());
         /*
         $textUser = TextUser::groupBy('text_id')->selectRaw('count(*) as total, text_id')->get()->where('total', '<', $maximum_user_for_text);
         foreach($textUser as $text){
