@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Data;
 
 use App\User;
+use App\Models\TextUser;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
@@ -69,6 +70,13 @@ class UsersController extends Controller
      */
     public function destroy(Request $request, $id)
     {
+        if ($request->input('scope') == 'texts'){
+            $textUser = TextUser::where(['id' => $request->input('text_user_id'), 'user_id' => $id]);
+            if ($textUser->count()){
+                $deleted = $textUser->first()->delete();
+            }
+            return $deleted ? ["status" => 200] : ["status" => 404];
+        }
         return User::destroy($id);
     }
 }

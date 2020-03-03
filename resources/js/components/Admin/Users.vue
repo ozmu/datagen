@@ -235,7 +235,20 @@ export default {
         },
 
         destroyText(text){
-            console.log('Text destroyingg...')
+            this.$buefy.dialog.confirm({
+                message: 'Continue on this task?',
+                onConfirm: () => {
+                    axios.delete('/data/admin/users/' + text.user_id + '?scope=texts&text_user_id=' + text.id).then(response => {
+                        if (response.data.status === 200){
+                            this.texts.data.splice(this.texts.data.indexOf(text), 1)
+                            this.$buefy.toast.open('Text deleted!')
+                        }
+                        else {
+                            console.log('error while removing item.')
+                        }
+                    })
+                }
+            })
         },
 
         backFromDetails(){
