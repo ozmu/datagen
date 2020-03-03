@@ -72,6 +72,15 @@ const support = [
 ]
 // END:Support Routes
 
-const routes = [].concat(main, admin, texts, support);
+// BEGIN:Erros
+import PageNotFound from '../components/Errors/PageNotFound.vue'
+const errors = [
+    {
+        path: '*',
+        component: PageNotFound
+    }
+]
+
+const routes = [].concat(main, admin, texts, support, errors);
 
 export default routes;

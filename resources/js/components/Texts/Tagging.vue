@@ -9,6 +9,7 @@
                         </div>
                         <div class="tool-menu" v-if="!loading">
                             <span class="tool-item"
+                            v-if="tools.autoSave.show"
                             @click="tools.autoSave.auto = !tools.autoSave.auto"
                             :title="'Otomatik kaydetme ' + (tools.autoSave.auto ? 'açık' : 'kapalı') + '.. ' + (tools.autoSave.time ? 'Son kaydetme: ' + moment(tools.autoSave.time).fromNow() : '')">
                                 <b-icon icon="content-save"></b-icon>
@@ -51,6 +52,7 @@ export default {
             entities: [],
             tools: {
                 autoSave: {
+                    show: true,
                     auto: true,
                     message: '',
                     time: ''
@@ -74,6 +76,8 @@ export default {
         else if (routeParams.includes("text_user_id")){
             path = '/data/text/' 
             id =  this.$route.params.text_user_id
+            this.tools.autoSave.show = false;
+            this.tools.autoSave.auto = false;
         }
         else {
             // Get Random Text
