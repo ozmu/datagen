@@ -32,24 +32,30 @@
                                     {{ props.row.email }}
                                 </b-table-column>
                                 
-                                <b-table-column field="balance" label="Balance (TL)" width="5%" sortable>
+                                <b-table-column field="balance" label="Balance (TL)" width="10%" sortable>
                                     <b-tag type="is-info">
                                         {{ props.row.balance }}
                                         <b-icon icon="currency-try" custom-size="mdi-14px"></b-icon>
                                     </b-tag>
                                 </b-table-column>
                                 
-                                <b-table-column field="is_admin" label="Yetki" width="5%" sortable>
+                                <b-table-column field="text_count" label="Etiketlenen Metin" width="10%" sortable>
+                                    <b-tag type="is-success" :class="{'text-count': props.row.text_count != 0}" @click.native="getTexts(props.row)">
+                                        {{ props.row.text_count }}
+                                    </b-tag>
+                                </b-table-column>
+                                
+                                <b-table-column field="is_admin" label="Yetki" width="10%" sortable>
                                     <b-tag v-if="props.row.is_admin" type="is-danger">Admin</b-tag>
                                     <b-tag v-else type="is-warning">Kullanıcı</b-tag>
                                 </b-table-column>
                                 
-                                <b-table-column field="is_deleted" label="Durum" width="10%" sortable>
+                                <b-table-column field="is_deleted" label="Durum" width="5%" sortable>
                                     <b-tag v-if="props.row.is_deleted" type="is-danger">Silindi</b-tag>
                                     <b-tag v-else type="is-success">Kayıtlı</b-tag>
                                 </b-table-column>
                                 
-                                <b-table-column label="Actions" width="25%">
+                                <b-table-column label="İşlemler" width="15%">
                                     <b-tag type="is-warning" @click.native="editUser(props.row)" title="Edit" class="action">
                                         <b-icon icon="file-edit-outline" custom-size="mdi-18px"></b-icon>
                                     </b-tag>
@@ -103,6 +109,53 @@
             </div>
         </b-modal>
         <!-- END::Edit Modal -->
+
+        <!-- BEGIN::Texts Modal -->
+        <b-modal custom-class="texts-modal-content" :active.sync="texts.modal" :width="640" :height="540" scroll="keep" :onCancel="cancelTextsModal">
+            <div class="card-content" :class="{'details-content': texts.details.open}">
+                <div v-if="!texts.details.open" class="content">
+                    <div class="overlay" v-if="texts.loading">
+                        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    </div>
+                    <input v-if="texts.data.length" v-model="filterTexts" type="text" class="form-control filter-text" placeholder="Filtrele">
+                    <b-table
+                    v-if="texts.data.length"
+                    :data="filteredTexts"
+                    :paginated="true"
+                    :per-page="5"
+                    width="100%"
+                    :striped="true"
+                    :pagination-simple="false"
+                    sort-icon="arrow-up">
+                        <template slot-scope="props">
+                            <b-table-column field="id" label="ID" width="5%" sortable>
+                                {{ props.row.id }}
+                            </b-table-column>
+                            
+                            <b-table-column field="tagged_text" label="Etiketlenmiş" width="70%" sortable>
+                                {{ props.row.tagged_text | truncate(100) }}
+                            </b-table-column>
+                            
+                            <b-table-column label="İşlemler" width="25%">
+                                <b-tag type="is-warning" @click.native="showText(props.row)" title="Metni Göster" class="action">
+                                    <b-icon icon="eye" custom-size="mdi-18px"></b-icon>
+                                </b-tag>
+                                <b-tag type="is-danger" @click.native="destroyText(props.row)" title="Metni Sil" class="action">
+                                    <b-icon icon="close-circle" custom-size="mdi-18px"></b-icon>
+                                </b-tag>
+                            </b-table-column>
+                        </template>
+                    </b-table>
+                </div>
+                <div v-else class="content details-height scrollbar">
+                    <b-icon icon="arrow-left-circle" class="back-btn" @click.native="backFromDetails"></b-icon>
+                    <div class="scrollbar">
+                        <p class="tagged-text" v-html="taggedTextReplace(texts.details.data.tagged_text)"></p>
+                    </div>
+                </div>
+            </div>
+        </b-modal>
+        <!-- END::Texts Modal -->
     </div>
 </template>
 
@@ -112,6 +165,8 @@ export default {
         return {
             loading: true,
             search: '',
+            filterTexts: '',
+            entities: [],
             create: {
                 modal: false,
                 data: {}
@@ -119,6 +174,15 @@ export default {
             edit: {
                 modal: false,
                 data: {}
+            },
+            texts: {
+                modal: false,
+                loading: true,
+                details: {
+                    open: false,
+                    data: {}
+                },
+                data: []
             },
             users: []
         }
@@ -130,6 +194,13 @@ export default {
                 return this.users.filter(user => user.name.toLowerCase().includes(this.search.toLowerCase()) || user.email.toLowerCase().includes(this.search.toLowerCase()))
             }
             return this.users
+        },
+
+        filteredTexts(){
+            if (this.filterTexts){
+                return this.texts.data.filter(text => text.id === this.filterTexts || text.tagged_text.toLowerCase().includes(this.filterTexts.toLowerCase()))
+            }
+            return this.texts.data
         }
     },
 
@@ -138,9 +209,60 @@ export default {
             this.users = response.data
             this.loading = false
         })
+        
+        // Get Entities
+        axios.get('/data/utils/entities').then(response => {
+            this.entities = response.data
+        })
     },
 
     methods: {
+        getTexts(user){
+            if (user.text_count){
+                this.texts.modal = true
+                axios.get('/data/admin/users/' + user.id + '?scope=texts').then(response => {
+                    if (response.status === 200){
+                        this.texts.loading = false
+                        this.texts.data = response.data
+                    }
+                })
+            }
+        },
+
+        showText(text){
+            this.texts.details.data = text
+            this.texts.details.open = true
+        },
+
+        destroyText(text){
+            console.log('Text destroyingg...')
+        },
+
+        backFromDetails(){
+            this.texts.details.data = {}
+            this.texts.details.open = false
+        },
+
+        cancelTextsModal(){
+            this.texts.data = []
+            this.texts.loading = true
+        },
+
+        taggedTextReplace(taggedText){
+            var pattern = new RegExp('<START:(.+?)>(.+?)<END>', 'gi')
+            var match;
+            do {
+                match = pattern.exec(taggedText)
+                if (match){
+                    var e = this.entities.filter(entity => entity.entity.toLowerCase() === match[1].toLowerCase())
+                    var entity = e.length ? e[0] : {color: '#000'}
+                    taggedText = taggedText.replace('<START:' + match[1] + '>' + match[2] + '<END>', '<span class="selected" title="' + 
+                    match[1] + '" style="background-color: ' + entity.color + '">' + match[2] + '</span>')
+                }
+            } while (match)
+            return taggedText
+        },
+
         store(){
             axios.post('/data/admin/users', this.create.data).then(response => {
                 if (response.status === 201){
@@ -217,6 +339,15 @@ export default {
                 }
             })
         }
+    },
+
+    filters: {
+        truncate: function(value, limit){
+            if (value.length > limit) {
+                value = value.substring(0, (limit - 3)) + '...';
+            }
+            return value
+        }
     }
 }
 </script>
@@ -232,5 +363,38 @@ export default {
 }
 span.tag.is-info {
     width: 50px;
+}
+.text-count {
+    cursor: pointer;
+}
+input.filter-text {
+    width: 150px;
+    padding: 10px;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+.back-btn {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    cursor: pointer;
+    transition: all ease .4s;
+}
+.back-btn:hover {
+    color: #1976D2;
+    transition: all ease .4s;
+}
+.content.details-height {
+    height: 100%;
+    text-align: justify;
+    overflow-y: auto;
+}
+.details-content {
+    height: 100%;
+    overflow-y: hidden;
+}
+p.tagged-text {
+    line-height: 22px;
 }
 </style>

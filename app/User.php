@@ -39,7 +39,7 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'balance'
+        'balance', 'text_count'
     ];
 
     public function texts(){
@@ -60,6 +60,10 @@ class User extends Authenticatable
 
     public function getBalanceAttribute(){
         return $this->balance();
+    }
+
+    public function getTextCountAttribute(){
+        return $this->texts->count();
     }
 
     public function balance($verified = true){

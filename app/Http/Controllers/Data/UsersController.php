@@ -39,11 +39,10 @@ class UsersController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $user = $request->user();
-        if ($user->is_admin || $user->id == $id){
-            return User::find($id);
+        if ($request->input('scope') == 'texts'){
+            return User::find($id) ? User::find($id)->texts : [];
         }
-        abort(403);
+        return User::find($id) ? User::find($id) : abort(403);
     }
 
     /**

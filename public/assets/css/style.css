@@ -83,3 +83,8 @@ outline: 1px solid slategrey;
   margin-left: 5px;
   cursor: pointer;
 }
+.texts-modal-content .modal-content {
+  border-radius: 10px;
+  height: 540px;
+  overflow-y: auto;
+}
