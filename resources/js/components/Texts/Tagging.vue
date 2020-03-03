@@ -212,8 +212,9 @@ export default {
                         var html = text.innerHTML;
                         var pattern = new RegExp('<span id="([0-9]{4})" class="selected" title="(.+?)" style="(.+?)">(.+?)<i class="mdi mdi-close-circle mdi-14px close-icon"></i></span>', 'gi')
                         var taggedText = html.replace(pattern, ' <START:$2>$4<END> ')
+                        var text_id = (Object.keys(this.$route.params).includes('draft_id') || Object.keys(this.$route.params).includes('text_user_id')) ? this.text.text.id : this.text.id
                         var data = {
-                            text_id: this.text.id,
+                            text_id: text_id,
                             tagged_text: taggedText
                         }
                         axios.post('/data/text', data).then(response => {
