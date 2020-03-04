@@ -2,12 +2,12 @@ version: '3'
 services:
 
   #PHP Service
-  datagen_app:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
     image: digitalocean.com/php
-    container_name: app
+    container_name: datagen_app
     restart: unless-stopped
     tty: true
     environment:
@@ -22,9 +22,9 @@ services:
  
 
   #Nginx Service
-  datagen_webserver:
+  webserver:
     image: nginx:alpine
-    container_name: webserver
+    container_name: datagen_webserver
     restart: unless-stopped
     tty: true
     ports:
@@ -37,9 +37,9 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
 
   #MySQL Service
-  datagen_db:
+  db:
     image: mysql:5.7.22
-    container_name: db
+    container_name: datagen_db
     restart: unless-stopped
     tty: true
     ports:

@@ -1,52 +1,83 @@
-FROM php:7.3-fpm
+FROM ubuntu:18.04
 
-RUN mkdir -p /var/www/app
-
-# Copy composer.lock and composer.json
-COPY composer.lock composer.json /var/www/app/
+# Create app dir
+RUN mkdir -p /home/app
 
 # Set working directory
-WORKDIR /var/www/app
+WORKDIR /home/app
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
+# Update
+RUN apt-get update
+
+# Install Software Properties Common
+RUN apt-get install -y software-properties-common
+
+# Add PHP7.3 repo
+RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+
+# Update timezone to Istanbul
+ENV DEBIAN_FRONTEND=noninteractive
+RUN ln -fs /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+RUN apt-get -y install tzdata
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+
+# Install packages
+RUN apt-get install -y php7.3 \
+    php7.3-cli \
+    php7.3-common \
+    php7.3-xml \
+    php7.3-fpm \
+    php7.3-mysql \
+    php7.3-mbstring \
     zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
     unzip \
-    libzip-dev \
+    php7.3-zip \
     git \
-    curl
+    curl \
+    apache2 \
+    supervisor
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
-RUN docker-php-ext-install gd
-
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
-
 # Copy existing application directory contents
-COPY . /var/www/app
+COPY . /home/app
+
+# Add dependencies
+RUN composer install
+COPY .env /home/app/.env
+
+# Build web server (Apache2)
+COPY ./apache2/app.conf /etc/apache2/sites-available/
+RUN find /etc/apache2/sites-enabled/ -type l -exec rm -if "{}" \;
+RUN a2ensite app.conf
+
+# Laravel
+RUN php artisan key:generate
+RUN php artisan config:cache
+
+# Install NodeJS 10
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt install -y nodejs
+
+# Install NPM dependencies and compile
+RUN npm install
+RUN npm run prod
+
+# Supervisor copy configuration and run
+COPY ./supervisor/queue.conf /etc/supervisor/conf.d/
+RUN service supervisor start
+RUN supervisorctl start queue:*
 
 # Copy existing application directory permissions
-RUN chown -R www:www /var/www/app
+RUN chown -R www-data: /home/app
 
 # Change current user to www
-USER www
+USER www-data
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Expose port 80 and start nginx server
+EXPOSE 80
+CMD ["apachectl", "-D", "FOREGROUND"]
