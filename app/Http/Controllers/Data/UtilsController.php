@@ -53,7 +53,6 @@ class UtilsController extends Controller
                     $data->push([
                         $current->format('d-M-y'),
                         $request->user()->tags()->whereBetween('verified_at', [$current, $next])->where('is_verified', true)->count() * $coin_factor
-                        //$request->user()->tags()->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
                     ]);
                 }
                 else {
@@ -61,14 +60,11 @@ class UtilsController extends Controller
                     $data->push([
                         $current->format('d-M-y'),
                         $request->user()->texts->whereBetween('verified_at', [$current, $next])->where('is_verified', true)->count() * $coin_factor
-                        //$request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->where('is_verified', true)->count() * $coin_factor
                     ]);
                 }
             }
             else if ($scope == "texts"){
                 $data->push([
-                    //"start" => $current,
-                    //"end" => $next,
                     "label" => $current->format('d M'),//$current->format('d') . "-" . $next->format('d M'),
                     "value" => $request->user()->texts->where('created_at', '>', $current)->where('created_at', '<', $next)->count()
                 ]);

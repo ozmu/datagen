@@ -76,12 +76,5 @@ class User extends Authenticatable
             // Verified Texts by default!
             return $this->texts->where('is_verified', $verified)->count() * $coin_factor;
         }
-        /*
-        $tags = $this->tags();
-        return [
-            "verified" => $tags->where('is_verified', true)->count() * $coin_factor,
-            "pending" => $tags->where('is_verified', false)->count() * $coin_factor
-        ];
-        */
     }
 }

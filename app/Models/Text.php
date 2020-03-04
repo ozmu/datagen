@@ -29,27 +29,5 @@ class Text extends Model
             }
         }
         return Text::find($texts->random());
-        /*
-        $textUser = TextUser::groupBy('text_id')->selectRaw('count(*) as total, text_id')->get()->where('total', '<', $maximum_user_for_text);
-        foreach($textUser as $text){
-            $user = TextUser::where(['text_id' => $text->text_id, 'user_id' => $userId]);
-            if (!$user->count()){
-                return Text::find($text->text_id); 
-            }
-        }
-        return [];
-        */
-
-        /*
-        $user = TextUser::where('user_id', '!=', $userId);
-        if ($user->count()){
-            return [];
-        }
-        $rand = $user->get()->countBy('text_id')->map(function($item, $key){return ["count" => $item, "text_id" => $key];})->where('count', '<', $maximum_user_for_text);
-        if ($rand->count()){
-            return Text::find($rand->random()->text_id);
-        }
-        return [];
-        */
     }
 }
