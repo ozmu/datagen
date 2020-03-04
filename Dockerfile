@@ -48,15 +48,14 @@ COPY . /home/app
 
 # Add dependencies
 RUN composer install
-COPY .env /home/app/.env
 
 # Build web server (Apache2)
-COPY ./apache2/app.conf /etc/apache2/sites-available/
+COPY apache2/conf.d/app.conf /etc/apache2/sites-available/
 RUN find /etc/apache2/sites-enabled/ -type l -exec rm -if "{}" \;
 RUN a2ensite app.conf
 
 # Laravel
-RUN php artisan key:generate
+# RUN php artisan key:generate
 RUN php artisan config:cache
 
 # Install NodeJS 10
