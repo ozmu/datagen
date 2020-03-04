@@ -78,9 +78,6 @@ class TextsUsersController extends Controller
             return ["status" => 400, "message" => "Taslak kaydederken hata!"];
         }
         else {
-            if ($draft->count()){
-                $draft->first()->delete();
-            } 
             $created = TextUser::create([
                 'user_id' => $request->user()->id,
                 'text_id' => $request->input('text_id'),
@@ -88,6 +85,9 @@ class TextsUsersController extends Controller
             ]);
             if ($created){
                 CreateJob::dispatch($created)->onQueue('computing');
+                if ($draft->count()){
+                    $draft->first()->delete();
+                }
                 return ["status" => 200, "message" => "Metin başarıyla oluşturuldu!", "data" => $created];
             }
             abort(500);

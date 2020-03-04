@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-xl-8">
                 <div class="card">
-                        <div class="overlay" v-if="loading">
-                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-                        </div>
+                    <div class="overlay" v-if="loading">
+                        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    </div>
                     <div class="card-header">
                         <h3 class="title">Detay</h3>
                         <button class="btn btn-primary create-btn" @click="$router.push({name: 'texts-tagging', params: { text_user_id: text.id}});">
@@ -139,7 +139,7 @@ export default {
                 do {
                     match = pattern.exec(replaced)
                     if (match){
-                        var entity_mention = this.text.tags.filter(tag => tag.entity_mention === match[2] && tag.entity_type.entity === match[1])
+                        var entity_mention = this.text.tags.filter(tag => tag.entity_mention === match[2] && tag.entity_type.entity.toLowerCase() === match[1].toLowerCase())
                         if (entity_mention.length){
                             replaced = replaced.replace('<START:' + match[1] + '>' + match[2] + '<END>', '<span style="background:'+ 
                             (entity_mention[0].is_verified ? '#23d160' : '#fd1d4a') + ';color:#fff;padding:5px;border-radius:5px;">&lt;START:' + match[1] + '&gt;' + match[2] + '&lt;END&gt;</span>')

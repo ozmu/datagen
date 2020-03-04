@@ -15,7 +15,7 @@
                         v-if="filteredTaggedTexts.length"
                         :data="filteredTaggedTexts"
                         :paginated="true"
-                        :per-page="10"
+                        :per-page="5"
                         width="100%"
                         :striped="true"
                         :pagination-simple="false"

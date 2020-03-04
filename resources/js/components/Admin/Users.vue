@@ -241,7 +241,7 @@ export default {
                     axios.delete('/data/admin/users/' + text.user_id + '?scope=texts&text_user_id=' + text.id).then(response => {
                         if (response.data.status === 200){
                             this.texts.data.splice(this.texts.data.indexOf(text), 1)
-                            this.$buefy.toast.open('Text deleted!')
+                            this.$buefy.toast.open('Metin silindi!')
                         }
                         else {
                             console.log('error while removing item.')

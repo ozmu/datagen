@@ -175,7 +175,11 @@ export default {
                     text_id: text_id,
                     tagged_text: taggedText,
                 }
-                axios.post('/data/text?draft=true', postData).then(response => {
+                axios.post('/data/text?draft=true', postData, {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector("meta[name='csrf-token']").getAttribute('content') 
+                    }
+                }).then(response => {
                     if (response.data.status === 200){
                         this.tools.autoSave.message = response.data.message
                         this.tools.autoSave.time = response.data.time
@@ -217,7 +221,11 @@ export default {
                             text_id: text_id,
                             tagged_text: taggedText
                         }
-                        axios.post('/data/text', data).then(response => {
+                        axios.post('/data/text', data, {
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector("meta[name='csrf-token']").getAttribute('content')
+                            }
+                        }).then(response => {
                             if (response.status === 200){
                                 this.$buefy.snackbar.open({
                                     message:  response.data.message,
@@ -228,7 +236,10 @@ export default {
                                     onAction: () => {
                                         this.loading = true;
                                         this.getNewText();
-                                        document.getElementById('text').innerHTML = ""
+                                        var text = document.getElementById('text')
+                                        if (text){
+                                            text.innerHTML = ""
+                                        }
                                     }
                                 })
                             }
@@ -267,7 +278,11 @@ export default {
                             text_id: this.text.id,
                             tagged_text: taggedText
                         }
-                        axios.put('/data/text', data).then(response => {
+                        axios.put('/data/text', data, {
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector("meta[name='csrf-token']").getAttribute('content') 
+                            }
+                        }).then(response => {
                             if (response.status === 200){
                                 this.$buefy.snackbar.open({
                                     message:  response.data.message,
