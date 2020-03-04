@@ -2,7 +2,7 @@ version: '3'
 services:
 
   #PHP Service
-  app:
+  datagen_app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,9 +16,13 @@ services:
     working_dir: /var/www/app
     networks:
       - app-network
+    volumes:
+      - ./:/var/www/app
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+ 
 
   #Nginx Service
-  webserver:
+  datagen_webserver:
     image: nginx:alpine
     container_name: webserver
     restart: unless-stopped
@@ -28,9 +32,12 @@ services:
       - "443:443"
     networks:
       - app-network
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
 
   #MySQL Service
-  db:
+  datagen_db:
     image: mysql:5.7.22
     container_name: db
     restart: unless-stopped
@@ -44,8 +51,16 @@ services:
       SERVICE_NAME: mysql
     networks:
       - app-network
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
 
 #Docker Networks
 networks:
   app-network:
     driver: bridge
+
+#Docker Volumes
+volumes:
+  dbdata:
+    driver: local

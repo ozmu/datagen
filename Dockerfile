@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     jpegoptim optipng pngquant gifsicle \
     vim \
     unzip \
+    libzip-dev \
     git \
     curl
 
@@ -38,10 +39,10 @@ RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
-COPY . /var/www
+COPY . /var/www/app
 
 # Copy existing application directory permissions
-COPY --chown=www:www . /var/www
+RUN chown -R www:www /var/www/app
 
 # Change current user to www
 USER www
