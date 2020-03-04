@@ -1,15 +1,16 @@
-FROM php:7.2-fpm
+FROM php:7.3-fpm
+
+RUN mkdir -p /var/www/app
 
 # Copy composer.lock and composer.json
-COPY composer.lock composer.json /var/www/
+COPY composer.lock composer.json /var/www/app/
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/app
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    mysql-client \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
