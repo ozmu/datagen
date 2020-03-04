@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Data;
 
+use Hash;
 use App\User;
 use App\Models\TextUser;
 use Illuminate\Http\Request;
@@ -55,11 +56,19 @@ class UsersController extends Controller
      */
     public function update(UserRequest $request, $id)
     {
-        $updated = User::find($id)->update($request->all());
-        if ($updated){
-            return "Updated!";
+        $user = User::find($id);
+        if ($user){
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            if ($request->input('resetPassword')){
+                $user->password = Hash::make('password');
+            }
+            if ($user->save()){
+                return ["status" => 200, "message" => "Kullanıcı güncellendi!"];
+            }
+            return ["status" => 500, "message" => "Kullanıcı güncellenirken hata!"];
         }
-        abort(500);
+        return ["status" => 404, "message" => "Kullanıcı bulunamadı!"];
     }
 
     /**

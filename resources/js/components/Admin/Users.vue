@@ -104,6 +104,12 @@
                         <label>Email</label>
                         <input type="email" class="form-control" v-model="edit.data.email">
                     </div>
+                    <div class="form-group">
+                        <label class="special-checkbox">Parolayı Sıfırla
+                            <input type="checkbox" v-model="edit.data.resetPassword">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
                     <button class="btn btn-primary" @click="update">Kaydet</button>
                 </div>
             </div>
@@ -318,12 +324,12 @@ export default {
             axios.put('/data/admin/users/' + this.edit.data.id, this.edit.data).then(response => {
                 this.edit.modal = false;
                 this.$buefy.snackbar.open({
-                    message: response.data,
-                    type: response.status === 200 ? 'is-success' : 'is-warning',
+                    message: response.data.message,
+                    type: response.data.status === 200 ? 'is-success' : 'is-warning',
                     position: 'is-top',
-                    actionText: response.status === 200 ? 'OK' : 'Retry'
+                    actionText: response.data.status === 200 ? 'OK' : 'Retry'
                 })
-                if (response.status === 200){
+                if (response.data.status === 200){
                     axios.get('/data/admin/users/' + this.edit.data.id).then(response => {
                         if (response.status === 200){
                             var objIndex = this.users.findIndex(obj => obj.id === response.data.id)
@@ -409,5 +415,63 @@ input.filter-text {
 }
 p.tagged-text {
     line-height: 22px;
+}
+/** Checkbox */
+/* Hide the browser's default checkbox */
+.special-checkbox {
+    position: relative;
+}
+.special-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  /* left: 0; */
+  left: 90px;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.special-checkbox:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.special-checkbox input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.special-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.special-checkbox .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 </style>

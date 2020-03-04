@@ -61,16 +61,22 @@ const texts = [
 ]
 // END:Texts Routes
 
-// BEGIN:Support Routes
-import SupportContact from '../components/Support/Contact.vue'
-const support = [
+// BEGIN:Other Routes
+import OthersSettings from '../components/Others/Settings.vue'
+import OthersContact from '../components/Others/Contact.vue'
+const others = [
     {
         path: '/support',
-        name: 'support-contact',
-        component: SupportContact
+        name: 'others-contact',
+        component: OthersContact
+    },
+    {
+        path: '/settings',
+        name: 'others-settings',
+        component: OthersSettings
     }
 ]
-// END:Support Routes
+// END:Other Routes
 
 // BEGIN:Erros
 import PageNotFound from '../components/Errors/PageNotFound.vue'
@@ -81,6 +87,6 @@ const errors = [
     }
 ]
 
-const routes = [].concat(main, admin, texts, support, errors);
+const routes = [].concat(main, admin, texts, others, errors);
 
 export default routes;

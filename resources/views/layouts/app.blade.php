@@ -229,18 +229,24 @@
 						</li>
 						<!-- /texts -->
 
-						<!-- Support -->
+						<!-- Others -->
 						<li class="nav-item-header">
-							<div class="text-uppercase font-size-xs line-height-xs">Destek</div> 
-							<i class="icon-menu" title="Destek"></i>
+							<div class="text-uppercase font-size-xs line-height-xs">Diğer</div> 
+							<i class="icon-menu" title="Diğer"></i>
 						</li>
 						<li class="nav-item">
-							<router-link :to="{name: 'support-contact'}" class="nav-link" :class="{'active': $route.name == 'support-contact'}">
+							<router-link :to="{name: 'others-contact'}" class="nav-link" :class="{'active': $route.name == 'others-contact'}">
 								<i class="icon-comment-discussion"></i> 
 								<span>İletişim</span>
 							</router-link>
 						</li>
-						<!-- /support -->
+						<li class="nav-item">
+							<router-link :to="{name: 'others-settings'}" class="nav-link" :class="{'active': $route.name == 'others-settings'}">
+								<i class="icon-gear"></i> 
+								<span>Ayarlar</span>
+							</router-link>
+						</li>
+						<!-- /Others -->
 						
 
 					</ul>
