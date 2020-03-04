@@ -146,7 +146,9 @@
 							</div>
 
 							<div class="ml-3 align-self-center">
-								<a href="#" class="text-white"><i class="icon-cog3"></i></a>
+								<router-link :to="{name: 'others-settings'}" class="text-white">
+									<i class="icon-cog3"></i>
+								</router-link>
 							</div>
 						</div>
 					</div>

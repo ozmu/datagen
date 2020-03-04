@@ -27,6 +27,8 @@ Route::delete('text/destroy', 'TextsUsersController@destroy');
 
 // Utils
 Route::group(['prefix' => 'utils'], function(){
+    Route::get('user', 'UtilsController@getUser');
+    Route::put('user', 'UtilsController@updateUser');
     Route::get('entities', 'UtilsController@entities');
     Route::get('widgets', 'UtilsController@widgets');
     Route::get('charts', 'UtilsController@charts');

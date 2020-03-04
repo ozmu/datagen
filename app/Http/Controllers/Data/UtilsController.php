@@ -2,15 +2,40 @@
 
 namespace App\Http\Controllers\Data;
 
+use Hash;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use App\User;
 use App\Models\Entity;
 use App\Models\Setting;
+use App\Http\Requests\User\UpdateRequest as UpdateUserRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class UtilsController extends Controller
 {
+    public function getUser(Request $request){
+        return $request->user();
+    }
+    
+    public function updateUser(UpdateUserRequest $request){
+        $user = $request->user();
+        if (User::where('id', '!=', $user->id)->where('email', $request->input('email'))->count()){
+            return ["status" => 400, "message" => "Eposta zaten kayıtlı!"];
+        }
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        if ($request->input('new_password')){
+            if (Hash::check($request->input('current_password'), $user->password)){
+                $user->password = Hash::make($request->input('new_password'));
+            }
+            else {
+                return ["status" => 404, "message" => "Parola yanlış!"];
+            }
+        }
+        return $user->save() ? ["status" => 200, "message" => "Kullanıcı güncellendi!"] : ["status" => 500, "message" => "Güncellenirken hata!"];
+    }
+    
     public function entities(Request $request){
         return Entity::where('is_active', true)->get();
     }
